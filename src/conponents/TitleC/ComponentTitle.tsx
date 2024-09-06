@@ -5,6 +5,7 @@ interface IProps {
   right?: ReactNode
   theme?: "light" | "dark"
   style?: React.CSSProperties
+  hiddenTitle?: boolean
 }
 
 export const ComponentTitle: React.FC<IProps> = ({
@@ -12,6 +13,7 @@ export const ComponentTitle: React.FC<IProps> = ({
   right = null,
   theme = "light",
   style = {},
+  hiddenTitle = false,
 }) => {
   let bgColor = "#ffffff"
   let color = "var(--root-text-color)"
@@ -30,7 +32,7 @@ export const ComponentTitle: React.FC<IProps> = ({
       }}
       className="h-10 border-b-[0.5px] border-b-root_border_color px-2 items-center flex justify-between"
     >
-      <div className="flex-1 overflow-auto">{title}</div>
+      <div className="flex-1 overflow-auto">{hiddenTitle ? "" :title}</div>
       <div>{right ? right : null}</div>
     </div>
   )

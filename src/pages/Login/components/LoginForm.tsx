@@ -15,7 +15,7 @@ export const LoginForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const gotoApp = () => {
-    history?.navigate?.(routeConfig?.monitor)
+    history?.navigate?.(routeConfig?.manager_remind)
   }
 
   const onFinish = async (vals: any) => {

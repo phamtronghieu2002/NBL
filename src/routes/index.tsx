@@ -1,13 +1,12 @@
 import { Fragment, ReactNode } from "react"
 import { routeConfig } from "../configs/routeConfig"
-import { Monitor } from "../pages/Monitor"
+
 import { MainLayout } from "../layouts/MainLayout"
 import { Login } from "../pages/Login"
 import { LoginLayout } from "../layouts/LoginLayout"
 
 import { RootPage } from "../pages/Root"
-import ManageAlertViahicle from "../pages/ManageAlertViahicle/ManageAlertViahicle"
-
+import Remind from "../pages/manager/Remind/Remind"
 export interface IRoute {
   path: string
   component: React.FC<{}> | null
@@ -43,10 +42,15 @@ export const routes: IRoute[] = [
 
   // alert vihicle
   {
-    path: routeConfig?.manager_alert_vihicle,
-    component: ManageAlertViahicle,
+    path: routeConfig?.manager_remind,
+    component: Remind,
     layout: MainLayout,
   },
+  // {
+  //   path: routeConfig?.manager_tire,
+  //   component: ManagerAlert,
+  //   layout: MainLayout,
+  // },
 ]
 
 export const routesObj: { [key: string]: IRoute } = {}

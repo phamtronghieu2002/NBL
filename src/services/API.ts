@@ -122,7 +122,7 @@ export const API_URL = {
   vehicleIconList: "/api/v1/vehicle-icon/rows",
   vehicleIconDelete: "/api/v1/vehicle-icon/delete",
   vehicleIconUpdate: "/api/v1/vehicle-icon/update",
-  vehicleIconAdd: "/api/v1/vehicle-icon/register",
+  vehicleIconRefresh: "/api/v1/vehicle-icon/register",
 
   //vehicleType
   vehicleTypeList: "/api/v1/vehicle-type/rows",
@@ -144,7 +144,7 @@ export const API_URL = {
   permissionList: "/api/v1/permission/rows",
   permissionDelete: "/api/v1/permission/delete",
   permissionUpdate: "/api/v1/permission/update",
-  permissionAdd: "/api/v1/permission/register",
+  permissionRefresh: "/api/v1/permission/register",
 
   //manageDevice
   deviceList: "/api/v1/device/rows",

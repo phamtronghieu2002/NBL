@@ -34,7 +34,10 @@ export const AuthHoc: React.FC<IProps> = ({ children }) => {
 
   useEffect(() => {
     const refeshToken = storage.getRefreshToken()
-
+      // alert(refeshToken)
+      console.log('====================================');
+      console.log("co lot");
+      console.log('====================================');
     if (!refeshToken) {
       history?.navigate?.(routeConfig?.login)
     }

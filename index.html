@@ -15,7 +15,11 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <div id="root" value=123></div>
+    <script  type="module" src="/src/main.tsx"></script>
   </body>
+  <script>
+    const div = document.getElementById('root');
+    console.log(div.getAttribute('value'));
+  </script>
 </html>

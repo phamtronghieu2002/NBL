@@ -1,9 +1,9 @@
-button,
+/* button,
 [type="button"],
 [type="reset"],
 [type="submit"] {
   background-color: var(--theme);
-}
+} */
 
 .ant-btn-default {
   background-color: var(--transparent);

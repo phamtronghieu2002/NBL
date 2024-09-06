@@ -9,8 +9,9 @@ export const routeConfig = {
   // monitor: "/mananger",
 
   //MANAGER
-    
-  manager_alert_vihicle : "/manager/alert/vihicle",
+
+  manager_remind: "/manager/remind",
+  manager_tire: "/manager/tire",
 
   //DEV
   manager_dev_frontend_menu: "/dev/front-end/menu",

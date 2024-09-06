@@ -1,3 +1,4 @@
+import { fetchFCM } from "../App"
 import { _const } from "../_constant"
 import { api, history } from "../_helper"
 import { ICmcServer } from "../_types/devServerType"
@@ -12,7 +13,7 @@ import {
   IRouteModalProps,
   setMenu,
   setRouteModalState,
-  settingApp,
+  // settingApp,
 } from "../features/interface/interfaceSlice"
 import {
   IUserAccess,
@@ -44,6 +45,7 @@ import {
   resetPassService,
 } from "../services/userServices"
 import { _array } from "./_array"
+import { requestFCMToken } from "./firebase"
 import { getString } from "./getString"
 import storage from "./storage"
 
@@ -98,12 +100,12 @@ export const _app = {
     },
   },
   setting: (key: string, value: any) => {
-    store.dispatch?.(
-      settingApp?.({
-        key: key,
-        value: value,
-      }),
-    )
+    // store.dispatch?.(
+    //   settingApp?.({
+    //     key: key,
+    //     value: value,
+    //   }),
+    // )
   },
   getSetting: () => {
     return storage.getItem?.(_const?.storeKey?.setting)
@@ -217,6 +219,19 @@ export const _app = {
 
     all: async () => {
       const userInfoPromise = _app.getInitialData?.userInfo()
+      const user: any = await userInfoPromise
+      const userId = user?.id
+      console.log("====================================")
+      console.log("userId", userId)
+      console.log("====================================")
+      try {
+        fetchFCM()
+      } catch (error) {
+        console.log("====================================")
+        console.log("error", error)
+        console.log("====================================")
+      }
+
       const menuPromise = _app.getInitialData?.menu()
       const userChildPromise = _app?.getInitialData?.userChild()
       // const driverTreePromise = _app?.getInitialData?.driverTree()

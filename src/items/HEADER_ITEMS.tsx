@@ -23,42 +23,45 @@ import { routeConfig } from "../configs/routeConfig"
 
 const fakeMenu: IServerMenu[] = [
   {
-    child: [{
-      child: [],
-      icon: "PiCarFill",
-      id: 101,
-      link: routeConfig.manager_alert_vihicle,
-      lv: 0,
-      name: "quản lí phương tiện",
-      parent_id: 0,
-      type: "nuldl",
-      component: "",
-      created_at: 0,
-      is_deleted: 0,
-      publish: 0,
-      sort: 0,
-      updated_at: 0
-    },{
-      child: [],
-      icon: "MdOutlineBatteryAlert",
-      id: 101,
-      link: routeConfig.manager_dev_frontend_menu,
-      lv: 0,
-      name: "nhắc nhở",
-      parent_id: 0,
-      type: "null",
-      component: "",
-      created_at: 0,
-      is_deleted: 0,
-      publish: 0,
-      sort: 0,
-      updated_at: 0
-    }],
+    child: [
+      {
+        child: [],
+        icon: "PiCarFill",
+        id: 101,
+        link: routeConfig.manager_remind,
+        lv: 0,
+        name: "Quản lí nhắc nhở",
+        parent_id: 0,
+        type: "nuldl",
+        component: "",
+        created_at: 0,
+        is_deleted: 0,
+        publish: 0,
+        sort: 0,
+        updated_at: 0,
+      },
+      {
+        child: [],
+        icon: "MdOutlineBatteryAlert",
+        id: 101,
+        link: routeConfig.manager_tire,
+        lv: 0,
+        name: "Quản lí lốp xe",
+        parent_id: 0,
+        type: "null",
+        component: "",
+        created_at: 0,
+        is_deleted: 0,
+        publish: 0,
+        sort: 0,
+        updated_at: 0,
+      },
+    ],
     icon: "PiBellRingingBold",
     id: 101,
     link: routeConfig.monitor,
     lv: 0,
-    name: "Cảnh báo",
+    name: "Nhắc nhở",
     parent_id: 0,
     type: "nuldl",
     component: "",
@@ -68,7 +71,6 @@ const fakeMenu: IServerMenu[] = [
     sort: 0,
     updated_at: 0,
   },
-
 ]
 export const NLink: React.FC<{
   to: string
@@ -112,9 +114,8 @@ export interface IHEADER {
 }
 
 export const HEADER = (): IHEADER[] => {
-  // const serverMenu = store?.getState?.()?.interface?.menu 
+  // const serverMenu = store?.getState?.()?.interface?.menu
   const serverMenu = fakeMenu
-
 
   const getMenu = (menu: IServerMenu): IHEADER => {
     const Icon = <IconC name={menu?.icon} />

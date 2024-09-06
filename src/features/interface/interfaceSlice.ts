@@ -5,12 +5,6 @@ import { IServerMenu } from "../../_types/interfaceType"
 import storage from "../../utils/storage"
 import { _app } from "../../utils/_app"
 import { _const } from "../../_constant"
-import {
-  MAP_LINE_TYPE_ITEMS,
-  MAP_TYPE_ITEMS,
-  VEHICLE_FONT_OPTIONS,
-  VEHICLE_SCALE_OPTIONS,
-} from "../../items/MAP_TYPE_ITEMS"
 
 const initialSetting = _app?.getSetting()
 
@@ -37,21 +31,7 @@ export interface IState {
   menu: IServerMenu[]
   menuObj: { [key: string]: IServerMenu }
 
-  setting: {
-    map_mapType: number
-    map_mapLineType: number
-    map_vehicleFrameWidth: number
-    map_showLabel: boolean
-    map_labelSize: number
-    map_iconSize: number
-    map_followVehicle: boolean
-    map_followVehiclePlayback: boolean
-    map_cursorHoverPlayback: boolean
-    map_showParkingMarker: boolean
-    map_markerClusterGroup: boolean
-    map_showArrowMarker: boolean
-    map_showRouteOnline: boolean
-  }
+
 
   page: IPageInterface
 
@@ -66,28 +46,7 @@ const initialState: IState = {
   menu: [],
   menuObj: {},
 
-  setting: {
-    map_mapType: initialSetting?.map_mapType ?? MAP_TYPE_ITEMS?.[0]?.value,
-    map_mapLineType:
-      initialSetting?.map_mapLineType ?? MAP_LINE_TYPE_ITEMS?.[1]?.value,
-    map_showLabel: initialSetting?.map_showLabel ?? false,
-    map_labelSize:
-      initialSetting?.map_labelSize ?? VEHICLE_FONT_OPTIONS?.[1]?.value,
-    map_iconSize:
-      initialSetting?.map_iconSize ?? VEHICLE_SCALE_OPTIONS?.[1]?.value,
-    map_followVehicle: initialSetting?.map_followVehicle ?? false,
-    map_cursorHoverPlayback: initialSetting?.map_cursorHoverPlayback ?? true,
-    map_showParkingMarker: initialSetting?.map_showParkingMarker ?? true,
-    map_markerClusterGroup: initialSetting?.map_markerClusterGroup ?? true,
-    map_showArrowMarker: initialSetting?.map_showArrowMarker ?? true,
-    map_followVehiclePlayback:
-      initialSetting?.map_followVehiclePlayback ?? true,
-    map_showRouteOnline: initialSetting?.map_showRouteOnline ?? true,
 
-    map_vehicleFrameWidth:
-      initialSetting?.map_vehicleFrameWidth ??
-      _const?.interface?.map_vehicleFrameWidth,
-  },
 
   page: {
     logo: "",
@@ -132,23 +91,23 @@ export const counterSlice = createSlice({
       state.menuObj = menuPathObj
     },
 
-    settingApp: (
-      state,
-      actions: {
-        payload: {
-          key: string
-          value: any
-        }
-      },
-    ) => {
-      const key = actions?.payload?.key
-      const value = actions?.payload?.value
+    // settingApp: (
+    //   state,
+    //   actions: {
+    //     payload: {
+    //       key: string
+    //       value: any
+    //     }
+    //   },
+    // ) => {
+    //   const key = actions?.payload?.key
+    //   const value = actions?.payload?.value
 
-      if (!key) return
-      state.setting = { ...state?.setting, [key]: value }
+    //   if (!key) return
+    //   state.setting = { ...state?.setting, [key]: value }
 
-      storage.setItem(_const?.storeKey?.setting, state?.setting)
-    },
+    //   storage.setItem(_const?.storeKey?.setting, state?.setting)
+    // },
 
     setRouteModalState: (
       state,
@@ -182,7 +141,7 @@ export const counterSlice = createSlice({
 
 export const {
   setMenu,
-  settingApp,
+  // settingApp,
   setRouteModalState,
   setPageInterface,
   setDeviceOnlineCountDown,
