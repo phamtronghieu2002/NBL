@@ -14,6 +14,7 @@ export interface ViahicleType {
   is_deleted?: boolean
   reminds?: any
   key?: number
+  icons?: any
 }
 
 export interface CategoryType {

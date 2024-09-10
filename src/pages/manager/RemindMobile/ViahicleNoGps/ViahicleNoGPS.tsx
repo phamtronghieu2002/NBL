@@ -11,9 +11,9 @@ import {
   viahiclesContext,
   ViahicleProviderContextProps,
 } from "../providers/ViahicleProvider"
-import ModalImportExel from "../../../../conponents/modals/ModalImportExel"
-import ModalAddViahicle from "../../../../conponents/modals/ModalAddViahicle"
-import { MaskLoader } from "../../../../conponents/Loader"
+import ModalImportExelMobile from "../../../../conponents/modals/ModalImportExelMobile"
+import ModalAddViahicleMobile from "../../../../conponents/modals/ModalAddViahicleMobile"
+import { TableCM } from "../../../../conponents/TableCM/TableCM"
 interface ViahicleNoGPSType {
   viahicles: ViahicleType[]
 }
@@ -34,9 +34,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
 
   return (
     <div className="mt-5">
-      {viahiclesStore.loading && <MaskLoader />}
-
-      <TableC
+      <TableCM
         checkBox
         setViahicleChecked={getViahicleChecked}
         hiddenTitle={true}
@@ -51,11 +49,11 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
         }}
         right={
           <>
-            <ModalAddViahicle
+            <ModalAddViahicleMobile
               type="add"
               button={<Button type="primary">Thêm xe</Button>}
             />
-            <ModalImportExel
+            <ModalImportExelMobile
               button={<Button type="primary">Import Excel</Button>}
             />
           </>

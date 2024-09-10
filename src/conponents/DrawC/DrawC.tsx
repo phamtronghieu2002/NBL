@@ -5,7 +5,7 @@ interface DrawProps {
   button: React.ReactNode
   children: (data: { closeModal: any; data: any }) => React.ReactNode
   title: string
-  width?: number | string
+  width?: string | number
   data: any
 }
 

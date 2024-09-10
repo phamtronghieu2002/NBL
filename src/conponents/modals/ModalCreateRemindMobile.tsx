@@ -7,14 +7,12 @@ import { useContext } from "react"
 import {
   viahiclesContext,
   ViahicleProviderContextProps,
-} from "../../pages/manager/Remind/providers/ViahicleProvider"
+} from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
 import { api } from "../../_helper"
 import { MaskLoader } from "../Loader"
 import { ViahicleType } from "../../interface/interface"
-import { addRemind, updateRemind } from "../../apis/remindAPI"
+import { addRemind } from "../../apis/remindAPI"
 import { log } from "console"
-import { createCategory } from "../../apis/categoryAPI"
-import moment from "moment"
 interface ModalCreateRemindProps {
   remindData?: any
   button: React.ReactNode
@@ -28,18 +26,11 @@ const Form: FC<{
   onReload?: () => void
   remindData?: any
   type?: string
-}> = ({ action, onReload, remindData = {}, type }) => {
+}> = ({ action, onReload, remindData, type }) => {
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (formData: any, callback: any) => {
-    console.log("formData >>>>>>>>>>>>>>", formData)
-
-    const cate_name = formData["cat_name"]
-    if (cate_name) {
-      const cat = await createCategory(cate_name,"", "")
-      formData["remind_category_id"] = cat.data
-      callback()
-    }
+  const handleSubmit = async (formData: any) => {
+    console.log("formData", formData)
     // call api thêm nhắc nhở
     setLoading(true)
     await addRemind(formData)
@@ -47,14 +38,14 @@ const Form: FC<{
     api.message?.success("Thêm nhắc nhở thành công")
     onReload?.()
   }
-  const handleUpdate = async (formData: any, callback: any) => {
+  const handleUpdate = async (formData: any) => {
     console.log("formData", formData)
     // call api sửa nhắc nhở
-    setLoading(true)
-    await updateRemind(remindData?.remind_id, formData)
-    action?.closeModal?.()
-    api.message?.success("cập nhật nhắc nhở thành công")
-    onReload?.()
+    // setLoading(true)
+    // await addRemind(formData)
+    // action?.closeModal?.()
+    // api.message?.success("Thêm nhắc nhở thành công")
+    // onReload?.()
   }
   const handleFormData: any = type == "add" ? handleSubmit : handleUpdate
 
@@ -91,15 +82,7 @@ const Form: FC<{
     <div>
       {loading && <MaskLoader />}
       <FormAddRemind
-        initialValues={remindData}
-        // initialValues={
-        //   {
-        //     // note_repair: "123",
-        //     // current_kilometers: 10,
-        //     // remind_category_id: 1,
-        //     // cumulative_kilometers: 20,
-        //   }
-        // }
+        // initialValues={}
         ref={buttonRef}
         viahicleSelected={viahicleSelected}
         onSubmit={handleFormData}
@@ -131,24 +114,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const { viahiclesStore } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
-  console.log("viahiclesStore", viahiclesStore)
-
-  const isTimestamp = (value: any) => {
-    return typeof value === "number" && value > 1000000000
-  }
-
-  const convertTimestampsToMoment = (data: any) => {
-    const convertedData = { ...data }
-
-    Object.keys(convertedData).forEach((key) => {
-      if (isTimestamp(convertedData[key])) {
-        // Chỉ chuyển đổi nếu là timestamp
-        convertedData[key] = moment(convertedData[key])
-      }
-    })
-
-    return convertedData
-  }
+  console.log("record >>>", remindData)
 
   const getAction = () => {
     if (type === "add") {
@@ -173,7 +139,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
       children={(action) => (
         <Form
           type={type}
-          remindData={convertTimestampsToMoment(remindData)}
+          remindData={remindData}
           onReload={onReload}
           action={action}
         />

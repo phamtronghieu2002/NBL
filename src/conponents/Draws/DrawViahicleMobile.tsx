@@ -1,4 +1,4 @@
-import { FC, memo, useContext, useEffect, useState } from "react"
+import { FC, memo, useEffect, useState } from "react"
 import React from "react"
 import {
   Button,
@@ -12,9 +12,9 @@ import {
 import DrawC from "../DrawC/DrawC"
 import { Tabs } from "antd"
 import type { TabsProps } from "antd"
-import { TableC } from "../TableC"
+import { TableCM } from "../TableCM/TableCM"
 import { TableColumnsType } from "antd"
-import ModalCreateRemind from "../modals/ModalCreateRemind"
+import ModalCreateRemind from "../modals/ModalCreateRemindMobile"
 import { PopconfirmProps } from "antd/lib"
 import ModalCreateTire from "../modals/ModalCreateTire"
 import { use } from "i18next"
@@ -25,16 +25,10 @@ import {
   getRemindAll,
   getRemindByLisencePlate,
   getRemindSearch,
-  getRemindVehicleGPS,
   TurnOffRemind,
   TurnOnRemind,
 } from "../../apis/remindAPI"
 import { getViahicle } from "../../apis/viahicleAPI"
-import {
-  ViahicleProviderContextProps,
-  viahiclesContext,
-} from "../../pages/manager/Remind/providers/ViahicleProvider"
-import { MaskLoader } from "../Loader"
 
 export interface RemindProps {
   id?: number
@@ -80,14 +74,13 @@ interface DetailViahicleComponentsProps {
   data: any
 }
 
+
+
 const TabTableRemind = memo(({ data, isReload }: any) => {
   const viahicleInfor = data
+
   const [reminds, setReminds] = useState<RemindProps[]>([])
   const [remindsFilter, setRemindsFilter] = useState<RemindProps[]>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  const { viahiclesStore } = useContext(
-    viahiclesContext,
-  ) as ViahicleProviderContextProps
   const [filter, setFilter] = useState<filterProps>({
     select: "all",
     keyword: "",
@@ -117,27 +110,16 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
   const fetchRemind = async (keyword: string = "") => {
     // alert("re render remind")
     // call api get remind by viahicle id or license plate
-    setLoading(true)
-    const type = viahiclesStore?.type
     try {
-      if (type == 0) {
-        let res: any = []
-        res = await getRemindSearch(keyword, data?.license_plate)
-
-        setReminds(res?.data.filter((item: any) => item?.remind_id !== null))
-        setRemindsFilter(
-          res?.data.filter((item: any) => item?.remind_id !== null),
-        )
+      let res: any = []
+      if (keyword) {
+        res = await getViahicle(keyword)
       } else {
-        let res: any = []
-        res = await getRemindVehicleGPS(data?.license_plate, keyword)
-
-        setReminds(res?.data.filter((item: any) => item?.remind_id !== null))
-        setRemindsFilter(
-          res?.data.filter((item: any) => item?.remind_id !== null),
-        )
+        res = await getRemindSearch(keyword, data?.license_plate)
       }
-      setLoading(false)
+
+      setReminds(res?.data)
+      setRemindsFilter(res?.data)
     } catch (error) {
       api.message?.error("Lỗi khi lấy dữ liệu nhắc nhở !!")
     }
@@ -205,87 +187,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
     }
   }
 
-  const columns: TableColumnsType<RemindProps> = [
-    {
-      title: "STT",
-      dataIndex: "key",
-      key: "key",
-      render: (text, record, index) => index + 1,
-    },
-    {
-      title: "Tên nhắc nhở",
-      dataIndex: "note_repair",
-      key: "note_repair",
-      sorter: (a, b) =>
-        (a.note_repair ?? "").length - (b.note_repair ?? "").length,
-    },
-    {
-      title: "Dịch vụ",
-      dataIndex: "category_name",
-      key: "category_name",
-      sorter: (a, b) => a.category_name.length - b.category_name.length,
-    },
-    {
-      title: "Km",
-      dataIndex: "cumulative_kilometers",
-      key: "cumulative_kilometers",
-    },
-    {
-      title: "Thời hạn",
-      dataIndex: "expiration_time",
-      key: "expiration_time",
-    },
-    {
-      title: "Trạng thái",
-      dataIndex: "is_notified",
-      key: "is_notified",
-    },
 
-    {
-      title: "Bật/tắt",
-      dataIndex: "isOn",
-      key: "isOn",
-      render: (text, record, index) => (
-        <Switch
-          loading={record?.remind_id === loadingButton}
-          defaultChecked={record?.is_notified === 0}
-          onChange={(e) => {
-            handleOnOf(e, record)
-          }}
-        />
-      ),
-    },
-    {
-      title: "Ngày hoàn thành",
-      dataIndex: "dayFinish",
-      key: "dayFinish",
-    },
-    {
-      title: "Hoàn thành",
-      dataIndex: "isFinish",
-      key: "isFinish",
-      render: (text, record, index) => (
-        <Popconfirm
-          title="Xác nhận hoàn thành nhắc nhở"
-          description="Bạn có muốn cập nhật thông tin cho chu kì tiếp theo không?"
-          onConfirm={confirm}
-          onCancel={(e) => handleCancel(e, record)}
-          okText={
-            <ModalCreateRemind
-
-              type="update"
-              onReload={fetchRemind}
-              remindData={record}
-              button={<span>OK</span>}
-            />
-          }
-          cancelText="No"
-        >
-          <Button>Hoàn thành</Button>
-        </Popconfirm>
-      ),
-    },
-  ]
 
   return (
     <>
@@ -293,10 +195,8 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         {" "}
         Phương tiện : <b className="text-xl"> {data?.license_plate}</b>
       </p>
-        {
-          loading && <MaskLoader />
-        }
-      <TableC
+
+      <TableCM
         title="Danh sách nhắc nhở"
         hiddenTitle
         onReload={() => {
@@ -327,10 +227,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           </div>
         }
         props={{
-          columns: columns,
-          dataSource: remindsFilter,
-          size: "middle",
-          pagination: {},
+         
         }}
       />
     </>
@@ -343,55 +240,7 @@ export const TabTableTire: FC<{
   isReload?: number
   onReFresh?: () => void
 }> = ({ data, isReload, isAddTireButton }) => {
-  const columns: TableColumnsType<TireProps> = [
-    {
-      title: "STT",
-      dataIndex: "key",
-      key: "key",
-      render: (text, record, index) => index + 1,
-    },
-    {
-      title: "Số seri",
-      dataIndex: "seri",
-      key: "seri",
-    },
-    {
-      title: "Nhãn hiệu",
-      dataIndex: "brand",
-      key: "brand",
-    },
-    {
-      title: "Kích thước",
-      dataIndex: "size",
-      key: "size",
-    },
 
-    {
-      title: "Thao tác",
-      dataIndex: "isOn",
-      key: "isOn",
-      render: (text, record, index) => (
-        <div className="flex justify-start">
-          <ModalCreateTire
-            onRefresh={() => {
-              fetchTire()
-            }}
-            button={<Button type="link">Cập nhật</Button>}
-            type="update"
-            data={record}
-          />
-          <ModalCreateTire
-            onRefresh={() => {
-              fetchTire()
-            }}
-            button={<Button type="link">Xóa</Button>}
-            type="delete"
-            data={record}
-          />
-        </div>
-      ),
-    },
-  ]
   const [tires, setTires] = useState<TireProps[]>([])
   const [keyword, setKeyword] = useState<string>("")
   console.log("keyword", keyword)
@@ -408,7 +257,7 @@ export const TabTableTire: FC<{
 
   return (
     <div>
-      <TableC
+      <TableCM
         hiddenTitle
         title="123"
         search={{
@@ -435,10 +284,7 @@ export const TabTableTire: FC<{
           </div>
         }
         props={{
-          columns: columns,
-          dataSource: tires,
-          size: "middle",
-          pagination: {},
+         
         }}
       />
     </div>
@@ -459,6 +305,7 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
     setIsReload(Math.random())
   }
   const items = (reload: () => void): TabsProps["items"] => [
+
     {
       key: "2",
       label: "Nhắc nhở của xe",
@@ -467,7 +314,7 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
     {
       key: "3",
       label: "Lốp của xe",
-      children: <TabTableTire isAddTireButton data={viahicleInfor} />,
+      children: <TabTableTire data={viahicleInfor} />,
     },
   ]
 
@@ -475,7 +322,6 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
     <div className="relative">
       <div className="absolute z-50 left-[350px] top-[11px]">
         <ModalCreateRemind
-          
           onReload={onReload}
           button={<Button type="primary">Thêm</Button>}
         />
@@ -491,6 +337,7 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
 const DrawViahicle: FC<DrawViahicleProps> = ({ button, title, data }) => {
   return (
     <DrawC
+    width={"100%"}
       title={title}
       button={button}
       data={data}

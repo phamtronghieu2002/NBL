@@ -1,9 +1,9 @@
 import { FC, useContext, useState } from "react"
 import { ModalCView } from "../ModalC/ModalC"
 import { Button } from "antd"
-import UploadExel from "../../pages/manager/Remind/components/Upload/UploadFile"
+import UploadExel from "../../pages/manager/RemindMobile/components/Upload/UploadFile"
 import { FileExcelOutlined } from "@ant-design/icons"
-import { ViahicleProviderContextProps, viahiclesContext } from "../../pages/manager/Remind/providers/ViahicleProvider"
+import { ViahicleProviderContextProps, viahiclesContext } from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
 interface ModalImportExelProps {
   button: React.ReactNode
 }

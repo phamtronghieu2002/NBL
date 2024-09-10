@@ -7,6 +7,8 @@ import { LoginLayout } from "../layouts/LoginLayout"
 
 import { RootPage } from "../pages/Root"
 import Remind from "../pages/manager/Remind/Remind"
+import RemindMobie from "../pages/manager/RemindMobile/Remind"
+import MobileLayout from "../layouts/MobileLayout/MobileLayout"
 export interface IRoute {
   path: string
   component: React.FC<{}> | null
@@ -45,6 +47,11 @@ export const routes: IRoute[] = [
     path: routeConfig?.manager_remind,
     component: Remind,
     layout: MainLayout,
+  },
+  {
+    path: routeConfig?.manager_remindMobile,
+    component: RemindMobie,
+    layout: MobileLayout,
   },
   // {
   //   path: routeConfig?.manager_tire,

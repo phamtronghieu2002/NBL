@@ -46,25 +46,17 @@ const ViahicleProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         type: type,
       }))
     },
-
+    setLoading: (loading: boolean) => {
+      setState({ ...viahiclesStore, loading: loading })
+    },
     freshKey: () => {
       setState({ ...viahiclesStore, freshKey: Math.random() })
-    },
-    
-    setLoading: (loading: boolean) => {
-      setState((prevState) => ({
-        ...prevState,
-        loading: loading,
-      }))
     },
     setKeyword: (keyword: string) => {
       setState({ ...viahiclesStore, keyword: keyword })
     },
     setViahicle: (viahicle: ViahicleType[]) => {
-      setState((prevState) => ({
-        ...prevState,
-        viahiclesStore: viahicle,
-      }))
+      setState({ ...viahiclesStore, viahiclesStore: viahicle })
     },
     getIdViahicles: () => {
       return viahiclesStore.viahiclesStore

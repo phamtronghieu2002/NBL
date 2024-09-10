@@ -2,8 +2,8 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
 import { ViahicleType } from "../interface/interface"
 
-export const getViahicle = () => {
-  return axiosInstance.get("/vehicle-no-gps/get-all")
+export const getViahicle = (keyword:string) => {
+  return axiosInstance.get("/main/get-all?keyword="+keyword)
 }
 
 export const addViahicle = ({ license_plate, license }: ViahicleType) => {

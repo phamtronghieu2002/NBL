@@ -1,7 +1,7 @@
 import { ReactNode } from "react"
 import { Button, type TableColumnsType } from "antd"
-import DrawViahicle from "../../../../conponents/Draws/DrawViahicle"
-import ModalAddViahicle from "../../../../conponents/modals/ModalAddViahicle"
+import DrawViahicle from "../../../../conponents/Draws/DrawViahicleMobile"
+import ModalAddViahicleMobile from "../../../../conponents/modals/ModalAddViahicleMobile"
 
 import { ViahicleType } from "../../../../interface/interface"
 import { SettingOutlined } from "@ant-design/icons"
@@ -43,26 +43,24 @@ const getColumnViahicleNoGPS = (
       dataIndex: "setting",
       key: "setting",
       render(value, record, index) {
-        console.log("record ne cac ban oi", record)
-
-        return (
-          <DrawViahicle
-            data={record}
-            title="Cài đặt nhắc nhở xe"
-            button={
-              <Button
+        return {
+          children: (
+            <DrawViahicle
+              data={record}
+              title="Cài đặt nhắc nhở xe"
+              button={
+                <Button
                 icon={<SettingOutlined />}
-                onClick={() => {
-                  console.log("record >>>>>>>>>>", record)
-
-                  setViahicleSelect([record])
-                }}
-              >
-                {/* Cài đặt */}
-              </Button>
-            }
-          />
-        )
+                  onClick={() => {
+                    setViahicleSelect([record])
+                  }}
+                >
+                  {/* Cài đặt */}
+                </Button>
+              }
+            />
+          ),
+        }
       },
     },
     {
@@ -73,12 +71,12 @@ const getColumnViahicleNoGPS = (
         return {
           children: (
             <div className="flex">
-              <ModalAddViahicle
+              <ModalAddViahicleMobile
                 data={record}
                 type="update"
                 button={<Button type="link">Cập nhật</Button>}
               />
-              <ModalAddViahicle
+              <ModalAddViahicleMobile
                 type="delete"
                 data={record}
                 button={<Button type="link">Xóa</Button>}

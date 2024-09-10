@@ -37,53 +37,53 @@ export const MainLayout: React.FC<IProps> = ({
   const { t } = useTranslation()
 
   return (
-    <Layout className="h-[100vh]">
-      <LayoutSideBar />
-      <Layout>
-        <Content>
-          <div className="h-[100vh] relative">
-            <div className="h-full z-[9] relative">
-              <Remind />
-            </div>
-            <div
-              style={{
-                zIndex: useMonitor ? 0 : 10,
-              }}
-              className="h-full absolute top-0 right-0 left-0"
-            >
-              <AppMainTab />
-            </div>
-            {!useMonitor && !useTab ? (
-              <div className="h-full bg-root_bg_lv1 flex flex-col absolute z-[999] top-0 right-0 left-0">
-                {useFullScreen ? (
-                  children
-                ) : (
-                  <Fragment>
-                    <div>
-                      <div className="bg-white">
-                        <TabHead />
-                      </div>
-                      <div className="px-3 py-2 bg-white border-b border-b-root_bg_lv1">
-                        <BreadcrumbHead />
-                      </div>
-                    </div>
-                    <div className="flex-1 overflow-auto flex">
-                      {useMenu ? (
-                        <div>
-                          <PageMenu />
-                        </div>
-                      ) : null}
-                      <div className="flex-1 overflow-auto px-3 py-3">
-                        {children}
-                      </div>
-                    </div>
-                  </Fragment>
-                )}
+      <Layout className="h-[100vh]">
+        <LayoutSideBar />
+        <Layout>
+          <Content>
+            <div className="h-[100vh] relative">
+              <div className="h-full z-[9] relative">
+                <Remind />
               </div>
-            ) : null}
-          </div>
-        </Content>
+              <div
+                style={{
+                  zIndex: useMonitor ? 0 : 10,
+                }}
+                className="h-full absolute top-0 right-0 left-0"
+              >
+                <AppMainTab />
+              </div>
+              {!useMonitor && !useTab ? (
+                <div className="h-full bg-root_bg_lv1 flex flex-col absolute z-[999] top-0 right-0 left-0">
+                  {useFullScreen ? (
+                    children
+                  ) : (
+                    <Fragment>
+                      <div>
+                        <div className="bg-white">
+                          <TabHead />
+                        </div>
+                        <div className="px-3 py-2 bg-white border-b border-b-root_bg_lv1">
+                          <BreadcrumbHead />
+                        </div>
+                      </div>
+                      <div className="flex-1 overflow-auto flex">
+                        {useMenu ? (
+                          <div>
+                            <PageMenu />
+                          </div>
+                        ) : null}
+                        <div className="flex-1 overflow-auto px-3 py-3">
+                          {children}
+                        </div>
+                      </div>
+                    </Fragment>
+                  )}
+                </div>
+              ) : null}
+            </div>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
   )
 }

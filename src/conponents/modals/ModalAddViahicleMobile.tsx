@@ -14,7 +14,7 @@ import { api } from "../../_helper"
 import {
   ViahicleProviderContextProps,
   viahiclesContext,
-} from "../../pages/manager/Remind/providers/ViahicleProvider"
+} from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
 import { ViahicleType } from "../../interface/interface"
 interface ModalAddViahicleProps {
   button: React.ReactNode
@@ -57,19 +57,14 @@ const FormAdd: FC<{
             .validateFields()
             .then(async (values) => {
               //call api thêm phương tiện
-
-              try {
-                setLoading(true)
-                await addViahicle({
-                  ...values,
-                })
-                api.message?.success("Thêm phương tiện thành công")
-                dispatch.freshKey()
-                setLoading(false)
-              } catch (error) {
-                api.message?.error("Biển số Phương tiện trùng !!!")
-                setLoading(false)
-              }
+     
+              setLoading(true)
+              await addViahicle({
+                ...values,
+              })
+              api.message?.success("Thêm phương tiện thành công")
+              dispatch.freshKey()
+              setLoading(false)
             })
             .catch((errorInfo) => {
               console.log("Validation Failed:", errorInfo)
@@ -103,7 +98,7 @@ const FormAdd: FC<{
             .then(async (values) => {
               //call api chỉnh sửa phương tiện
               setLoading(true)
-              await updateViahicle(id, values)
+              await updateViahicle(id,values)
               api.message?.success("cập nhật phương tiện thành công")
               dispatch.freshKey()
               setLoading(false)
@@ -140,29 +135,21 @@ const FormAdd: FC<{
             <Input />
           </Form.Item>
           <Form.Item
-            label="SDT"
+            label="Giấy phép"
             name="license"
             rules={[
-              { required: true, message: "Vui lòng nhập số điện thoại!" },
+              { required: true, message: "Vui lòng nhập giấy phép lái xe!" },
             ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            label="Họ và tên"
-            name="user_name"
-            rules={[{ required: true, message: "Vui lòng nhập họ và tên!" }]}
+          {/* <Form.Item
+            label="Tải trọng"
+            name="viahicleWeight"
+            rules={[{ required: true, message: "Vui lòng nhập tải trọng!" }]}
           >
             <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Địa chỉ"
-            name="user_address"
-            rules={[{ required: true, message: "Vui lòng nhập địa chỉ!" }]}
-          >
-            <Input />
-          </Form.Item>
+          </Form.Item> */}
         </Form>
       )}
       <div className="flex justify-end gap-2">

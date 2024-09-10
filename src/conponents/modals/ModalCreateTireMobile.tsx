@@ -9,7 +9,7 @@ import { TabTableTire } from "../Draws/DrawViahicle"
 import {
   ViahicleProviderContextProps,
   viahiclesContext,
-} from "../../pages/manager/Remind/providers/ViahicleProvider"
+} from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
 import { addTire, deleteTire, updateTire } from "../../apis/tireAPI"
 import { TireProps } from "../../interface/interface"
 

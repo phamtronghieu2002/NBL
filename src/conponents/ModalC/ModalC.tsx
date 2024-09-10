@@ -45,9 +45,6 @@ export const ModalCView = forwardRef<ModalCViewAction, IProps>(
     ref,
   ) => {
     const { t } = useTranslation()
-    console.log("====================================")
-    console.log("isShow", isShow)
-    console.log("====================================")
     const [open, setOpen] = useState<boolean>(isShow || false)
     const [modalKey, setModalKey] = useState<number>(Math.random())
 

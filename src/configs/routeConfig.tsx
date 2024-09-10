@@ -11,6 +11,8 @@ export const routeConfig = {
   //MANAGER
 
   manager_remind: "/manager/remind",
+  manager_remindMobile: "/manager/remindMobile",
+
   manager_tire: "/manager/tire",
 
   //DEV

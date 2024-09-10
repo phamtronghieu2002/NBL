@@ -1,6 +1,6 @@
 import { ReactNode } from "react"
 import { Button, type TableColumnsType } from "antd"
-import DrawViahicle from "../../../../conponents/Draws/DrawViahicle"
+import DrawViahicle from "../../../../conponents/Draws/DrawViahicleMobile"
 import { ViahicleType } from "../../../../interface/interface"
 import { SettingOutlined } from "@ant-design/icons"
 
@@ -31,9 +31,9 @@ const getColumnViahicleGPS = (
       dataIndex: "icons",
       key: "icons",
       render(value, record, index) {
-        return record?.icons?.map((icon: any) => (
-          <span key={index}> {icon}</span>
-        ))
+        return {
+          children: record?.reminds?.map((icon: any) => <span> {icon}</span>),
+        }
       },
     },
     {
@@ -41,26 +41,24 @@ const getColumnViahicleGPS = (
       dataIndex: "setting",
       key: "setting",
       render(value, record, index) {
-        // This log should print the correct record
-
-        return (
-          <DrawViahicle
-            data={record}
-            title="Cài đặt nhắc nhở xe"
-            button={
-              <Button
-                icon={<SettingOutlined />}
-                onClick={() => {
-                  // This should now log the correct record
-                  console.log("record inside onClick:", record)
-                  setViahicleSelect([record])
-                }}
-              >
-                {/* Cài đặt */}
-              </Button>
-            }
-          />
-        )
+        return {
+          children: (
+            <DrawViahicle
+              data={record}
+              title="Cài đặt nhắc nhở xe"
+              button={
+                <Button
+                  icon={<SettingOutlined />}
+                  onClick={() => {
+                    setViahicleSelect([record])
+                  }}
+                >
+                  {/* Cài đặt */}
+                </Button>
+              }
+            />
+          ),
+        }
       },
     },
   ]

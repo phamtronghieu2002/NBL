@@ -8,7 +8,7 @@ import {
   Upload,
 } from "antd"
 import TextArea from "antd/es/input/TextArea"
-import { FC, useContext, useEffect, useState, forwardRef, useRef } from "react"
+import { FC, useContext, useEffect, useState, forwardRef } from "react"
 import moment from "moment"
 import { use } from "i18next"
 import {
@@ -20,7 +20,7 @@ import {
   ViahicleProviderContextProps,
   viahiclesContext,
 } from "../../providers/ViahicleProvider"
-import ModalCreateTire from "../../../../../conponents/modals/ModalCreateTire"
+import ModalCreateTireMobile from "../../../../../conponents/modals/ModalCreateTireMobile"
 import { Button } from "antd"
 import { PlusOutlined } from "@ant-design/icons"
 import { FormInstance } from "antd/lib"
@@ -31,12 +31,11 @@ import { t } from "i18next"
 import MultiDateTimePicker, {
   DateTimeRange,
 } from "./MultiRangeDateWithTimePickerProps"
-import { log } from "console"
 
 interface FormAddRemindProps {
   viahicleSelected?: ViahicleType[]
   initialValues?: any
-  onSubmit: (formData: any, callback: any) => void
+  onSubmit: (formData: any) => void
 }
 
 const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
@@ -55,15 +54,20 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const { viahiclesStore } = useContext(
       viahiclesContext,
     ) as ViahicleProviderContextProps
-  console.log("viahicle mới nhât >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", viahiclesStore);
-  
+
     const [vhiahicleTire, setViahicleTire] = useState<ViahicleType | null>(null)
-
-    const [timeSelect, setTimeSelect] = useState<any>([])
-
-    const buttonDateRef = useRef<HTMLButtonElement>(null)
-
-    const [randomKey, setRandomKey] = useState<number>(Math.random())
+    const initDateDate: DateTimeRange[] = [
+      {
+        start: 1725555600000,
+        end: 1725555600000,
+        time: "00:12:00",
+      },
+      {
+        start: 1725555600000,
+        end: 1725555600000,
+        time: "06:00:00",
+      },
+    ]
 
     const fetchTire = async () => {
       try {
@@ -79,47 +83,19 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     const fetchCategory = async () => {
       const res = await getCategory()
-      setCategories(res?.data)
+      setCategories(res.data)
     }
     const [form] = Form.useForm()
 
     useEffect(() => {
       // call api to get remindType
 
-      if (!initialValues) {
-        form.setFieldsValue({ is_notified: true })
-      } else {
-        form.setFieldsValue(initialValues)
-      }
+      form.setFieldsValue({ remind_category_id: 2 })
+      form.setFieldsValue({ is_notified: true })
+      // form.setFieldsValue({ viahicles: viahiclesStore.viahiclesStore.map((items: ViahicleType) => items?.id) });
+
       fetchCategory()
     }, [])
-    //  handle getDataForm
-
-    useEffect(() => {
-      if (timeSelect.length > 0) {
-        form.setFieldValue("schedules", timeSelect)
-        form
-          ?.validateFields()
-          .then((values) => {
-            const processedValuesForm = {
-              ...values,
-              expiration_time: values.expiration_time
-                ? values.expiration_time.valueOf() // Chuyển đổi date thành timestamp
-                : null,
-              vehicles: values.vehicles
-                ? [values.vehicles]
-                : viahiclesStore?.viahiclesStore.map(
-                    (item: ViahicleType) => item.license_plate,
-                  ),
-              is_notified: values.is_notified ? 1 : 0,
-            }
-            onSubmit(processedValuesForm, fetchCategory) // Gửi dữ liệu đã xử lý
-          })
-          .catch(() => {
-            console.log("Lỗi xác thực:")
-          })
-      }
-    }, [timeSelect.length, randomKey])
 
     useEffect(() => {
       if (vhiahicleTire) {
@@ -135,13 +111,13 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }
 
     const handleSelectTypeRemind = (value: any) => {
-      if (value === "Khác") {
+      if (value === "khac") {
         setIsName(true)
       } else {
         setIsName(false)
       }
 
-      if (value === 8) {
+      if (value === 1) {
         setIsTireSelect(true)
         fetchTire()
       } else {
@@ -163,14 +139,33 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }
 
     const handleGetDataForm = () => {
-      buttonDateRef.current?.click()
-      setRandomKey(Math.random())
+      form
+        ?.validateFields()
+        .then((values) => {
+          const processedValuesForm = {
+            ...values,
+            expiration_time: values.expiration_time
+              ? values.expiration_time.valueOf() // Chuyển đổi date thành timestamp
+              : null,
+            vehicles: values.vehicles
+              ? [values.vehicles]
+              : viahiclesStore?.viahiclesStore.map(
+                  (item: ViahicleType) => item.license_plate,
+                ),
+            is_notified: values.is_notified ? 1 : 0,
+          }
+          onSubmit(processedValuesForm) // Gửi dữ liệu đã xử lý
+        })
+        .catch(() => {
+          console.log("Lỗi xác thực:")
+        })
     }
 
     return (
       <div>
         <Form
           form={form}
+          onFinish={onSubmit}
           initialValues={initialValues}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
@@ -178,16 +173,16 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           disabled={false}
           style={{ maxWidth: 600 }}
         >
-  
+          {/* loại nhắc nhở */}
           <Form.Item
             name="remind_category_id"
             style={{ gap: 10 }}
             label="Loại nhắc nhở"
-            rules={[{ required: true, message: "Vui lòng chọn loại nhắc nhở" }]}
           >
             <Select
               className="select-type-remind"
               onChange={handleSelectTypeRemind}
+              defaultValue={1}
             >
               {categories.map((item: CategoryType) => (
                 <Select.Option key={item.id} value={item.id}>
@@ -195,91 +190,87 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 </Select.Option>
               ))}
 
-              <Select.Option value="khác" key={100}>
-                Khác
-              </Select.Option>
+              <Select.Option value="khac">Khác</Select.Option>
             </Select>
           </Form.Item>
 
           {/* chọn phương tiện */}
-          {(isTireSelect || initialValues?.category_id == 1 ) &&
-          (
-            (
-              <>
-                <Form.Item
-                  name="vehicles"
-                  rules={[{ required: true, message: "Vui lòng chọn xe" }]}
-                  style={{ gap: 10 }}
-                  label="Chọn xe"
+          {isTireSelect && (
+            <>
+              <Form.Item
+                name="vehicles"
+                rules={[{ required: true, message: "Vui lòng chọn xe" }]}
+                style={{ gap: 10 }}
+                label="Chọn xe"
+              >
+                <Select
+                  className="select-viahicle"
+                  onChange={(value: any) => {
+                    handleSelectViahicle(value)
+                    form.validateFields(["vehicles"])
+                  }}
                 >
-                  <Select
-                    className="select-viahicle"
-                    onChange={(value: any) => {
-                      handleSelectViahicle(value)
-                      form.validateFields(["vehicles"])
-                    }}
-                  >
-                    {viahicleSelected?.map((item: ViahicleType) => (
-                      <Select.Option
-                        key={item.license_plate}
-                        value={item.license_plate}
-                      >
-                        {item?.license_plate}
+                  {viahicleSelected?.map((item: ViahicleType) => (
+                    <Select.Option
+                      key={item.license_plate}
+                      value={item.license_plate}
+                    >
+                      {item?.license_plate}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <div className="relative">
+                <Form.Item
+                  className="flex-1"
+                  name="tire"
+                  rules={[{ required: true, message: "Vui lòng chọn lốp" }]}
+                  style={{ gap: 10 }}
+                  label="Chọn Lốp"
+                >
+                  <Select className="select-viahicle">
+                    {tires.map((item: TireProps) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item?.seri}
                       </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
-
-                <div className="relative">
-                  <Form.Item
-                    className="flex-1"
-                    name="tire"
-                    rules={[{ required: true, message: "Vui lòng chọn lốp" }]}
-                    style={{ gap: 10 }}
-                    label="Chọn Lốp"
-                  >
-                    <Select className="select-viahicle">
-                      {tires.map((item: TireProps) => (
-                        <Select.Option key={item.id} value={item.id}>
-                          {item?.seri}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <ModalCreateTire
-                    isAddTireButton={false}
-                    data={vhiahicleTire}
-                    isReload={isReloadTableTire}
-                    isInModalRemind
-                    onRefresh={fetchTire}
-                    type="add"
-                    button={
-                      <Button
-                        disabled={!vhiahicleTire}
-                        className="absolute right-[-20px] top-0"
-                        icon={<PlusOutlined />}
-                      >
-                        Thêm lốp
-                      </Button>
-                    }
-                  />
-                </div>
-              </>
-            )
-          )
-          }
+                <ModalCreateTireMobile
+                  isAddTireButton={false}
+                  data={vhiahicleTire}
+                  isReload={isReloadTableTire}
+                  isInModalRemind
+                  onRefresh={fetchTire}
+                  type="add"
+                  button={
+                    <Button
+                      disabled={!vhiahicleTire}
+                      className="absolute right-[-20px] top-0"
+                      icon={<PlusOutlined />}
+                    >
+                      Thêm lốp
+                    </Button>
+                  }
+                />
+              </div>
+            </>
+          )}
 
           {/* tên nhắc nhở */}
           {isName && (
             <Form.Item
-              name="cat_name"
+              name="customRemindName"
               rules={[
                 { required: true, message: "Vui lòng nhập tên loại nhắc nhở" },
               ]}
               style={{ gap: 10 }}
               label="Tên loại nhắc nhở"
             >
-              <Input onChange={() => form.validateFields(["name"])} />
+              <Input
+                onChange={() => form.validateFields(["customRemindName"])}
+              />
             </Form.Item>
           )}
 
@@ -318,14 +309,29 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   (KM)
                 </span>
               </Form.Item>
+              <Form.Item
+            name="km_before"
+            label="Nhắc nhở trước"
+            rules={[
+              { required: true, message: "Vui lòng nhập số ngày nhắc trước" },
+            ]}
+          >
+            <InputNumber
+              onChange={(value) => {
+                form.setFieldsValue({ time_before: value })
+                form.validateFields(["time_before"])
+              }}
+            />
+            <span style={{ marginLeft: "10px", display: "inline-block" }}>
+              km
+            </span>
+          </Form.Item>
             </>
-          ) : (
-            <></>
-          )}
+          ):<></>}         
 
           <Form.Item
             name="expiration_time"
-            label="Hạn nhắc nhở"
+            label="Ngày nhắc nhở"
             rules={[{ required: true, message: "Vui lòng chọn ngày nhắc nhở" }]}
           >
             <DatePicker
@@ -336,41 +342,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             />
           </Form.Item>
 
-          <Form.Item
-            name="cycle"
-            label="Chu kì"
-            rules={[{ required: true, message: "Vui lòng nhập chu kì" }]}
-          >
-            <InputNumber
-              onChange={(value) => {
-                form.setFieldsValue({ cycle: value })
-              }}
-            />
-            <span style={{ marginLeft: "10px", display: "inline-block" }}>
-              Tháng
-            </span>
-          </Form.Item>
-          <Form.Item
-            name={"schedules"}
-            label="Thời gian"
-            rules={[
-              { required: true, message: "Vui lòng chọn thời gian nhắc nhở" },
-            ]}
-          >
-            <MultiDateTimePicker
-              ref={buttonDateRef}
-              setValueTime={(value: any) => {
-                setTimeSelect(value)
-              }}
-            />
-            <Input
-              className="!mt-[-30px]"
-              value={timeSelect.length > 0 ? "ok" : ""}
-              type="hidden"
-            />
-          </Form.Item>
-          {/* đoạn này nè */}
-
+  
+          <MultiDateTimePicker initialValues={initDateDate} />
           {/* Upload ảnh */}
           <Form.Item name="img" label="Hình ảnh">
             <Upload
@@ -383,13 +356,13 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               ) : (
                 <div>
                   <PlusOutlined />
-                  <div style={{ marginTop: 9 }}>Upload</div>
+                  <div style={{ marginTop: 8 }}>Upload</div>
                 </div>
               )}
             </Upload>
           </Form.Item>
 
-          <Form.Item name="note_repair" label="Nội dung">
+          <Form.Item name="note_repair" label="Ghi chú">
             <TextArea />
           </Form.Item>
 
