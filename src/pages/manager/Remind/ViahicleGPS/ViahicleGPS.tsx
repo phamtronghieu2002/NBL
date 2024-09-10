@@ -45,7 +45,9 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         onReload={onReload}
         search={{
           width: 200,
-          onSearch(q) {},
+          onSearch(q) {
+            dispatch?.setKeyword(q)
+          },
           limitSearchLegth: 3,
         }}
         right={<></>}

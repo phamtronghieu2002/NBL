@@ -22,8 +22,21 @@ const getColumnViahicleNoGPS = (
       key: "licenseNumber",
       sorter: (a, b) => a.license_plate.localeCompare(b.license_plate),
     },
+
     {
-      title: "Giấy phép",
+      title: "Họ tên",
+      dataIndex: "user_name",
+      key: "user_name",
+      sorter: (a, b) => a.license.localeCompare(b.license),
+    },
+    {
+      title: "Địa chỉ",
+      dataIndex: "user_address",
+      key: "user_address",
+      sorter: (a, b) => a.license.localeCompare(b.license),
+    },
+    {
+      title: "Số điện thoại",
       dataIndex: "license",
       key: "license",
       sorter: (a, b) => a.license.localeCompare(b.license),

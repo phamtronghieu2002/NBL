@@ -32,8 +32,10 @@ const Form: FC<{
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (formData: any, callback: any) => {
-    console.log("formData >>>>>>>>>>>>>>", formData)
-
+      
+    console.log('====================================');
+    console.log("formData >>", formData);
+    console.log('====================================');
     const cate_name = formData["cat_name"]
     if (cate_name) {
       const cat = await createCategory(cate_name,"", "")
@@ -50,11 +52,11 @@ const Form: FC<{
   const handleUpdate = async (formData: any, callback: any) => {
     console.log("formData", formData)
     // call api sửa nhắc nhở
-    setLoading(true)
-    await updateRemind(remindData?.remind_id, formData)
-    action?.closeModal?.()
-    api.message?.success("cập nhật nhắc nhở thành công")
-    onReload?.()
+    // setLoading(true)
+    // await updateRemind(remindData?.remind_id, formData)
+    // action?.closeModal?.()
+    // api.message?.success("cập nhật nhắc nhở thành công")
+    // onReload?.()
   }
   const handleFormData: any = type == "add" ? handleSubmit : handleUpdate
 

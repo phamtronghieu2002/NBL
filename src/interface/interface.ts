@@ -15,6 +15,8 @@ export interface ViahicleType {
   reminds?: any
   key?: number
   icons?: any
+  user_name?: string
+  user_address?: string
 }
 
 export interface CategoryType {

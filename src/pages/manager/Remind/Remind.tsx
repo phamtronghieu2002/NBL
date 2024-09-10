@@ -29,26 +29,28 @@ const Remind: FC<RemindProps> = () => {
     viahiclesContext,
   ) as ViahicleProviderContextProps
 
-  const fetchViahicle = async () => {
+  const fetchViahicle = async (keyword: string = "") => {
     // alert('co fe')
     setViahicles([])
     dispatch?.setLoading?.(true)
     if (tab === "1") {
       try {
         const res = await axios.get(
-          "https://sys01.midvietnam.net/api/v1/device/rows?keyword=&offset=0&limit=50&type=1",
+          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=50&type=1`,
           {
             headers: {
               Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY0NSwicGFyZW50SWQiOjc4MywiY2xpZW50SWQiOiIxNDI5MTAxYi0xNWQ4LTQzYzktYmM5Ni1mMWQ4ZjVkN2RkYzYiLCJyb2xlIjo1MCwibGV2ZWwiOjAsImN1c3RvbWVySWQiOjQzMSwiaWF0IjoxNzI1ODY3MTk5LCJleHAiOjE3Mjg0NTkxOTl9.uWLymilDQvzr4T23Hjs6sfoz9o32xaLPurVp6InG-4Y`,
             },
           },
         )
+   
         const viahicleGPS = res?.data?.data?.map((item: any) => {
           return {
             key: item.id,
             id: item.id,
             license: item.imei,
             license_plate: item.dev_id,
+            user_name: item.customer_name,
           }
         })
 
@@ -70,7 +72,7 @@ const Remind: FC<RemindProps> = () => {
       }
     } else {
       try {
-        const res = await getViahicle(viahiclesStore?.keyword || "")
+        const res = await getViahicle(keyword)
         const data = getData(res?.data)
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
@@ -80,7 +82,8 @@ const Remind: FC<RemindProps> = () => {
     }
   }
   useEffect(() => {
-    fetchViahicle()
+    const keyword = viahiclesStore.keyword
+    fetchViahicle(keyword)
   }, [tab, viahiclesStore.freshKey, viahiclesStore.keyword])
 
   useEffect(() => {

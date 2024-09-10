@@ -22,6 +22,7 @@ import { TireProps, ViahicleType } from "../../interface/interface"
 import { getTire } from "../../apis/tireAPI"
 import { api } from "../../_helper"
 import {
+  AutoFinishRemind,
   getRemindAll,
   getRemindByLisencePlate,
   getRemindSearch,
@@ -35,6 +36,8 @@ import {
   viahiclesContext,
 } from "../../pages/manager/Remind/providers/ViahicleProvider"
 import { MaskLoader } from "../Loader"
+import getTime from "../../utils/getTime"
+import moment from "moment"
 
 export interface RemindProps {
   id?: number
@@ -100,10 +103,12 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
     setIsShowModal(true)
   }
 
-  const handleCancel = (e: any, remind: any) => {
-    // call api cancel next
-    alert("call api kì tiếp")
-    fetchRemind()
+  const handleCancel = async (e: any, remind: any) => {
+    try {
+      await AutoFinishRemind(remind?.remind_id)
+      api.message?.success("Gia hạn thông báo thành công")
+      fetchRemind()
+    } catch (error) {}
     cancel?.(e)
   }
 
@@ -123,19 +128,31 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
       if (type == 0) {
         let res: any = []
         res = await getRemindSearch(keyword, data?.license_plate)
-
-        setReminds(res?.data.filter((item: any) => item?.remind_id !== null))
-        setRemindsFilter(
-          res?.data.filter((item: any) => item?.remind_id !== null),
+        const reminds = res?.data.filter(
+          (item: any) => item?.remind_id !== null,
         )
+        const remindsHandle = reminds.map((item: any) => ({
+          ...item,
+          expiration_timeStamp: moment(item?.expiration_time),
+          expiration_time: getTime.formatDate(item?.expiration_time),
+        }))
+
+        setReminds(remindsHandle)
+        setRemindsFilter(remindsHandle)
       } else {
         let res: any = []
         res = await getRemindVehicleGPS(data?.license_plate, keyword)
-
-        setReminds(res?.data.filter((item: any) => item?.remind_id !== null))
-        setRemindsFilter(
-          res?.data.filter((item: any) => item?.remind_id !== null),
+        const reminds = res?.data.filter(
+          (item: any) => item?.remind_id !== null,
         )
+        const remindsHandle = reminds.map((item: any) => ({
+          ...item,
+          expiration_timeStamp: moment(item?.expiration_time),
+
+          expiration_time: getTime.formatDate(item?.expiration_time),
+        }))
+        setReminds(remindsHandle)
+        setRemindsFilter(remindsHandle)
       }
       setLoading(false)
     } catch (error) {
@@ -272,7 +289,6 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           onCancel={(e) => handleCancel(e, record)}
           okText={
             <ModalCreateRemind
-
               type="update"
               onReload={fetchRemind}
               remindData={record}
@@ -293,9 +309,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         {" "}
         Phương tiện : <b className="text-xl"> {data?.license_plate}</b>
       </p>
-        {
-          loading && <MaskLoader />
-        }
+      {loading && <MaskLoader />}
       <TableC
         title="Danh sách nhắc nhở"
         hiddenTitle
@@ -475,7 +489,6 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
     <div className="relative">
       <div className="absolute z-50 left-[350px] top-[11px]">
         <ModalCreateRemind
-          
           onReload={onReload}
           button={<Button type="primary">Thêm</Button>}
         />

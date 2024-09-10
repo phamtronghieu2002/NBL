@@ -55,8 +55,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const { viahiclesStore } = useContext(
       viahiclesContext,
     ) as ViahicleProviderContextProps
-  console.log("viahicle mới nhât >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", viahiclesStore);
-  
+    console.log(
+      "viahicle mới nhât >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
+      viahiclesStore,
+    )
+
     const [vhiahicleTire, setViahicleTire] = useState<ViahicleType | null>(null)
 
     const [timeSelect, setTimeSelect] = useState<any>([])
@@ -86,9 +89,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     useEffect(() => {
       // call api to get remindType
 
-      if (!initialValues) {
-        form.setFieldsValue({ is_notified: true })
+      if (Object.keys(initialValues).length === 0) {
+        form.setFieldsValue({
+          is_notified: true,
+          note_repair: "Tới hạn thay dầu rồi,đi thay dầu thôi !!",
+        })
       } else {
+        initialValues.expiration_time = initialValues?.expiration_timeStamp
+     
+
         form.setFieldsValue(initialValues)
       }
       fetchCategory()
@@ -171,14 +180,18 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       <div>
         <Form
           form={form}
-          initialValues={initialValues}
+          initialValues={{
+            ...initialValues,
+            expiration_time: initialValues?.expiration_timeStamp
+              ? moment(initialValues?.expiration_time)
+              : null,
+          }}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
           disabled={false}
           style={{ maxWidth: 600 }}
         >
-  
           <Form.Item
             name="remind_category_id"
             style={{ gap: 10 }}
@@ -202,72 +215,68 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           </Form.Item>
 
           {/* chọn phương tiện */}
-          {(isTireSelect || initialValues?.category_id == 1 ) &&
-          (
-            (
-              <>
-                <Form.Item
-                  name="vehicles"
-                  rules={[{ required: true, message: "Vui lòng chọn xe" }]}
-                  style={{ gap: 10 }}
-                  label="Chọn xe"
+          {( initialValues?.category_id == 8) && (
+            <>
+              <Form.Item
+                name="vehicles"
+                rules={[{ required: true, message: "Vui lòng chọn xe" }]}
+                style={{ gap: 10 }}
+                label="Chọn xe"
+              >
+                <Select
+                  className="select-viahicle"
+                  onChange={(value: any) => {
+                    handleSelectViahicle(value)
+                    form.validateFields(["vehicles"])
+                  }}
                 >
-                  <Select
-                    className="select-viahicle"
-                    onChange={(value: any) => {
-                      handleSelectViahicle(value)
-                      form.validateFields(["vehicles"])
-                    }}
-                  >
-                    {viahicleSelected?.map((item: ViahicleType) => (
-                      <Select.Option
-                        key={item.license_plate}
-                        value={item.license_plate}
-                      >
-                        {item?.license_plate}
+                  {viahicleSelected?.map((item: ViahicleType) => (
+                    <Select.Option
+                      key={item.license_plate}
+                      value={item.license_plate}
+                    >
+                      {item?.license_plate}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </Form.Item>
+
+              <div className="relative">
+                <Form.Item
+                  className="flex-1"
+                  name="tire"
+                  rules={[{ required: true, message: "Vui lòng chọn lốp" }]}
+                  style={{ gap: 10 }}
+                  label="Chọn Lốp"
+                >
+                  <Select className="select-viahicle">
+                    {tires.map((item: TireProps) => (
+                      <Select.Option key={item.id} value={item.id}>
+                        {item?.seri}
                       </Select.Option>
                     ))}
                   </Select>
                 </Form.Item>
-
-                <div className="relative">
-                  <Form.Item
-                    className="flex-1"
-                    name="tire"
-                    rules={[{ required: true, message: "Vui lòng chọn lốp" }]}
-                    style={{ gap: 10 }}
-                    label="Chọn Lốp"
-                  >
-                    <Select className="select-viahicle">
-                      {tires.map((item: TireProps) => (
-                        <Select.Option key={item.id} value={item.id}>
-                          {item?.seri}
-                        </Select.Option>
-                      ))}
-                    </Select>
-                  </Form.Item>
-                  <ModalCreateTire
-                    isAddTireButton={false}
-                    data={vhiahicleTire}
-                    isReload={isReloadTableTire}
-                    isInModalRemind
-                    onRefresh={fetchTire}
-                    type="add"
-                    button={
-                      <Button
-                        disabled={!vhiahicleTire}
-                        className="absolute right-[-20px] top-0"
-                        icon={<PlusOutlined />}
-                      >
-                        Thêm lốp
-                      </Button>
-                    }
-                  />
-                </div>
-              </>
-            )
-          )
-          }
+                <ModalCreateTire
+                  isAddTireButton={false}
+                  data={vhiahicleTire}
+                  isReload={isReloadTableTire}
+                  isInModalRemind
+                  onRefresh={fetchTire}
+                  type="add"
+                  button={
+                    <Button
+                      disabled={!vhiahicleTire}
+                      className="absolute right-[-20px] top-0"
+                      icon={<PlusOutlined />}
+                    >
+                      Thêm lốp
+                    </Button>
+                  }
+                />
+              </div>
+            </>
+          )}
 
           {/* tên nhắc nhở */}
           {isName && (

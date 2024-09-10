@@ -202,6 +202,17 @@ const getTime = {
       Number(minuteString || 0) < 10 ? `0${minuteString}` : minuteString
     }:${Number(secondString) < 10 ? `0${secondString}` : secondString}`
   },
+  formatDate(timestamp: number): string {
+    const date = new Date(timestamp)
+    const year = date.getFullYear()
+    const month = String(date.getMonth() + 1).padStart(2, "0") // Thêm 1 vì getMonth() trả về từ 0-11
+    const day = String(date.getDate()).padStart(2, "0") // Đảm bảo ngày có 2 chữ số
+
+    return `${year}-${month}-${day}`
+  },
+   parseDate (dateString: string): Date {
+    return new Date(dateString);
+  }
 }
 
 export default getTime

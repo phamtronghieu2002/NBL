@@ -10,6 +10,9 @@ export const updateRemind = (id: number, data: any) => {
   return axiosInstance.put("/main/update/" + id, data)
 }
 
+export const AutoFinishRemind = (id: number) => {
+  return axiosInstance.post("/main/finish-remind/" + id)
+}
 export const getRemindByLisencePlate = (lisense_plate: string) => {
   return axiosInstance.get("/main/get-vehicle-id/" + lisense_plate)
 }
