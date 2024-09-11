@@ -16,6 +16,8 @@ import { getViahicle } from "../../../apis/viahicleAPI"
 import axios from "axios"
 import { getData } from "../../../utils/handleDataViahicle"
 import { getRemindVehicleGPS } from "../../../apis/remindAPI"
+import { log } from "console"
+import { getTokenParam } from "../../../utils/_param"
 
 interface RemindProps {}
 
@@ -28,6 +30,7 @@ const Remind: FC<RemindProps> = () => {
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
+  console.log("viahiclesStore", viahiclesStore)
 
   const fetchViahicle = async (keyword: string = "") => {
     // alert('co fe')
@@ -36,25 +39,27 @@ const Remind: FC<RemindProps> = () => {
     if (tab === "1") {
       try {
         const res = await axios.get(
-          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=50&type=1`,
+          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=100&type=1`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY0NSwicGFyZW50SWQiOjc4MywiY2xpZW50SWQiOiIxNDI5MTAxYi0xNWQ4LTQzYzktYmM5Ni1mMWQ4ZjVkN2RkYzYiLCJyb2xlIjo1MCwibGV2ZWwiOjAsImN1c3RvbWVySWQiOjQzMSwiaWF0IjoxNzI1ODY3MTk5LCJleHAiOjE3Mjg0NTkxOTl9.uWLymilDQvzr4T23Hjs6sfoz9o32xaLPurVp6InG-4Y`,
+              Authorization: `Bearer ${getTokenParam()}`,
             },
           },
         )
-   
+        console.log("res >>>>", res?.data?.data)
+
         const viahicleGPS = res?.data?.data?.map((item: any) => {
           return {
             key: item.id,
             id: item.id,
             license: item.imei,
-            license_plate: item.dev_id,
+            license_plate: item.vehicle_name,
             user_name: item.customer_name,
+            imei: item.imei,
           }
         })
 
-        for (let i = 0; i < viahicleGPS.length; i++) {
+        for (let i = 0; i < 2; i++) {
           const reminds: any = await getRemindVehicleGPS(
             viahicleGPS[i].license_plate,
           )
@@ -122,6 +127,7 @@ const Remind: FC<RemindProps> = () => {
     </div>
   )
 }
+
 const RemindMeMo: FC = () => (
   <ViahicleProvider>
     <Remind />

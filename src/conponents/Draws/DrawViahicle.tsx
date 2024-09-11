@@ -136,7 +136,6 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           expiration_timeStamp: moment(item?.expiration_time),
           expiration_time: getTime.formatDate(item?.expiration_time),
         }))
-
         setReminds(remindsHandle)
         setRemindsFilter(remindsHandle)
       } else {
@@ -230,7 +229,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
       render: (text, record, index) => index + 1,
     },
     {
-      title: "Tên nhắc nhở",
+      title: "Nội dung nhắc nhở",
       dataIndex: "note_repair",
       key: "note_repair",
       sorter: (a, b) =>

@@ -121,16 +121,23 @@ export const _app = {
   },
 
   getInitialData: {
+
     userInfo: async () => {
       return new Promise(async (resolve, reject) => {
         try {
           const fb = await getUserInfoService()
           const data: IUserInfo = fb?.data?.[0]
-          const dispatch = store.dispatch
+          const currentUrl = window.location.href
 
+          // Tạo đối tượng URL để dễ xử lý
+          const url = new URL(currentUrl)
+
+          // Lấy token từ URL
+          const token:string = url.searchParams.get("token")!;
+          const dispatch = store.dispatch
           dispatch(
             setUserAccess({
-              userInfo: data,
+              userInfo:{...data, token},
             }),
           )
           resolve(data)
@@ -221,9 +228,7 @@ export const _app = {
       const userInfoPromise = _app.getInitialData?.userInfo()
       const user: any = await userInfoPromise
       const userId = user?.id
-      console.log("====================================")
-      console.log("userId", userId)
-      console.log("====================================")
+
       try {
         fetchFCM()
       } catch (error) {

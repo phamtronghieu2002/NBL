@@ -14,6 +14,7 @@ export interface IUserInfo {
   username: string
   website: string
   customer_id: number
+  token?: string
 }
 
 export interface IUserDetailInfo {

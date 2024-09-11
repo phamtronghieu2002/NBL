@@ -17,6 +17,7 @@ export interface ViahicleType {
   icons?: any
   user_name?: string
   user_address?: string
+  imei?:string
 }
 
 export interface CategoryType {

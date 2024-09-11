@@ -23,14 +23,11 @@ import {
 import ModalCreateTire from "../../../../../conponents/modals/ModalCreateTire"
 import { Button } from "antd"
 import { PlusOutlined } from "@ant-design/icons"
-import { FormInstance } from "antd/lib"
 import { getCategory } from "../../../../../apis/categoryAPI"
 import { api } from "../../../../../_helper"
 import { getTire } from "../../../../../apis/tireAPI"
 import { t } from "i18next"
-import MultiDateTimePicker, {
-  DateTimeRange,
-} from "./MultiRangeDateWithTimePickerProps"
+import MultiDateTimePicker from "./MultiRangeDateWithTimePickerProps"
 import { log } from "console"
 
 interface FormAddRemindProps {
@@ -55,10 +52,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const { viahiclesStore } = useContext(
       viahiclesContext,
     ) as ViahicleProviderContextProps
-    console.log(
-      "viahicle mới nhât >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",
-      viahiclesStore,
-    )
 
     const [vhiahicleTire, setViahicleTire] = useState<ViahicleType | null>(null)
 
@@ -71,7 +64,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const fetchTire = async () => {
       try {
         const res = await getTire(vhiahicleTire?.license_plate || "", "")
-
         setTires(res?.data)
       } catch (error) {
         // api.message?.error("Lỗi khi lấy dữ liệu lốp")
@@ -95,14 +87,25 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           note_repair: "Tới hạn thay dầu rồi,đi thay dầu thôi !!",
         })
       } else {
-        initialValues.expiration_time = initialValues?.expiration_timeStamp
-     
+        initialValues.expiration_time = moment(
+          initialValues?.expiration_timeStamp,
+        )
 
-        form.setFieldsValue(initialValues)
+        const tire = initialValues?.tire
+        if (tire) {
+          handleSelectViahicle(viahiclesStore?.viahiclesStore[0]?.license_plate)
+        }
+        form.setFieldsValue({
+          ...initialValues,
+          vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
+          tire: initialValues?.tire,
+        })
+        form.setFieldValue("cycle", initialValues?.cycle)
       }
       fetchCategory()
     }, [])
     //  handle getDataForm
+    console.log("viahicle Store >>>", viahiclesStore)
 
     useEffect(() => {
       if (timeSelect.length > 0) {
@@ -110,6 +113,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         form
           ?.validateFields()
           .then((values) => {
+            console.log("values ne cac ban", values)
+
             const processedValuesForm = {
               ...values,
               expiration_time: values.expiration_time
@@ -117,8 +122,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 : null,
               vehicles: values.vehicles
                 ? [values.vehicles]
-                : viahiclesStore?.viahiclesStore.map(
-                    (item: ViahicleType) => item.license_plate,
+                : viahiclesStore?.viahiclesStore.map((item: ViahicleType) =>
+                    viahiclesStore?.type ? item?.imei : item.license_plate,
                   ),
               is_notified: values.is_notified ? 1 : 0,
             }
@@ -137,8 +142,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }, [vhiahicleTire?.license_plate])
 
     const handleSelectViahicle = (value: string) => {
-      const viahicle: any = viahicleSelected?.find(
-        (item: ViahicleType) => item?.license_plate == value,
+      const viahicle: any = viahicleSelected?.find((item: ViahicleType) =>
+        viahiclesStore?.type == 0 ? item?.license_plate : item?.imei == value,
       )
       setViahicleTire(viahicle)
     }
@@ -180,12 +185,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       <div>
         <Form
           form={form}
-          initialValues={{
-            ...initialValues,
-            expiration_time: initialValues?.expiration_timeStamp
-              ? moment(initialValues?.expiration_time)
-              : null,
-          }}
           labelCol={{ span: 6 }}
           wrapperCol={{ span: 14 }}
           layout="horizontal"
@@ -215,7 +214,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           </Form.Item>
 
           {/* chọn phương tiện */}
-          {( initialValues?.category_id == 8) && (
+          {(isTireSelect || initialValues?.remind_category_id == 8) && (
             <>
               <Form.Item
                 name="vehicles"
@@ -233,7 +232,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   {viahicleSelected?.map((item: ViahicleType) => (
                     <Select.Option
                       key={item.license_plate}
-                      value={item.license_plate}
+                      value={
+                        viahiclesStore?.type == 0
+                          ? item.license_plate
+                          : item.imei
+                      }
                     >
                       {item?.license_plate}
                     </Select.Option>
@@ -244,14 +247,14 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               <div className="relative">
                 <Form.Item
                   className="flex-1"
-                  name="tire"
+                  name="tire_seri"
                   rules={[{ required: true, message: "Vui lòng chọn lốp" }]}
                   style={{ gap: 10 }}
                   label="Chọn Lốp"
                 >
                   <Select className="select-viahicle">
                     {tires.map((item: TireProps) => (
-                      <Select.Option key={item.id} value={item.id}>
+                      <Select.Option key={item.id} value={item.seri}>
                         {item?.seri}
                       </Select.Option>
                     ))}
@@ -295,23 +298,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           {viahiclesStore.type ? (
             <>
               <Form.Item
-                name="current_kilometers"
-                label="KM đầu kì"
-                rules={[{ required: true, message: "Vui lòng nhập KM đầu kì" }]}
-              >
-                <InputNumber
-                  onChange={(value) => {
-                    form.setFieldsValue({ current_kilometers: value })
-                    form.validateFields(["current_kilometers"])
-                  }}
-                  min={0}
-                />
-                <span style={{ marginLeft: 10, display: "inline-block" }}>
-                  (KM)
-                </span>
-              </Form.Item>
-              <Form.Item
-                name="cumulative_kilometers"
+                name="km_before"
                 label="Cảnh báo sau"
                 rules={[
                   { required: true, message: "Vui lòng nhập KM cảnh báo" },
@@ -319,8 +306,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               >
                 <InputNumber
                   onChange={(value) => {
-                    form.setFieldsValue({ cumulative_kilometers: value })
-                    form.validateFields(["cumulative_kilometers"])
+                    form.setFieldsValue({ km_before: value })
                   }}
                 />
                 <span style={{ marginLeft: 10, display: "inline-block" }}>
@@ -351,6 +337,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             rules={[{ required: true, message: "Vui lòng nhập chu kì" }]}
           >
             <InputNumber
+              value={form.getFieldValue("cycle")}
               onChange={(value) => {
                 form.setFieldsValue({ cycle: value })
               }}

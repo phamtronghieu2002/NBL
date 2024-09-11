@@ -1,4 +1,5 @@
 import { TireProps } from "../interface/interface"
+import { store } from "../app/store"
 
 import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
@@ -17,3 +18,4 @@ export const deleteTire = (id: number) => {
 export const updateTire = (id: number, data: TireProps) => {
   return axiosInstance.put(`/tire/update-tire/${id}`, data)
 }
+

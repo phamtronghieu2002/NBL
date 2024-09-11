@@ -1,9 +1,13 @@
 import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
 import { CategoryType } from "../interface/interface"
+import { getTokenParam } from "../utils/_param"
 
 export const addRemind = (data: any) => {
-  return axiosInstance.post("/main/add-remind", data)
+  return axiosInstance.post("/main/add-remind", {
+    ...data,
+    token: getTokenParam(),
+  })
 }
 
 export const updateRemind = (id: number, data: any) => {

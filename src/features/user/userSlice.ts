@@ -57,6 +57,7 @@ export const counterSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
+   
     setUserAccess: (state, actions: { payload: IUserAccess }) => {
       state.access = { ...state.access, ...actions.payload }
       const userInfo = state?.access?.userInfo
