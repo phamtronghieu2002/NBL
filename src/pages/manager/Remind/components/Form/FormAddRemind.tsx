@@ -33,7 +33,7 @@ import { log } from "console"
 interface FormAddRemindProps {
   viahicleSelected?: ViahicleType[]
   initialValues?: any
-  onSubmit: (formData: any, callback: any) => void
+  onSubmit: (formData: any, callback: any,images:any) => void
 }
 
 const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
@@ -68,7 +68,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       } catch (error) {
         // api.message?.error("Lỗi khi lấy dữ liệu lốp")
       }
-
       // setIsReloadTableTire(Math.random())
     }
 
@@ -80,7 +79,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     useEffect(() => {
       // call api to get remindType
-
       if (Object.keys(initialValues).length === 0) {
         form.setFieldsValue({
           is_notified: true,
@@ -127,7 +125,24 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   ),
               is_notified: values.is_notified ? 0 : 1,
             }
-            onSubmit(processedValuesForm, fetchCategory) // Gửi dữ liệu đã xử lý
+
+            const formData = new FormData()
+            // Thêm dữ liệu vào formData
+            imageFiles.forEach((file) => {
+              formData.append('images', file.originFileObj) // Đảm bảo là tệp ảnh gốc
+            })
+
+        
+       
+              
+            console.log("formData >>>", formData);
+            
+
+
+            
+
+
+            onSubmit(processedValuesForm, fetchCategory,formData) // Gửi dữ liệu đã xử lý
           })
           .catch(() => {
             console.log("Lỗi xác thực:")
@@ -168,7 +183,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       const formData = new FormData()
       formData.append("image", file)
       setImageFiles((prev) => [...prev, formData])
-      
+
       return false // Prevent automatic upload
     }
 

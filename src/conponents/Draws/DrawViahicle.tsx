@@ -277,6 +277,19 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
       key: "dayFinish",
     },
     {
+      title: "Thao tác",
+      dataIndex: "action",
+      key: "action",
+      render: (text, record, index) => (
+        <ModalCreateRemind
+          type="update"
+          onReload={fetchRemind}
+          remindData={record}
+          button={<Button type="link">Cập nhật</Button>}
+        />
+      ),
+    },
+    {
       title: "Hoàn thành",
       dataIndex: "isFinish",
       key: "isFinish",
@@ -304,10 +317,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
 
   return (
     <>
-      <p className="absolute top-[-120px]">
-        {" "}
-        Phương tiện : <b className="text-xl"> {data?.license_plate}</b>
-      </p>
+      <p className="absolute top-[-120px]"> </p>
       {loading && <MaskLoader />}
       <TableC
         title="Danh sách nhắc nhở"
@@ -503,7 +513,11 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
 const DrawViahicle: FC<DrawViahicleProps> = ({ button, title, data }) => {
   return (
     <DrawC
-      title={title}
+      title={
+        <p>
+          Cài đặt nhắc nhở xe : <b>{data?.license_plate}</b>
+        </p>
+      }
       button={button}
       data={data}
       children={(action) => <DetailViahicleComponents {...action} />}

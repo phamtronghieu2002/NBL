@@ -54,7 +54,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
               button={<Button type="primary">Thêm xe</Button>}
             />
             <ModalImportExelMobile
-              button={<Button type="primary">Import Excel</Button>}
+              button={<Button type="primary">Tải Excel</Button>}
             />
           </>
         }

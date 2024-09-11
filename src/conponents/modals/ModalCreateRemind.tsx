@@ -15,6 +15,7 @@ import { addRemind, updateRemind } from "../../apis/remindAPI"
 import { log } from "console"
 import { createCategory } from "../../apis/categoryAPI"
 import moment from "moment"
+import { getTokenParam } from "../../utils/_param"
 interface ModalCreateRemindProps {
   remindData?: any
   button: React.ReactNode
@@ -29,25 +30,30 @@ const Form: FC<{
   remindData?: any
   type?: string
 }> = ({ action, onReload, remindData = {}, type }) => {
-
-  
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (formData: any, callback: any) => {
-      
-    console.log('====================================');
-    console.log("formData >>", formData);
-    console.log('====================================');
+  const handleSubmit = async (formData: any, callback: any, images?: any) => {
+    console.log("====================================")
+    console.log("formData >>", formData)
+    console.log("====================================")
     const cate_name = formData["cat_name"]
     if (cate_name) {
-      const cat = await createCategory(cate_name,"", "")
+      const cat = await createCategory(cate_name, "", "")
       formData["remind_category_id"] = cat.data
       callback()
     }
+
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        images.append(key, JSON.stringify(formData[key]))
+      }
+    }
+    images.append("token", getTokenParam())
+
     // call api thêm nhắc nhở
-    setLoading(true)
-    await addRemind(formData)
-    action?.closeModal?.()
+    // setLoading(true)
+    await addRemind(images)
+    // action?.closeModal?.()
     api.message?.success("Thêm nhắc nhở thành công")
     onReload?.()
   }
@@ -60,7 +66,29 @@ const Form: FC<{
     api.message?.success("cập nhật nhắc nhở thành công")
     onReload?.()
   }
-  const handleFormData: any = type == "add" ? handleSubmit : handleUpdate
+
+  const handleUpdateCycle = async (formData: any, callback: any) => {
+    console.log("formData", formData)
+    // call api sửa nhắc nhở
+    setLoading(true)
+    await updateRemind(remindData?.remind_id, formData)
+    action?.closeModal?.()
+    api.message?.success("cập nhật nhắc nhở thành công")
+    onReload?.()
+  }
+
+  const getFunctionHandleAction = () => {
+    if (type == "add") {
+      return handleSubmit
+    }
+    if (type == "update") {
+      return handleUpdate
+    }
+    if (type == "update-cycle") {
+      return handleUpdateCycle
+    }
+  }
+  const handleFormData: any = getFunctionHandleAction()
 
   const { viahiclesStore } = useContext(
     viahiclesContext,
@@ -80,6 +108,13 @@ const Form: FC<{
     if (type == "update") {
       return {
         title: "Chỉnh sửa nhắc nhở",
+        okButton: "Lưu",
+        okCallback: onsubmit,
+      }
+    }
+    if (type == "update-cycle") {
+      return {
+        title: "Chỉnh sửa hạn nhắc nhở",
         okButton: "Lưu",
         okCallback: onsubmit,
       }
@@ -157,13 +192,13 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const getAction = () => {
     if (type === "add") {
       return {
-        title: "Tạo nhắc nhở",
+        title: `Tạo nhắc nhở`,
       }
     }
 
     if (type === "update") {
       return {
-        title: `sửa nhắc nhở`,
+        title: `sửa nhắc nhở  ${remindData?.license_plate}`,
       }
     }
   }

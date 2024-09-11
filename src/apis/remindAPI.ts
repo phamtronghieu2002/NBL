@@ -1,12 +1,15 @@
+import axios from "axios"
 import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
 import { CategoryType } from "../interface/interface"
 import { getTokenParam } from "../utils/_param"
 
 export const addRemind = (data: any) => {
-  return axiosInstance.post("/main/add-remind", {
-    ...data,
-    token: getTokenParam(),
+  return axios.post("http://192.168.2.42:3005/api/v1/remind/main/add-remind", data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-mobicam-token": getTokenParam(),
+    },
   })
 }
 

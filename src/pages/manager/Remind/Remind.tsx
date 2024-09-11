@@ -108,13 +108,6 @@ const Remind: FC<RemindProps> = () => {
       <div className="mb-10 font-bold text-lg">Quản lí phương tiện</div>
       <div className="action_create_remind flex justify-end absolute left-[450px] top-[80px] z-50 ">
         <ModalCreateRemind
-          // remindData={[
-          //   {
-          //     current_kilometers: 10,
-          //     remind_category_id: 1,
-          //     cumulative_kilometers: 20,
-          //   },
-          // ]}
           button={
             <Button type="primary" icon={<PlusCircleOutlined />}>
               Thêm

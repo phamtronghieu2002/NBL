@@ -4,7 +4,7 @@ import { Button, Drawer } from "antd"
 interface DrawProps {
   button: React.ReactNode
   children: (data: { closeModal: any; data: any }) => React.ReactNode
-  title: string
+  title: React.ReactNode
   width?: string | number
   data: any
 }
