@@ -18,6 +18,7 @@ import { getData } from "../../../utils/handleDataViahicle"
 import { getRemindVehicleGPS } from "../../../apis/remindAPI"
 import { log } from "console"
 import { getTokenParam } from "../../../utils/_param"
+import { api } from "../../../_helper"
 
 interface RemindProps {}
 
@@ -39,7 +40,7 @@ const Remind: FC<RemindProps> = () => {
     if (tab === "1") {
       try {
         const res = await axios.get(
-          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=100&type=1`,
+          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=50&type=1`,
           {
             headers: {
               Authorization: `Bearer ${getTokenParam()}`,
@@ -59,15 +60,19 @@ const Remind: FC<RemindProps> = () => {
           }
         })
 
-        for (let i = 0; i < 2; i++) {
-          const reminds: any = await getRemindVehicleGPS(
-            viahicleGPS[i].license_plate,
-          )
-          const icons: any = []
-          reminds?.data?.forEach((item: any) => {
-            item?.icon && icons.push(item.icon)
-          })
-          viahicleGPS[i]["icons"] = icons
+        for (let i = 0; i < viahicleGPS?.length; i++) {
+            try {
+              const reminds: any = await getRemindVehicleGPS(
+                viahicleGPS[i].license_plate,
+              )
+              const icons: any = []
+              reminds?.data?.forEach((item: any) => {
+                item?.icon && icons.push(item.icon)
+              })
+              viahicleGPS[i]["icons"] = icons
+            } catch (error) {
+                api.message?.error("Lỗi !!")
+            }
         }
 
         dispatch?.setLoading?.(false)
