@@ -61,18 +61,16 @@ const Remind: FC<RemindProps> = () => {
         })
 
         for (let i = 0; i < viahicleGPS?.length; i++) {
-            try {
-              const reminds: any = await getRemindVehicleGPS(
-                viahicleGPS[i].license_plate,
-              )
-              const icons: any = []
-              reminds?.data?.forEach((item: any) => {
-                item?.icon && icons.push(item.icon)
-              })
-              viahicleGPS[i]["icons"] = icons
-            } catch (error) {
-                api.message?.error("Lỗi !!")
-            }
+          try {
+            const reminds: any = await getRemindVehicleGPS(viahicleGPS[i].imei)
+            const icons: any = []
+            reminds?.data?.forEach((item: any) => {
+              item?.icon && icons.push(item.icon)
+            })
+            viahicleGPS[i]["icons"] = icons
+          } catch (error) {
+            api.message?.error("Lỗi !!")
+          }
         }
 
         dispatch?.setLoading?.(false)

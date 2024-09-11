@@ -125,7 +125,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 : viahiclesStore?.viahiclesStore.map((item: ViahicleType) =>
                     viahiclesStore?.type ? item?.imei : item.license_plate,
                   ),
-              is_notified: values.is_notified ? 1 : 0,
+              is_notified: values.is_notified ? 0 : 1,
             }
             onSubmit(processedValuesForm, fetchCategory) // Gửi dữ liệu đã xử lý
           })
@@ -168,6 +168,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       const formData = new FormData()
       formData.append("image", file)
       setImageFiles((prev) => [...prev, formData])
+      
       return false // Prevent automatic upload
     }
 
@@ -295,6 +296,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           {viahiclesStore.type ? (
             <>
               <Form.Item
+               
                 name="km_before"
                 label="Cảnh báo sau"
                 rules={[
@@ -367,6 +369,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           {/* Upload ảnh */}
           <Form.Item label="Tải lên hình ảnh" style={{ gap: 10 }}>
             <Upload
+             multiple={true}
               accept=".png, .jpg, .jpeg"
               listType="picture-card"
               customRequest={({ file }) => handleImageUpload(file)} // Xử lý khi tải ảnh
