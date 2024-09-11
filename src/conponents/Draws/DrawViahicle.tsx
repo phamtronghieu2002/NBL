@@ -140,7 +140,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         setRemindsFilter(remindsHandle)
       } else {
         let res: any = []
-        res = await getRemindVehicleGPS(data?.license_plate, keyword)
+        res = await getRemindVehicleGPS(data?.imei, keyword)
         const reminds = res?.data.filter(
           (item: any) => item?.remind_id !== null,
         )

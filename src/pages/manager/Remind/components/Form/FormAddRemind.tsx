@@ -60,7 +60,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const buttonDateRef = useRef<HTMLButtonElement>(null)
 
     const [randomKey, setRandomKey] = useState<number>(Math.random())
-
+    const [imageFiles, setImageFiles] = useState<any[]>([])
     const fetchTire = async () => {
       try {
         const res = await getTire(vhiahicleTire?.license_plate || "", "")
@@ -165,16 +165,13 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     // Hàm xử lý khi ảnh được chọn
     const handleImageUpload = (file: any) => {
-      const reader = new FileReader()
-      reader.onload = () => {
-        setImageUrl(reader.result as string)
-        const formData = new FormData()
-        formData.append("image", file)
-        form.setFieldsValue({ img: formData })
-      }
-      reader.readAsDataURL(file)
-      return false
+      const formData = new FormData()
+      formData.append("image", file)
+      setImageFiles((prev) => [...prev, formData])
+      return false // Prevent automatic upload
     }
+
+    console.log("imageFiles >>", imageFiles)
 
     const handleGetDataForm = () => {
       buttonDateRef.current?.click()
@@ -368,18 +365,37 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           {/* đoạn này nè */}
 
           {/* Upload ảnh */}
-          <Form.Item name="img" label="Hình ảnh">
+          <Form.Item label="Tải lên hình ảnh" style={{ gap: 10 }}>
             <Upload
-              beforeUpload={handleImageUpload}
+              accept=".png, .jpg, .jpeg"
               listType="picture-card"
-              showUploadList={false}
+              customRequest={({ file }) => handleImageUpload(file)} // Xử lý khi tải ảnh
+              fileList={imageFiles} // Danh sách các ảnh đã tải lên
+              onPreview={(file) => {
+                // Hiển thị xem trước ảnh từ URL hoặc Blob
+                const previewUrl =
+                  file.url ||
+                  file.thumbUrl ||
+                  (file.originFileObj &&
+                    URL.createObjectURL(file.originFileObj))
+                const imgWindow = window.open(previewUrl)
+                imgWindow?.document.write('<img src="' + previewUrl + '" />')
+              }}
+              onChange={({ fileList }) => setImageFiles(fileList)} // Cập nhật danh sách ảnh
+              onRemove={(file) => {
+                // Xóa ảnh
+                setImageFiles((prev) => prev.filter((f) => f.uid !== file.uid))
+              }}
+              beforeUpload={(file) => {
+                // Tạo URL xem trước ảnh
+                (file as any).thumbUrl = URL.createObjectURL(file)
+                return false // Ngăn chặn tự động upload
+              }}
             >
-              {imageUrl ? (
-                <img src={imageUrl} alt="preview" style={{ width: "100%" }} />
-              ) : (
+              {imageFiles.length >= 5 ? null : ( // Giới hạn số lượng ảnh được tải lên
                 <div>
                   <PlusOutlined />
-                  <div style={{ marginTop: 9 }}>Upload</div>
+                  <div style={{ marginTop: 8 }}>Upload</div>
                 </div>
               )}
             </Upload>
