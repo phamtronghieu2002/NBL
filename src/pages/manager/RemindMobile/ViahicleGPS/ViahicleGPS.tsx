@@ -151,7 +151,6 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
               className="item-container"
             >
               <CardCar
-                weight="ád"
                 isGPS
                 {...item}
                 showCheckbox={showCheckbox} // Hiển thị checkbox khi người dùng nhấn giữ và thả chuột

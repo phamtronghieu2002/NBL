@@ -42,6 +42,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [isTireSelect, setIsTireSelect] = useState<boolean>(false)
     const [tires, setTires] = useState<any>([])
 
+    console.log("========>>>>>>>>>>>>>", viahicleSelected)
+
     const [isReloadTableTire, setIsReloadTableTire] = useState<number>(
       Math.random(),
     )

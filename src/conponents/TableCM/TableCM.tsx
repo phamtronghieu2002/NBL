@@ -100,7 +100,7 @@ const Search: React.FC<ISearch> = ({ search, setQ, styles = {} }) => {
           const value = e?.target?.value
           setInput(value)
         }}
-        placeholder="Tìm kiếm"
+        placeholder="Tìm kiếm biển số, số điện thoại"
         style={{
           height: 24,
           width: search?.width,
@@ -395,12 +395,7 @@ export const TableCM: React.FC<IProps> = ({
         </div>
       ) : null}
       {/* gọi card components */}
-      <div
-      className="h-[100vh] overflow-scroll pt-1 "
-      >
-
-      {children}
-      </div>
+      <div className="h-[100vh] overflow-scroll pt-1 ">{children}</div>
     </div>
   )
 }

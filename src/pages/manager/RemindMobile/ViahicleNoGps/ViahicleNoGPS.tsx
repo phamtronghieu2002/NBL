@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from "react"
 import React from "react"
-import { Button, Tabs } from "antd"
+import { Button, Tabs, Upload } from "antd"
 import type { TabsProps } from "antd"
 import { TableC } from "../../../../conponents/TableC"
 
@@ -16,7 +16,7 @@ import ModalAddViahicleMobile from "../../../../conponents/modals/ModalAddViahic
 import { TableCM } from "../../../../conponents/TableCM/TableCM"
 import CardCar from "../components/Card/CardCar"
 import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRemindMobile"
-import { PlusCircleOutlined } from "@ant-design/icons"
+import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons"
 import { MaskLoader } from "../../../../conponents/Loader"
 interface ViahicleNoGPSType {
   viahicles: ViahicleType[]
@@ -92,7 +92,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
       setSelectedItems([])
     } else {
       // Nếu chưa chọn tất cả, chọn tất cả item
-      setSelectedItems(viahicles.map((item) => item.id))
+      setSelectedItems(viahicles.map((item) => item))
     }
     setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
@@ -146,11 +146,25 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
               }
             />
             <ModalImportExelMobile
-              button={<Button type="primary">Tải Excel</Button>}
+              button={
+                <Button icon={<UploadOutlined />} type="primary">
+                  Tải Excel
+                </Button>
+              }
             />
           </div>
         </div>
       }
+      {/* Nút Chọn Tất Cả */}
+      {showCheckbox && ( // Chỉ hiển thị nút "Chọn tất cả" khi checkbox đang được hiển thị
+        <Button
+          className="ml-2 mt-2"
+          onClick={handleSelectAll}
+          style={{ marginBottom: 16 }}
+        >
+          {selectAll ? "Bỏ chọn tất cả" : "Chọn tất cả"}
+        </Button>
+      )}
       <TableCM
         checkBox
         setViahicleChecked={getViahicleChecked}
@@ -179,17 +193,17 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 dispatch.setViahicle(selectedItems)
               }}
               key={item.id}
-              onMouseDown={() => handleMouseDown(item.id)} // Nhấn chuột để bắt đầu chọn
-              onMouseUp={() => handleMouseUp(item.id)} // Thả chuột để hiển thị checkbox và chọn item
+              onMouseDown={() => handleMouseDown(item)} // Nhấn chuột để bắt đầu chọn
+              onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
               className="item-container"
             >
               <CardCar
                 weight=""
-                isGPS
+                isGPS={false}
                 {...item}
                 showCheckbox={showCheckbox} // Hiển thị checkbox khi người dùng nhấn giữ và thả chuột
-                checked={selectedItems.includes(item.id)} // Trạng thái checkbox
-                onCheckChange={(checked) => handleCheck(item.id, checked)} // Xử lý thay đổi trạng thái checkbox
+                checked={selectedItems.includes(item)} // Trạng thái checkbox
+                onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
             </div>
           )
