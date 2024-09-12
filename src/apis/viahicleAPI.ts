@@ -9,6 +9,9 @@ export const getViahicle = (keyword: string) => {
 export const addViahicle = (data: ViahicleType) => {
   return axiosInstance.post("/vehicle-no-gps/add-vehicle", [data])
 }
+export const addViahicleExel = (data: ViahicleType[]) => {
+  return axiosInstance.post("/vehicle-no-gps/add-vehicle", data)
+}
 
 export const addViahicles = (data: ViahicleType[]) => {
   return axiosInstance.post("/vehicle-no-gps/get-all", data)

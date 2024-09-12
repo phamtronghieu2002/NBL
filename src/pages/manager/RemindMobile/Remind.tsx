@@ -17,11 +17,14 @@ import { getViahicle } from "../../../apis/viahicleAPI"
 import { getData } from "../../../utils/handleDataViahicle"
 import "./customeTab.scss"
 import axios from "axios"
-import { getRemindVehicleGPS } from "../../../apis/remindAPI"
+import { getIconRemindViahicleGPS, getRemindVehicleGPS } from "../../../apis/remindAPI"
+import { getTokenParam } from "../../../utils/_param"
 interface RemindProps {}
 
 const Remind: FC<RemindProps> = () => {
   const [viahicles, setViahicles] = useState<ViahicleType[]>([])
+  const [viahiclesNoGPS, setViahiclesNoGPS] = useState<ViahicleType[]>([])
+
   const [tab, setTab] = useState<string>("1")
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
@@ -29,55 +32,78 @@ const Remind: FC<RemindProps> = () => {
 
   console.log("viahicle mới nhât >>", viahiclesStore)
 
-  const fetchViahicle = async () => {
+  const fetchViahicle = async (keyword: string = "") => {
     // alert('co fe')
+    setViahicles([])
+    dispatch?.setLoading?.(true)
     if (tab === "1") {
-      dispatch?.setLoading?.(true)
       try {
         const res = await axios.get(
-          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${viahiclesStore.keyword}&offset=0&limit=50&type=1`,
+          `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=50&type=1`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjY0NSwicGFyZW50SWQiOjc4MywiY2xpZW50SWQiOiIxNDI5MTAxYi0xNWQ4LTQzYzktYmM5Ni1mMWQ4ZjVkN2RkYzYiLCJyb2xlIjo1MCwibGV2ZWwiOjAsImN1c3RvbWVySWQiOjQzMSwiaWF0IjoxNzI1ODY3MTk5LCJleHAiOjE3Mjg0NTkxOTl9.uWLymilDQvzr4T23Hjs6sfoz9o32xaLPurVp6InG-4Y`,
+              Authorization: `Bearer ${getTokenParam()}`,
             },
           },
         )
+
+          
+        const remind_viahicles_gps  = await getIconRemindViahicleGPS()
+        
         const viahicleGPS = res?.data?.data?.map((item: any) => {
           return {
             key: item.id,
             id: item.id,
             license: item.imei,
-            license_plate: item.dev_id,
+            license_plate: item.vehicle_name,
+            user_name: item.customer_name,
+            imei: item.imei,
+            icons:remind_viahicles_gps?.data[item.imei]
+
           }
         })
 
-        for (let i = 0; i < viahicleGPS.length; i++) {
-          const res = await getRemindVehicleGPS(viahicleGPS[i].license_plate)
-        }
-        setViahicles(viahicleGPS)
+        // for (let i = 0; i < viahicleGPS?.length; i++) {
+        //   try {
+        //     const reminds: any = await getRemindVehicleGPS(viahicleGPS[i].imei)
+        //     const icons: any = []
+        //     reminds?.data?.forEach((item: any) => {
+        //       item?.icon && icons.push(item.icon)
+        //     })
+        //     viahicleGPS[i]["icons"] = icons
+        //   } catch (error) {
+        //     api.message?.error("Lỗi !!")
+        //   }
+        // }
+
         dispatch?.setLoading?.(false)
-      } catch (error) {}
+        setViahicles(viahicleGPS)
+      } catch (error) {
+        console.log("error  >>", error)
+      }
     } else {
-      // dispatch.setKeyword("123")
       try {
-        const res = await getViahicle(viahiclesStore?.keyword || "")
+        const res = await getViahicle(keyword)
         const data = getData(res?.data)
-        setViahicles(data)
+        setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
       } catch (error) {
-        console.log("====================================")
         console.log("error", error)
-        console.log("====================================")
       }
     }
   }
   useEffect(() => {
-    fetchViahicle()
+    const keyword = viahiclesStore.keyword
+    fetchViahicle(keyword)
   }, [tab, viahiclesStore.freshKey, viahiclesStore.keyword])
+
+  useEffect(() => {
+    dispatch?.setViahicle([])
+  }, [tab])
 
   const onChangeTab = (key: string) => {
     setTab(key)
-    dispatch.setTypeViahicle(key === "1" ? 1 : 0)
+    dispatch?.setTypeViahicle(key === "1" ? 1 : 0)
   }
 
   return (
