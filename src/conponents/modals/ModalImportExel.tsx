@@ -110,7 +110,6 @@ const ImportExel: FC<{
         }),
       vehicles: [item.license_plate?.toString()],
     }))
-    console.log(formattedData)
   }
 
   return (
