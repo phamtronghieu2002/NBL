@@ -1,7 +1,7 @@
 import { FC, useEffect, useRef, useState } from "react"
 import { ModalCView } from "../ModalC/ModalC"
 import { Button } from "antd"
-import FormAddRemind from "../../pages/manager/Remind/components/Form/FormAddRemind"
+import FormAddRemind from "../../pages/manager/RemindMobile/components/Form/FormAddRemind"
 import { FileExcelOutlined } from "@ant-design/icons"
 import { useContext } from "react"
 import {
@@ -11,8 +11,11 @@ import {
 import { api } from "../../_helper"
 import { MaskLoader } from "../Loader"
 import { ViahicleType } from "../../interface/interface"
-import { addRemind } from "../../apis/remindAPI"
+import { addRemind, updateRemind } from "../../apis/remindAPI"
 import { log } from "console"
+import { createCategory } from "../../apis/categoryAPI"
+import moment from "moment"
+import { getTokenParam } from "../../utils/_param"
 interface ModalCreateRemindProps {
   remindData?: any
   button: React.ReactNode
@@ -26,28 +29,74 @@ const Form: FC<{
   onReload?: () => void
   remindData?: any
   type?: string
-}> = ({ action, onReload, remindData, type }) => {
+}> = ({ action, onReload, remindData = {}, type }) => {
   const [loading, setLoading] = useState(false)
 
-  const handleSubmit = async (formData: any) => {
-    console.log("formData", formData)
+  const handleSubmit = async (formData: any, callback: any, images?: any) => {
+    console.log("====================================")
+    console.log("formData >>", formData)
+    console.log("====================================")
+    const cate_name = formData["cat_name"]
+    if (cate_name) {
+      const cat = await createCategory(cate_name, "", "")
+      formData["remind_category_id"] = cat.data
+      callback()
+    }
+
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        const value = formData[key]
+        // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
+        if (Array.isArray(value) || typeof value === "object") {
+          images.append(key, JSON.stringify(value))
+        } else if (typeof value === "number") {
+          images.append(key, value)
+        } else {
+          images.append(key, value)
+        }
+      }
+    }
+    images.append("token", getTokenParam())
+
     // call api thêm nhắc nhở
-    setLoading(true)
-    await addRemind(formData)
-    action?.closeModal?.()
+    // setLoading(true)
+    await addRemind(images)
+    // action?.closeModal?.()
     api.message?.success("Thêm nhắc nhở thành công")
     onReload?.()
   }
-  const handleUpdate = async (formData: any) => {
+  const handleUpdate = async (formData: any, callback: any) => {
     console.log("formData", formData)
     // call api sửa nhắc nhở
-    // setLoading(true)
-    // await addRemind(formData)
-    // action?.closeModal?.()
-    // api.message?.success("Thêm nhắc nhở thành công")
-    // onReload?.()
+    setLoading(true)
+    await updateRemind(remindData?.remind_id, formData)
+    action?.closeModal?.()
+    api.message?.success("cập nhật nhắc nhở thành công")
+    onReload?.()
   }
-  const handleFormData: any = type == "add" ? handleSubmit : handleUpdate
+
+  const handleUpdateCycle = async (formData: any, callback: any) => {
+    console.log("formData", formData)
+    // call api sửa nhắc nhở
+    setLoading(true)
+    await updateRemind(remindData?.remind_id, formData)
+    action?.closeModal?.()
+    api.message?.success("cập nhật nhắc nhở thành công")
+    onReload?.()
+  }
+
+  const getFunctionHandleAction = () => {
+    if (type == "add") {
+      return handleSubmit
+    }
+    if (type == "update") {
+      return handleUpdate
+    }
+    if (type == "update-cycle") {
+      return handleUpdateCycle
+    }
+  }
+  const handleFormData: any = getFunctionHandleAction()
 
   const { viahiclesStore } = useContext(
     viahiclesContext,
@@ -71,6 +120,13 @@ const Form: FC<{
         okCallback: onsubmit,
       }
     }
+    if (type == "update-cycle") {
+      return {
+        title: "Chỉnh sửa hạn nhắc nhở",
+        okButton: "Lưu",
+        okCallback: onsubmit,
+      }
+    }
   }
 
   // handle add remind
@@ -82,7 +138,15 @@ const Form: FC<{
     <div>
       {loading && <MaskLoader />}
       <FormAddRemind
-        // initialValues={}
+        initialValues={remindData}
+        // initialValues={
+        //   {
+        //     // note_repair: "123",
+        //     // current_kilometers: 10,
+        //     // remind_category_id: 1,
+        //     // cumulative_kilometers: 20,
+        //   }
+        // }
         ref={buttonRef}
         viahicleSelected={viahicleSelected}
         onSubmit={handleFormData}
@@ -114,18 +178,35 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const { viahiclesStore } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
-  console.log("record >>>", remindData)
+  console.log("viahiclesStore", viahiclesStore)
+
+  const isTimestamp = (value: any) => {
+    return typeof value === "number" && value > 1000000000
+  }
+
+  const convertTimestampsToMoment = (data: any) => {
+    const convertedData = { ...data }
+
+    Object.keys(convertedData).forEach((key) => {
+      if (isTimestamp(convertedData[key])) {
+        // Chỉ chuyển đổi nếu là timestamp
+        convertedData[key] = moment(convertedData[key])
+      }
+    })
+
+    return convertedData
+  }
 
   const getAction = () => {
     if (type === "add") {
       return {
-        title: "Tạo nhắc nhở",
+        title: `Tạo nhắc nhở`,
       }
     }
 
     if (type === "update") {
       return {
-        title: `sửa nhắc nhở`,
+        title: `sửa nhắc nhở  ${remindData?.license_plate}`,
       }
     }
   }
@@ -139,7 +220,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
       children={(action) => (
         <Form
           type={type}
-          remindData={remindData}
+          remindData={convertTimestampsToMoment(remindData)}
           onReload={onReload}
           action={action}
         />

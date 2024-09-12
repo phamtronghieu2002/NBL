@@ -96,13 +96,10 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
       ref={containerRef} // Tham chiếu container để xử lý click ra ngoài
     >
       <ModalCreateRemindMobile
+        type="add"
         button={
           <Button
-            onClick={() => {
-              console.log("selectedItems", selectedItems)
-
-              // dispatch.setViahicle(selectedItems)
-            }}
+            onClick={() => {}}
             type="primary"
             className="ml-2"
             icon={<PlusCircleOutlined />}
@@ -142,6 +139,9 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         {viahicles.map((item: any) => {
           return (
             <div
+              onClick={() => {
+                dispatch.setViahicle(selectedItems)
+              }}
               key={item.imei}
               onMouseDown={() => handleMouseDown(item)} // NhấHum to Kannadan chuột để bắt đầu chọn
               onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
