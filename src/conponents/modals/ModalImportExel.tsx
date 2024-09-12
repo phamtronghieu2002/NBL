@@ -13,6 +13,8 @@ import { api } from "../../_helper"
 import { addViahicle, addViahicleExel } from "../../apis/viahicleAPI"
 import { MaskLoader } from "../Loader"
 import { addTire } from "../../apis/tireAPI"
+import { createCategory, getCategory } from "../../apis/categoryAPI"
+import { addRemind } from "../../apis/remindAPI"
 interface ModalImportExelProps {
   button: React.ReactNode
 }
@@ -28,7 +30,6 @@ const ImportExel: FC<{
     viahiclesContext,
   ) as ViahicleProviderContextProps
   console.log("viahiclesStore", viahiclesStore)
-
 
   const handleImport = async () => {
     try {
@@ -89,12 +90,11 @@ const ImportExel: FC<{
           }),
       )
 
-      console.log("parsedRemindTireData >>>", parsedRemindTireData);
-      
-    
-    for(let i = 0; i < parsedRemindTireData.length; i++) {  
+      console.log("parsedRemindTireData >>>", parsedRemindTireData)
+
+      for (let i = 0; i < parsedRemindTireData.length; i++) {
         await addTire(parsedRemindTireData[i])
-    }
+      }
       const convertToUnix = (dateString: string): any => {
         try {
           if (
@@ -114,21 +114,19 @@ const ImportExel: FC<{
             Number(hours),
             Number(minutes),
           )
-          return Math.floor(date.getTime() / 1000)
+          return Math.floor(date.getTime())
         } catch (err) {
           throw err
         }
       }
-
-      const formattedData = excelData.map((item) => {
-
-          console.log('====================================');
-          console.log("items >>>>>>>", item);
-          console.log('====================================');
-
-
+      const res = await getCategory()
+      const type = res?.data
+      
+      const formattedData = excelData.map( function (item) {
+  
         return {
-          remind_category_id: item.license_plate,
+          type: item.type,
+          remind_category_id: "",
           expiration_time: convertToUnix(item.exp),
           cycle: item.cycle,
           note_repair: item.indexDesc,
@@ -147,14 +145,33 @@ const ImportExel: FC<{
                 time: timeOnly,
               }
             }),
+            is_notified: 0,
           vehicles: [item.license_plate?.toString()],
         }
       })
-      setLoading(false)
 
-      console.log(formattedData)
+     for(let i = 0; i < formattedData.length; i++){
+      let cate_id = ""
+      let typeFind = type.find((itemType: any) => itemType.name === formattedData[i].type)
+
+      if (typeFind?.id) {
+        cate_id = typeFind?.id
+      } else {
+        const res = await createCategory(formattedData[i]?.type, "", "")
+        cate_id = res?.data?.id
+      }
+      formattedData[i].remind_category_id = cate_id
+     }
+   
+      console.log('====================================');
+      console.log("formattedData", formattedData);
+      console.log('====================================');
+      for (let i = 0; i < formattedData.length; i++) {
+        await addRemind(formattedData[i])
+      }
+      setLoading(false)
     } catch (error) {
-      console.log(error)
+      console.log("error >>", error)
       api?.message?.error("Import thất bại")
     }
   }

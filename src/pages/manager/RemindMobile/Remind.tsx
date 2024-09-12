@@ -64,6 +64,18 @@ const Remind: FC<RemindProps> = () => {
           }
         })
 
+        // for (let i = 0; i < viahicleGPS?.length; i++) {
+        //   try {
+        //     const reminds: any = await getRemindVehicleGPS(viahicleGPS[i].imei)
+        //     const icons: any = []
+        //     reminds?.data?.forEach((item: any) => {
+        //       item?.icon && icons.push(item.icon)
+        //     })
+        //     viahicleGPS[i]["icons"] = icons
+        //   } catch (error) {
+        //     api.message?.error("Lỗi !!")
+        //   }
+        // }
 
         dispatch?.setLoading?.(false)
         setViahicles(viahicleGPS)
@@ -74,7 +86,6 @@ const Remind: FC<RemindProps> = () => {
       try {
         const res = await getViahicle(keyword)
         const data = getData(res?.data)
-
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
       } catch (error) {

@@ -28,6 +28,7 @@ import { api } from "../../../../../_helper"
 import { getTire } from "../../../../../apis/tireAPI"
 import { t } from "i18next"
 import MultiDateTimePicker from "./MultiRangeDateWithTimePickerProps"
+import { log } from "console"
 
 interface FormAddRemindProps {
   viahicleSelected?: ViahicleType[]
@@ -303,14 +304,32 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             <>
               <Form.Item
                 name="km_before"
-                label="Cảnh báo sau"
+                label="Cảnh báo trước"
+                rules={[
+                  { required: true, message: "Vui lòng nhập KM cảnh báo trước" },
+                ]}
+              >
+                <InputNumber
+                  onChange={(value) => {
+                    form.setFieldsValue({ km_before: value })
+                  }}
+                />
+                <span style={{ marginLeft: 10, display: "inline-block" }}>
+                  (KM)
+                </span>
+              </Form.Item>
+
+
+              <Form.Item
+                name="cumulative_kilometers"
+                label="KM cảnh báo"
                 rules={[
                   { required: true, message: "Vui lòng nhập KM cảnh báo" },
                 ]}
               >
                 <InputNumber
                   onChange={(value) => {
-                    form.setFieldsValue({ km_before: value })
+                    form.setFieldsValue({ cumulative_kilometers: value })
                   }}
                 />
                 <span style={{ marginLeft: 10, display: "inline-block" }}>

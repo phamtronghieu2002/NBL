@@ -46,9 +46,7 @@ const Remind: FC<RemindProps> = () => {
               Authorization: `Bearer ${getTokenParam()}`,
             },
           },
-        )
-
-          
+        ) 
         const remind_viahicles_gps  = await getIconRemindViahicleGPS()
         
         const viahicleGPS = res?.data?.data?.map((item: any) => {

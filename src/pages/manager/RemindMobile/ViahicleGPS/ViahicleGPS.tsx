@@ -11,13 +11,14 @@ import { TableCM } from "../../../../conponents/TableCM/TableCM"
 import CardCar from "../components/Card/CardCar"
 import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRemindMobile"
 import { PlusCircleOutlined } from "@ant-design/icons"
+import { MaskLoader } from "../../../../conponents/Loader"
 
 interface ViahicleGPSType {
   viahicles: ViahicleType[]
 }
 
 const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
-  const { dispatch } = useContext(
+  const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
 
@@ -95,6 +96,8 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
       onMouseUp={() => setIsSelecting(false)} // Kết thúc quá trình chọn nhiều item
       ref={containerRef} // Tham chiếu container để xử lý click ra ngoài
     >
+      {viahiclesStore.loading && <MaskLoader />}
+
       <ModalCreateRemindMobile
         type="add"
         button={
