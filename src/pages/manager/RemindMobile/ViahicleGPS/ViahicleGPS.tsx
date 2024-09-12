@@ -1,87 +1,92 @@
-import { FC, useState, useRef, useEffect } from "react";
-import React from "react";
-import { Button } from "antd";
-import { ViahicleType } from "../../../../interface/interface";
-import { useContext } from "react";
+import { FC, useState, useRef, useEffect } from "react"
+import React from "react"
+import { Button } from "antd"
+import { ViahicleType } from "../../../../interface/interface"
+import { useContext } from "react"
 import {
   viahiclesContext,
   ViahicleProviderContextProps,
-} from "../providers/ViahicleProvider";
-import { TableCM } from "../../../../conponents/TableCM/TableCM";
-import CardCar from "../components/Card/CardCar";
-import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRemindMobile";
-import { PlusCircleOutlined } from "@ant-design/icons";
+} from "../providers/ViahicleProvider"
+import { TableCM } from "../../../../conponents/TableCM/TableCM"
+import CardCar from "../components/Card/CardCar"
+import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRemindMobile"
+import { PlusCircleOutlined } from "@ant-design/icons"
 
 interface ViahicleGPSType {
-  viahicles: ViahicleType[];
+  viahicles: ViahicleType[]
 }
 
 const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
   const { dispatch } = useContext(
-    viahiclesContext
-  ) as ViahicleProviderContextProps;
+    viahiclesContext,
+  ) as ViahicleProviderContextProps
 
-  const [selectedItems, setSelectedItems] = useState<any>([]);
-  const [showCheckbox, setShowCheckbox] = useState(false); // Hiển thị checkbox khi thả chuột
-  const [isSelecting, setIsSelecting] = useState(false); // Trạng thái nhấn giữ chuột
-  const [selectAll, setSelectAll] = useState(false); // Trạng thái chọn tất cả
+  const [selectedItems, setSelectedItems] = useState<any>([])
+  const [showCheckbox, setShowCheckbox] = useState(false) // Hiển thị checkbox khi thả chuột
+  const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
+  const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
 
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null)
 
   // Hàm handle khi check/uncheck checkbox
   const handleCheck = (id: number, checked: boolean) => {
     setSelectedItems((prevSelected: any) =>
-      checked ? [...prevSelected, id] : prevSelected.filter((itemId: any) => itemId !== id)
-    );
-  };
+      checked
+        ? [...prevSelected, id]
+        : prevSelected.filter((itemId: any) => itemId !== id),
+    )
+  }
 
   // Bắt đầu chọn khi nhấn giữ chuột
   const handleMouseDown = (id: number) => {
-    setIsSelecting(true); // Bắt đầu quá trình chọn item
-  };
+    setIsSelecting(true) // Bắt đầu quá trình chọn item
+  }
 
   // Kết thúc chọn khi thả chuột
   const handleMouseUp = (id: number) => {
     if (isSelecting) {
-      setShowCheckbox(true); // Hiển thị checkbox sau khi thả chuột
-      handleCheck(id, true); // Chọn item ngay khi thả chuột
+      setShowCheckbox(true) // Hiển thị checkbox sau khi thả chuột
+      handleCheck(id, true) // Chọn item ngay khi thả chuột
     }
-    setIsSelecting(false); // Kết thúc quá trình chọn
-  };
+    setIsSelecting(false) // Kết thúc quá trình chọn
+  }
 
   // Xử lý click ra ngoài, ẩn checkbox và reset trạng thái
   const handleClickOutside = (event: MouseEvent) => {
-    if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-      setShowCheckbox(false); // Ẩn checkbox khi click ra ngoài
-      setSelectedItems([]); // Reset các item đã chọn
-      setSelectAll(false); // Reset nút "Chọn tất cả"
+    if (
+      containerRef.current &&
+      !containerRef.current.contains(event.target as Node)
+    ) {
+      setShowCheckbox(false) // Ẩn checkbox khi click ra ngoài
+      setSelectedItems([]) // Reset các item đã chọn
+      setSelectAll(false) // Reset nút "Chọn tất cả"
     }
-  };
+  }
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside)
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [])
 
   // Xử lý nút reload
   const onReload = () => {
-    dispatch.freshKey();
-  };
+    dispatch.freshKey()
+  }
 
   // Xử lý khi bấm nút "Chọn tất cả"
   const handleSelectAll = () => {
     if (selectAll) {
       // Nếu đã chọn tất cả, bỏ chọn
-      setSelectedItems([]);
+      setSelectedItems([])
     } else {
       // Nếu chưa chọn tất cả, chọn tất cả item
-      setSelectedItems(viahicles.map((item) => item.id));
+      setSelectedItems(viahicles.map((item) => item.id))
     }
-    setSelectAll(!selectAll); // Đảo trạng thái "Chọn tất cả"
-    setShowCheckbox(true); // Hiển thị checkbox khi chọn tất cả
-  };
+    setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
+    setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
+  }
 
   return (
     <div
@@ -91,7 +96,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     >
       <ModalCreateRemindMobile
         button={
-          <Button type="primary" icon={<PlusCircleOutlined />}>
+          <Button type="primary" className="ml-2" icon={<PlusCircleOutlined />}>
             Thêm
           </Button>
         }
@@ -99,10 +104,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
       {/* Nút Chọn Tất Cả */}
       {showCheckbox && ( // Chỉ hiển thị nút "Chọn tất cả" khi checkbox đang được hiển thị
-        <Button
-          onClick={handleSelectAll}
-          style={{ marginBottom: 16 }}
-        >
+        <Button onClick={handleSelectAll} style={{ marginBottom: 16 }}>
           {selectAll ? "Bỏ chọn tất cả" : "Chọn tất cả"}
         </Button>
       )}
@@ -115,7 +117,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         search={{
           width: 200,
           onSearch(q) {
-            dispatch.setKeyword(q);
+            dispatch.setKeyword(q)
           },
           limitSearchLegth: 3,
         }}
@@ -139,11 +141,11 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
                 onCheckChange={(checked) => handleCheck(item.id, checked)} // Xử lý thay đổi trạng thái checkbox
               />
             </div>
-          );
+          )
         })}
       </TableCM>
     </div>
-  );
-};
+  )
+}
 
-export default ViahicleGPS;
+export default ViahicleGPS
