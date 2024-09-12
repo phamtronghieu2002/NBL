@@ -417,12 +417,13 @@ export const TabTableTire: FC<{
   ]
   const [tires, setTires] = useState<TireProps[]>([])
   const [keyword, setKeyword] = useState<string>("")
-  console.log("keyword", keyword)
-
+  const [loading, setLoading] = useState<boolean>(false)
   const fetchTire = async (keyword: string = "") => {
     try {
+      setLoading(true)
       const res = await getTire(data?.license_plate || "", keyword)
       setTires(res?.data)
+      setLoading(false)
     } catch (error) {}
   }
   useEffect(() => {
@@ -431,6 +432,7 @@ export const TabTableTire: FC<{
 
   return (
     <div>
+      {loading && <MaskLoader />}
       <TableC
         hiddenTitle
         title="123"

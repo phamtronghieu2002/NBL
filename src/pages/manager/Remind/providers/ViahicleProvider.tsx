@@ -8,6 +8,7 @@ interface ViahicleProviderProps {
   keyword?: string
   type: number
   loading?: boolean
+  viahicleGPS?: ViahicleType[]
 }
 
 export interface ViahicleProviderContextProps {
@@ -20,11 +21,13 @@ export interface ViahicleProviderContextProps {
     setViahicle: (viahicle: ViahicleType[]) => void
     getIdViahicles: () => number[] // Assuming `id` is a string
     setLoading?: (loading: boolean) => void
+    setViahicleGPS?: (viahicleGPS: ViahicleType[]) => void
   }
 }
 
 const initState: ViahicleProviderProps = {
   viahiclesStore: [],
+  viahicleGPS: [],
   freshKey: 0,
   keyword: "",
   type: 1,
@@ -46,7 +49,12 @@ const ViahicleProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
         type: type,
       }))
     },
-
+    setViahicleGPS: (viahicleGPS: ViahicleType[]) => {
+      setState((prevState) => ({
+        ...prevState,
+        viahicleGPS: viahicleGPS,
+      }))
+    },
     freshKey: () => {
       setState({ ...viahiclesStore, freshKey: Math.random() })
     },

@@ -214,6 +214,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 checked={selectedItems.includes(item)} // Trạng thái checkbox
                 onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
+              
             </div>
           )
         })}

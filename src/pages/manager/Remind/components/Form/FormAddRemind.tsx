@@ -81,6 +81,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     useEffect(() => {
       // call api to get remindType
+
+       console.log("initialValues >>>", initialValues);
+       
       if (Object.keys(initialValues).length === 0) {
         form.setFieldsValue({
           is_notified: true,
@@ -439,7 +442,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             label="Bật thông báo"
             valuePropName="checked"
           >
-            <Switch defaultChecked />
+            <Switch checked={initialValues ? initialValues?.is_notified ==0  : true} />
           </Form.Item>
 
           {/*  */}

@@ -29,7 +29,6 @@ const ImportExel: FC<{
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
-  console.log("viahiclesStore", viahiclesStore)
 
   const handleImport = async () => {
     try {
@@ -54,7 +53,6 @@ const ImportExel: FC<{
         })
       })
 
-      console.log(excelData)
       //data của add phương tiện mới
       const dataNewVehicles = excelData.map((item) => ({
         license_plate: String(item.license_plate),
@@ -62,20 +60,35 @@ const ImportExel: FC<{
         license: String(item.phoneNumber),
         user_address: String(item.address),
       }))
+
+      const viahicleGPS = viahiclesStore?.viahicleGPS
+
+      // check trùng biển số xe và lấy được biển số xe trùng
+
+      const licensePlates = dataNewVehicles.map((item) => item.license_plate)
+      const licensePlatesGPS = viahicleGPS?.map((item) => item.license_plate)
+
+      
+      const duplicateLicensePlates = licensePlates.filter((item) =>
+        licensePlatesGPS?.includes(item),
+      )
+      console.log("duplicateLicensePlates;", duplicateLicensePlates);
+      
+
+      if (duplicateLicensePlates.length > 0) {
+        api.message?.error(
+          `Biển số xe ${duplicateLicensePlates.join(", ")} đã tồn tại trong danh sách phương tiện GPS`,
+        )
+        return
+      }
+
+
       setLoading(true)
+    
       await addViahicleExel(dataNewVehicles)
       dispatch?.freshKey()
 
-      // console.log("dataNewVehicles >>>", dataNewVehicles)
 
-      //data của type dạng array, insert call api từng hàng index 1 vào từ 0
-      //   {
-      //     "license_plate": "1",
-      //     "seri": "avc",
-      //     "size": "50x50",
-      //     "brand": "toyota"
-      // }
-      //đây là 1 ví dụ của 1 object parsedRemindTireData
       const parsedRemindTireData = excelData.flatMap((item) =>
         item.remindTire
           .filter((tire: any) => tire)
@@ -90,10 +103,13 @@ const ImportExel: FC<{
           }),
       )
 
-      console.log("parsedRemindTireData >>>", parsedRemindTireData)
 
       for (let i = 0; i < parsedRemindTireData.length; i++) {
-        await addTire(parsedRemindTireData[i])
+            try {
+              await addTire(parsedRemindTireData[i])
+            } catch (error) {
+                api.message?.error("Thêm lốp bị trùng series")
+            }
       }
       const convertToUnix = (dateString: string): any => {
         try {
@@ -163,16 +179,13 @@ const ImportExel: FC<{
       formattedData[i].remind_category_id = cate_id
      }
    
-      console.log('====================================');
-      console.log("formattedData", formattedData);
-      console.log('====================================');
       for (let i = 0; i < formattedData.length; i++) {
         await addRemind(formattedData[i])
       }
       setLoading(false)
     } catch (error) {
       console.log("error >>", error)
-      api?.message?.error("Import thất bại")
+      api?.message?.error("Import thất bại seri lốp bị trùng hoặc biển số xe bị trùng")
     }
   }
 

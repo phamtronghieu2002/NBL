@@ -61,7 +61,7 @@ const Form: FC<{
     // call api thêm nhắc nhở
     // setLoading(true)
     await addRemind(images)
-    // action?.closeModal?.()
+    action?.closeModal?.()
     api.message?.success("Thêm nhắc nhở thành công")
     onReload?.()
   }
@@ -189,8 +189,8 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
 
     Object.keys(convertedData).forEach((key) => {
       if (isTimestamp(convertedData[key])) {
-        // Chỉ chuyển đổi nếu là timestamp
-        convertedData[key] = moment(convertedData[key])
+        // Chỉ chuyển đổi nếu là timestamp và cộng thêm 7 tiếng
+        convertedData[key] = moment.unix(convertedData[key]).add(7, "hours")
       }
     })
 
