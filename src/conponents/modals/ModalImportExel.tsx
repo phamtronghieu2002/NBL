@@ -12,6 +12,7 @@ import { ViahicleType } from "../../interface/interface"
 import { api } from "../../_helper"
 import { addViahicle, addViahicleExel } from "../../apis/viahicleAPI"
 import { MaskLoader } from "../Loader"
+import { addTire } from "../../apis/tireAPI"
 interface ModalImportExelProps {
   button: React.ReactNode
 }
@@ -35,7 +36,6 @@ const ImportExel: FC<{
       excelData.forEach((item, index) => {
         // Kiểm tra thuộc tính remindDate
         const remindDate = item.remindDate
-
         if (!Array.isArray(remindDate)) {
           console.log(
             `Item at index ${index} has invalid remindDate format: Not an array`,
@@ -88,8 +88,13 @@ const ImportExel: FC<{
             }
           }),
       )
-      // console.log("Lop xe >>>", parsedRemindTireData);
-      // tạo
+
+      console.log("parsedRemindTireData >>>", parsedRemindTireData);
+      
+    
+    for(let i = 0; i < parsedRemindTireData.length; i++) {  
+        await addTire(parsedRemindTireData[i])
+    }
       const convertToUnix = (dateString: string): any => {
         try {
           if (
@@ -115,28 +120,36 @@ const ImportExel: FC<{
         }
       }
 
-      const formattedData = excelData.map((item) => ({
-        remind_category_id: item.license_plate,
-        expiration_time: convertToUnix(item.exp),
-        cycle: item.cycle,
-        note_repair: item.indexDesc,
-        schedules: item.remindDate
-          .filter((dateStr: any) => dateStr) // Lọc các giá trị null hoặc undefined
-          .map((dateStr: any) => {
-            const [startDate, endDateTime] = dateStr.split("-")
-            const startDateTime = `${startDate.trim()} ${endDateTime
-              .split(" ")[1]
-              .trim()}`
-            const endDateTimeFull = endDateTime.trim()
-            const timeOnly = endDateTime.split(" ")[1].trim()
-            return {
-              start: convertToUnix(startDateTime),
-              end: convertToUnix(endDateTimeFull),
-              time: timeOnly,
-            }
-          }),
-        vehicles: [item.license_plate?.toString()],
-      }))
+      const formattedData = excelData.map((item) => {
+
+          console.log('====================================');
+          console.log("items >>>>>>>", item);
+          console.log('====================================');
+
+
+        return {
+          remind_category_id: item.license_plate,
+          expiration_time: convertToUnix(item.exp),
+          cycle: item.cycle,
+          note_repair: item.indexDesc,
+          schedules: item.remindDate
+            .filter((dateStr: any) => dateStr) // Lọc các giá trị null hoặc undefined
+            .map((dateStr: any) => {
+              const [startDate, endDateTime] = dateStr.split("-")
+              const startDateTime = `${startDate.trim()} ${endDateTime
+                .split(" ")[1]
+                .trim()}`
+              const endDateTimeFull = endDateTime.trim()
+              const timeOnly = endDateTime.split(" ")[1].trim()
+              return {
+                start: convertToUnix(startDateTime),
+                end: convertToUnix(endDateTimeFull),
+                time: timeOnly,
+              }
+            }),
+          vehicles: [item.license_plate?.toString()],
+        }
+      })
       setLoading(false)
 
       console.log(formattedData)
