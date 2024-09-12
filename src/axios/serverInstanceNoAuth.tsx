@@ -15,7 +15,7 @@ const createNoAuthInstance = (API: string) => {
   })
 
   const interceptorsRq = (config: InternalAxiosRequestConfig<any>) => {
-    let accessToken = storage.getAccessToken() || getTokenParam()
+    let accessToken =  getTokenParam() || storage.getAccessToken() 
 
     config.headers["x-mobicam-token"] = getTokenAuthHeader(accessToken)
 
@@ -58,7 +58,7 @@ export const addressInstance = createNoAuthInstance(ADDRESS_DOMAIN)
 // )
 
 export const axiosInstance = createNoAuthInstance(
-  "http://192.168.2.42:3005/api/v1/remind/",
+  "http://192.168.2.42:3005/api/v1/remind",
 )
 
 // export const axiosInstance = createNoAuthInstance(
