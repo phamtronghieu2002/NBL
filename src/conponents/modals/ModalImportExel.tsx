@@ -72,44 +72,55 @@ const ImportExel: FC<{
         }),
     )
     // console.log(parsedRemindTireData);
-    // tạo 
+    // tạo
     const convertToUnix = (dateString: string): any => {
-      if(dateString === null || dateString === undefined || dateString === '') return '';
-      const [datePart, timePart] = dateString.trim().split(" ")
-      const [day, month, year] = datePart.split("/")
-      const [hours, minutes] = timePart.split(":")
+      try {
+        if (
+          dateString === null ||
+          dateString === undefined ||
+          dateString === ""
+        )
+          return ""
+        const [datePart, timePart] = dateString.trim().split(" ")
+        const [day, month, year] = datePart.split("/")
+        const [hours, minutes] = timePart.split(":")
 
-      const date = new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day),
-        Number(hours),
-        Number(minutes),
-      )
-      return Math.floor(date.getTime() / 1000) // Chuyển sang big INT (Unix timestamp)
+        const date = new Date(
+          Number(year),
+          Number(month) - 1,
+          Number(day),
+          Number(hours),
+          Number(minutes),
+        )
+        return Math.floor(date.getTime() / 1000)
+      } catch (err) {
+        throw err
+      }
     }
+    console.log(convertToUnix(excelData[0].exp))
     const formattedData = excelData.map((item) => ({
       remind_category_id: item.license_plate,
       expiration_time: convertToUnix(item.exp),
       cycle: item.cycle,
       note_repair: item.indexDesc,
       schedules: item.remindDate
-        .filter((dateStr:any) => dateStr) // Lọc các giá trị null hoặc undefined
-        .map((dateStr:any) => {
+        .filter((dateStr: any) => dateStr) // Lọc các giá trị null hoặc undefined
+        .map((dateStr: any) => {
           const [startDate, endDateTime] = dateStr.split("-")
           const startDateTime = `${startDate.trim()} ${endDateTime
             .split(" ")[1]
             .trim()}`
-          const endDateTimeFull = endDateTime.trim();
-          const timeOnly = endDateTime.split(' ')[1].trim();
+          const endDateTimeFull = endDateTime.trim()
+          const timeOnly = endDateTime.split(" ")[1].trim()
           return {
-            start: convertToUnix(startDateTime), 
-            end: convertToUnix(endDateTimeFull), 
-            time: timeOnly, 
+            start: convertToUnix(startDateTime),
+            end: convertToUnix(endDateTimeFull),
+            time: timeOnly,
           }
         }),
       vehicles: [item.license_plate?.toString()],
     }))
+    console.log(formattedData)
   }
 
   return (

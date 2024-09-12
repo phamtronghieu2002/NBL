@@ -6,11 +6,14 @@ import * as XLSX from "xlsx"
 import { number } from "react-i18next/icu.macro"
 
 interface UploadExelProps {
-  setIsUpload: any,
+  setIsUpload: any
   setExcelData: any
 }
 
-const UploadExel: React.FC<UploadExelProps> = ({ setIsUpload, setExcelData }) => {
+const UploadExel: React.FC<UploadExelProps> = ({
+  setIsUpload,
+  setExcelData,
+}) => {
   const [tableColumns, setTableColumns] = useState<any[]>([])
   const [tableData, setTableData] = useState<any[]>([])
 
@@ -37,30 +40,36 @@ const UploadExel: React.FC<UploadExelProps> = ({ setIsUpload, setExcelData }) =>
         const indexDes = header.indexOf("Nội dung")
 
         const indicesDate = header.reduce((acc, col, index) => {
-          if (col === "Thời gian nhắc nhở") acc.push(index);
-          return acc;
-        }, []);
+          if (col === "Thời gian nhắc nhở") acc.push(index)
+          return acc
+        }, [])
 
-        const indicesSeri= header.reduce((acc, col, index) => {
-          if (col === "Lốp(Seri,size,brand)") acc.push(index);
-          return acc;
-        }, []);
+        const indicesSeri = header.reduce((acc, col, index) => {
+          if (col === "Lốp(Seri,size,brand)") acc.push(index)
+          return acc
+        }, [])
 
-
-        const result = jsonData.slice(1).map((row) => ({
-          license_plate: row[indexBienSoXe],
-          type: row[indexLoaiCanhBao],
-          phoneNumber: row[indexPhoneNumber],
-          name: row[indexName],
-          address: row[indexAddress],
-          exp: row[indexExp],
-          cycle: row[indexCycle],
-          indexDesc: row[indexDes],
-          remindDate: indicesDate.map((index:number) => row[index]),
-          remindTire: indicesSeri.map((index:number) => row[index])
-        }))
-
-        setExcelData(result)  
+        const result = jsonData
+          .slice(1)
+          .filter(
+            (row) =>
+              row[indexBienSoXe] !== null &&
+              row[indexBienSoXe] !== undefined &&
+              row[indexBienSoXe] !== "",
+          )
+          .map((row) => ({
+            license_plate: row[indexBienSoXe],
+            type: row[indexLoaiCanhBao],
+            phoneNumber: row[indexPhoneNumber],
+            name: row[indexName],
+            address: row[indexAddress],
+            exp: row[indexExp],
+            cycle: row[indexCycle],
+            indexDesc: row[indexDes],
+            remindDate: indicesDate.map((index: number) => row[index]),
+            remindTire: indicesSeri.map((index: number) => row[index]),
+          }))
+        setExcelData(result)
 
         // Generate columns for the Ant Design table
         const columns = jsonData[0].map((col: string, index: number) => ({
