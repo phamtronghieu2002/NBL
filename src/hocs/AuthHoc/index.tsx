@@ -30,7 +30,7 @@ export const AuthHoc: React.FC<IProps> = ({ children }) => {
         _log("APP INITIAL ERROR", error)
       })
       .finally(() => {})
-  }
+  } 
 
   useEffect(() => {
     const refeshToken = storage.getRefreshToken()
