@@ -26,6 +26,8 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
   const [showCheckbox, setShowCheckbox] = useState(false) // Hiển thị checkbox khi thả chuột
   const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
+  const [isPressing, setIsPressing] = useState(false)
+  const pressTimer = useRef<any>()
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -90,6 +92,21 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
   }
 
+  const handleTouchStart = (item: any) => {
+    pressTimer.current = setTimeout(() => {
+      console.log(item)
+      setIsPressing(true)
+    }, 500) // Thay đổi thời gian giữ ở đây
+  }
+
+  const handleTouchEnd = () => {
+    clearTimeout(pressTimer.current)
+    if (isPressing) {
+      console.log("Long press detected")
+      setIsPressing(false)
+    }
+  }
+
   return (
     <div
       className="mt-7"
@@ -148,6 +165,8 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
               key={item.imei}
               onMouseDown={() => handleMouseDown(item)} // NhấHum to Kannadan chuột để bắt đầu chọn
               onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
+              onTouchStart={() => handleTouchStart(item)}
+              onTouchEnd={handleTouchEnd}
               className="item-container"
             >
               <CardCar

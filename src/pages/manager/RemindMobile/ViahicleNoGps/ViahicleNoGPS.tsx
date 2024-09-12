@@ -40,6 +40,8 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
   const [showCheckbox, setShowCheckbox] = useState(false) // Hiển thị checkbox khi thả chuột
   const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
+  const [isPressing, setIsPressing] = useState(false)
+  const pressTimer = useRef<any>()
 
   const containerRef = useRef<HTMLDivElement>(null)
 
@@ -96,6 +98,21 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
     }
     setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
+  }
+
+  const handleTouchStart = (item: any) => {
+    pressTimer.current = setTimeout(() => {
+      console.log(item)
+      setIsPressing(true)
+    }, 500) // Thay đổi thời gian giữ ở đây
+  }
+
+  const handleTouchEnd = () => {
+    clearTimeout(pressTimer.current)
+    if (isPressing) {
+      console.log("Long press detected")
+      setIsPressing(false)
+    }
   }
 
   return (
@@ -186,6 +203,8 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
               onMouseDown={() => handleMouseDown(item)} // Nhấn chuột để bắt đầu chọn
               onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
               className="item-container"
+              onTouchStart={() => handleTouchStart(item)}
+              onTouchEnd={handleTouchEnd}
             >
               <CardCar
                 weight=""
