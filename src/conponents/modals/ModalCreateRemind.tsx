@@ -45,7 +45,15 @@ const Form: FC<{
 
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
-        images.append(key, JSON.stringify(formData[key]))
+        const value = formData[key]
+        // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
+        if (Array.isArray(value) || typeof value === "object") {
+          images.append(key, JSON.stringify(value))
+        } else if (typeof value === "number") {
+          images.append(key, value)
+        } else {
+          images.append(key, value)
+        }
       }
     }
     images.append("token", getTokenParam())

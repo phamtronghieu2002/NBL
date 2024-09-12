@@ -33,7 +33,7 @@ import { log } from "console"
 interface FormAddRemindProps {
   viahicleSelected?: ViahicleType[]
   initialValues?: any
-  onSubmit: (formData: any, callback: any,images:any) => void
+  onSubmit: (formData: any, callback: any, images: any) => void
 }
 
 const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
@@ -129,20 +129,12 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             const formData = new FormData()
             // Thêm dữ liệu vào formData
             imageFiles.forEach((file) => {
-              formData.append('images', file.originFileObj) // Đảm bảo là tệp ảnh gốc
+              formData.append("images", file.originFileObj) // Đảm bảo là tệp ảnh gốc
             })
 
-        
-       
-              
-            console.log("formData >>>", formData);
-            
+            console.log("formData >>>", formData)
 
-
-            
-
-
-            onSubmit(processedValuesForm, fetchCategory,formData) // Gửi dữ liệu đã xử lý
+            onSubmit(processedValuesForm, fetchCategory, formData) // Gửi dữ liệu đã xử lý
           })
           .catch(() => {
             console.log("Lỗi xác thực:")
@@ -311,7 +303,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           {viahiclesStore.type ? (
             <>
               <Form.Item
-               
                 name="km_before"
                 label="Cảnh báo sau"
                 rules={[
@@ -384,7 +375,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           {/* Upload ảnh */}
           <Form.Item label="Tải lên hình ảnh" style={{ gap: 10 }}>
             <Upload
-             multiple={true}
+              multiple={true}
               accept=".png, .jpg, .jpeg"
               listType="picture-card"
               customRequest={({ file }) => handleImageUpload(file)} // Xử lý khi tải ảnh
@@ -406,7 +397,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               }}
               beforeUpload={(file) => {
                 // Tạo URL xem trước ảnh
-                (file as any).thumbUrl = URL.createObjectURL(file)
+                ;(file as any).thumbUrl = URL.createObjectURL(file)
                 return false // Ngăn chặn tự động upload
               }}
             >

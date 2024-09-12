@@ -74,6 +74,8 @@ const Remind: FC<RemindProps> = () => {
       try {
         const res = await getViahicle(keyword)
         const data = getData(res?.data)
+        console.log("=>>>>>>>>>>>>>>", data)
+
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
       } catch (error) {
@@ -101,7 +103,7 @@ const Remind: FC<RemindProps> = () => {
       <Tabs
         type="card"
         defaultActiveKey="1"
-        items={getTabItem(viahicles)}
+        items={getTabItem(viahicles, viahiclesNoGPS)}
         onChange={onChangeTab}
       />
     </div>

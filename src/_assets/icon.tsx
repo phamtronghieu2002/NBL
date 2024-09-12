@@ -14,7 +14,7 @@ import {
   MdOutlineLocalPolice,
   MdOutlineStackedLineChart,
   MdWaterfallChart,
-  MdOutlineBatteryAlert
+  MdOutlineBatteryAlert,
 } from "react-icons/md"
 import {
   PiChargingStationLight,
@@ -27,8 +27,7 @@ import {
   PiReadCvLogoFill,
   PiSpeedometerLight,
   PiBellRingingBold,
-  PiCarFill
-
+  PiCarFill,
 } from "react-icons/pi"
 import {
   RiChatHistoryFill,
@@ -37,7 +36,12 @@ import {
   RiMapPinTimeLine,
 } from "react-icons/ri"
 import { SiPolywork } from "react-icons/si"
-import { TbLassoPolygon, TbListDetails, TbNetworkOff } from "react-icons/tb"
+import {
+  TbLassoPolygon,
+  TbListDetails,
+  TbNetworkOff,
+  TbLocation,
+} from "react-icons/tb"
 
 export * as Fa6Icon from "react-icons/fa6"
 export * as FaIcon from "react-icons/fa"

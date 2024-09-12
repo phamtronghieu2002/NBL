@@ -1,10 +1,11 @@
 import type { TabsProps } from "antd"
+import { ViahicleType } from "../../../interface/interface"
 import ViahicleGPS from "../RemindMobile/ViahicleGPS/ViahicleGPS"
 import ViahicleNoGPS from "../RemindMobile/ViahicleNoGps/ViahicleNoGPS"
-import { ViahicleType } from "../../../interface/interface"
 
 export default function getTabItem(
   viahicles: ViahicleType[],
+  viahiclesNoGPS: ViahicleType[],
 ): TabsProps["items"] {
   return [
     {
@@ -15,7 +16,7 @@ export default function getTabItem(
     {
       key: "0",
       label: "Phương tiện không sử dụng GPS",
-      children: <ViahicleNoGPS viahicles={viahicles} />,
+      children: <ViahicleNoGPS viahicles={viahiclesNoGPS} />,
     },
   ]
 }
