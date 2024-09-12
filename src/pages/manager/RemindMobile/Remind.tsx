@@ -17,7 +17,10 @@ import { getViahicle } from "../../../apis/viahicleAPI"
 import { getData } from "../../../utils/handleDataViahicle"
 import "./customeTab.scss"
 import axios from "axios"
-import { getIconRemindViahicleGPS, getRemindVehicleGPS } from "../../../apis/remindAPI"
+import {
+  getIconRemindViahicleGPS,
+  getRemindVehicleGPS,
+} from "../../../apis/remindAPI"
 import { getTokenParam } from "../../../utils/_param"
 interface RemindProps {}
 
@@ -47,9 +50,8 @@ const Remind: FC<RemindProps> = () => {
           },
         )
 
-          
-        const remind_viahicles_gps  = await getIconRemindViahicleGPS()
-        
+        const remind_viahicles_gps = await getIconRemindViahicleGPS()
+
         const viahicleGPS = res?.data?.data?.map((item: any) => {
           return {
             key: item.id,
@@ -58,8 +60,7 @@ const Remind: FC<RemindProps> = () => {
             license_plate: item.vehicle_name,
             user_name: item.customer_name,
             imei: item.imei,
-            icons:remind_viahicles_gps?.data[item.imei]
-
+            icons: remind_viahicles_gps?.data[item.imei],
           }
         })
 
@@ -85,6 +86,8 @@ const Remind: FC<RemindProps> = () => {
       try {
         const res = await getViahicle(keyword)
         const data = getData(res?.data)
+        console.log("=>>>>>>>>>>>>>>", data)
+
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
       } catch (error) {
@@ -112,7 +115,7 @@ const Remind: FC<RemindProps> = () => {
       <Tabs
         type="card"
         defaultActiveKey="1"
-        items={getTabItem(viahicles)}
+        items={getTabItem(viahicles, viahiclesNoGPS)}
         onChange={onChangeTab}
       />
     </div>

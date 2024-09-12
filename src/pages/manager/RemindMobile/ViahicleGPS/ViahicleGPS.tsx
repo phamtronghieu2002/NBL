@@ -39,7 +39,8 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
   // Bắt đầu chọn khi nhấn giữ chuột
   const handleMouseDown = (id: number) => {
-    setIsSelecting(true) // Bắt đầu quá trình chọn item
+    //  Bắt đầu quá trình chọn item
+    setIsSelecting(true)
   }
 
   // Kết thúc chọn khi thả chuột
@@ -82,7 +83,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
       setSelectedItems([])
     } else {
       // Nếu chưa chọn tất cả, chọn tất cả item
-      setSelectedItems(viahicles.map((item) => item.id))
+      setSelectedItems(viahicles.map((item) => item))
     }
     setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
@@ -90,13 +91,22 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
   return (
     <div
-      className="mt-5 "
+      className="mt-7"
       onMouseUp={() => setIsSelecting(false)} // Kết thúc quá trình chọn nhiều item
       ref={containerRef} // Tham chiếu container để xử lý click ra ngoài
     >
       <ModalCreateRemindMobile
         button={
-          <Button type="primary" className="ml-2" icon={<PlusCircleOutlined />}>
+          <Button
+            onClick={() => {
+              console.log("selectedItems", selectedItems)
+
+              // dispatch.setViahicle(selectedItems)
+            }}
+            type="primary"
+            className="ml-2"
+            icon={<PlusCircleOutlined />}
+          >
             Thêm
           </Button>
         }
@@ -132,18 +142,18 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         {viahicles.map((item: any) => {
           return (
             <div
-              key={item.id}
-              onMouseDown={() => handleMouseDown(item.id)} // Nhấn chuột để bắt đầu chọn
-              onMouseUp={() => handleMouseUp(item.id)} // Thả chuột để hiển thị checkbox và chọn item
+              key={item.imei}
+              onMouseDown={() => handleMouseDown(item)} // Nhấn chuột để bắt đầu chọn
+              onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
               className="item-container"
             >
               <CardCar
-                weight="Ô tô có tải trọng 5000 tấn"
+                weight="ád"
                 isGPS
                 {...item}
                 showCheckbox={showCheckbox} // Hiển thị checkbox khi người dùng nhấn giữ và thả chuột
-                checked={selectedItems.includes(item.id)} // Trạng thái checkbox
-                onCheckChange={(checked) => handleCheck(item.id, checked)} // Xử lý thay đổi trạng thái checkbox
+                checked={selectedItems.includes(item)} // Trạng thái checkbox
+                onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
             </div>
           )
