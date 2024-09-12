@@ -15,7 +15,10 @@ import ModalCreateRemind from "../../../conponents/modals/ModalCreateRemind"
 import { getViahicle } from "../../../apis/viahicleAPI"
 import axios from "axios"
 import { getData } from "../../../utils/handleDataViahicle"
-import { getIconRemindViahicleGPS, getRemindVehicleGPS } from "../../../apis/remindAPI"
+import {
+  getIconRemindViahicleGPS,
+  getRemindVehicleGPS,
+} from "../../../apis/remindAPI"
 import { log } from "console"
 import { getTokenParam } from "../../../utils/_param"
 import { api } from "../../../_helper"
@@ -46,9 +49,9 @@ const Remind: FC<RemindProps> = () => {
               Authorization: `Bearer ${getTokenParam()}`,
             },
           },
-        ) 
-        const remind_viahicles_gps  = await getIconRemindViahicleGPS()
-        
+        )
+        const remind_viahicles_gps = await getIconRemindViahicleGPS()
+
         const viahicleGPS = res?.data?.data?.map((item: any) => {
           return {
             key: item.id,
@@ -57,11 +60,10 @@ const Remind: FC<RemindProps> = () => {
             license_plate: item.vehicle_name,
             user_name: item.customer_name,
             imei: item.imei,
-            icons:remind_viahicles_gps?.data[item.imei]
-
+            icons: remind_viahicles_gps?.data[item.imei],
           }
         })
-
+        dispatch?.setViahicleGPS?.(viahicleGPS)
         // for (let i = 0; i < viahicleGPS?.length; i++) {
         //   try {
         //     const reminds: any = await getRemindVehicleGPS(viahicleGPS[i].imei)

@@ -16,6 +16,7 @@ import {
   viahiclesContext,
 } from "../../pages/manager/Remind/providers/ViahicleProvider"
 import { ViahicleType } from "../../interface/interface"
+import { ac } from "vitest/dist/types-e3c9754d.js"
 interface ModalAddViahicleProps {
   button: React.ReactNode
   type?: string
@@ -60,12 +61,24 @@ const FormAdd: FC<{
 
               try {
                 setLoading(true)
+                const viahicleGPS = viahiclesStore?.viahicleGPS
+                const isDouble = viahicleGPS?.some(
+                  (item) => item.license_plate === values.license_plate,
+                )
+                if (isDouble) {
+                  api.message?.error(
+                    "Biển số Phương tiện trùng với Danh sách phương tiện GPS!!!",
+                  )
+                  setLoading(false)
+                  return
+                }
                 await addViahicle({
                   ...values,
                 })
                 api.message?.success("Thêm phương tiện thành công")
                 dispatch.freshKey()
                 setLoading(false)
+                action?.closeModal()
               } catch (error) {
                 api.message?.error("Biển số Phương tiện trùng !!!")
                 setLoading(false)
@@ -186,9 +199,7 @@ const ModalAddViahicle: FC<ModalAddViahicleProps> = ({
   button,
   type,
 }) => {
-  console.log("====================================")
-  console.log("data", data)
-  console.log("====================================")
+
   const getAction = () => {
     if (type === "add") {
       return {

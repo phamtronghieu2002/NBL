@@ -76,6 +76,7 @@ const UploadExel: React.FC<UploadExelProps> = ({
           title: col,
           dataIndex: `col${index}`,
           key: `col${index}`,
+          width: 200,
         }))
 
         // Generate data for the Ant Design table
@@ -102,10 +103,10 @@ const UploadExel: React.FC<UploadExelProps> = ({
               columns={columns}
               dataSource={dataSource}
               pagination={false}
-              scroll={{ y: 400 }}
+              scroll={{ x: 1000, y: 400 }} // Thêm thanh trượt ngang và dọc
             />
           ),
-          width: 800,
+          width: "100%",
         })
       }
     }
