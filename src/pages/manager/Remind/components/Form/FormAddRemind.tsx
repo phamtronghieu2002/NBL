@@ -90,9 +90,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           note_repair: "Tới hạn thay dầu rồi,đi thay dầu thôi !!",
         })
       } else {
+        // cộng thêm n tháng
+        
         initialValues.expiration_time = moment(
-          initialValues?.expiration_timeStamp,
-        )
+          initialValues?.expiration_timeStamp
+        ).add(initialValues?.cycle, 'months');
 
         const tire = initialValues?.tire
         if (tire) {
@@ -102,6 +104,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           ...initialValues,
           vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
           tire: initialValues?.tire,
+          is_notified: initialValues?.is_notified == 0 ? true : false,
         })
         form.setFieldValue("cycle", initialValues?.cycle)
       }
@@ -442,7 +445,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             label="Bật thông báo"
             valuePropName="checked"
           >
-            <Switch checked={initialValues ? initialValues?.is_notified ==0  : true} />
+            <Switch checked />
           </Form.Item>
 
           {/*  */}

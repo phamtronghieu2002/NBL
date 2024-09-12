@@ -101,15 +101,17 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
   const [loadingButton, setLoadingButton] = useState<number>(0)
   const [isShowModal, setIsShowModal] = useState(false)
 
-  const confirm: PopconfirmProps["onConfirm"] = (e) => {
+  const confirm: PopconfirmProps["onConfirm"] = (e) => {  
     setIsShowModal(true)
   }
 
   const handleCancel = async (e: any, remind: any) => {
     try {
+      setLoading(true)
       await AutoFinishRemind(remind?.remind_id)
       api.message?.success("Gia hạn thông báo thành công")
       fetchRemind()
+      setLoading(false)
     } catch (error) {}
     cancel?.(e)
   }
@@ -303,10 +305,10 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           onCancel={(e) => handleCancel(e, record)}
           okText={
             <ModalCreateRemind
-              type="update"
+              type="add"
               onReload={fetchRemind}
               remindData={record}
-              button={<span>OK</span>}
+              button={<span>Đồng ý</span>}
             />
           }
           cancelText="No"
@@ -353,7 +355,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         }
         props={{}}
       >
-          RENDER remind items
+        RENDER remind items
       </TableCM>
     </>
   )

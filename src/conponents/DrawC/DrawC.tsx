@@ -1,6 +1,10 @@
-import { FC, useState } from "react"
+import { FC, useContext, useState } from "react"
 import React from "react"
 import { Button, Drawer } from "antd"
+import {
+  ViahicleProviderContextProps,
+  viahiclesContext,
+} from "../../pages/manager/Remind/providers/ViahicleProvider"
 interface DrawProps {
   button: React.ReactNode
   children: (data: { closeModal: any; data: any }) => React.ReactNode
@@ -18,12 +22,16 @@ const DrawC: FC<DrawProps> = ({
 }) => {
   const [open, setOpen] = useState(false)
 
+  const { viahiclesStore, dispatch } = useContext(
+    viahiclesContext,
+  ) as ViahicleProviderContextProps
   const showDrawer = () => {
     setOpen(true)
   }
 
   const onClose = () => {
     setOpen(false)
+    dispatch?.setViahicle?.([])
   }
   return (
     <>

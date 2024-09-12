@@ -301,7 +301,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           onCancel={(e) => handleCancel(e, record)}
           okText={
             <ModalCreateRemind
-              type="update"
+              type="add"
               onReload={fetchRemind}
               remindData={record}
               button={<span>OK</span>}

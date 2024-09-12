@@ -33,37 +33,44 @@ const Form: FC<{
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (formData: any, callback: any, images?: any) => {
-    console.log("====================================")
-    console.log("formData >>", formData)
-    console.log("====================================")
-    const cate_name = formData["cat_name"]
-    if (cate_name) {
-      const cat = await createCategory(cate_name, "", "")
-      formData["remind_category_id"] = cat.data
-      callback()
-    }
+    try {
+      console.log("====================================")
+      console.log("formData >>", formData)
+      console.log("====================================")
+      const cate_name = formData["cat_name"]
+      if (cate_name) {
+        const cat = await createCategory(cate_name, "", "")
+        formData["remind_category_id"] = cat.data
+        callback()
+      }
 
-    for (const key in formData) {
-      if (formData.hasOwnProperty(key)) {
-        const value = formData[key]
-        // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
-        if (Array.isArray(value) || typeof value === "object") {
-          images.append(key, JSON.stringify(value))
-        } else if (typeof value === "number") {
-          images.append(key, value)
-        } else {
-          images.append(key, value)
+      for (const key in formData) {
+        if (formData.hasOwnProperty(key)) {
+          const value = formData[key]
+          // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
+          if (Array.isArray(value) || typeof value === "object") {
+            images.append(key, JSON.stringify(value))
+          } else if (typeof value === "number") {
+            images.append(key, value)
+          } else {
+            images.append(key, value)
+          }
         }
       }
-    }
-    images.append("token", getTokenParam())
+      images.append("token", getTokenParam())
 
-    // call api thêm nhắc nhở
-    // setLoading(true)
-    await addRemind(images)
-    action?.closeModal?.()
-    api.message?.success("Thêm nhắc nhở thành công")
-    onReload?.()
+      // call api thêm nhắc nhở
+      setLoading(true)
+      await addRemind(images)
+      action?.closeModal?.()
+      api.message?.success("Thêm nhắc nhở thành công")
+      onReload?.()
+      setLoading(true)
+    } catch (error) {
+      api.message?.error("Thêm nhắc nhở thất bại")
+      setLoading(false)
+
+    }
   }
   const handleUpdate = async (formData: any, callback: any) => {
     console.log("formData", formData)
@@ -190,7 +197,10 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
     Object.keys(convertedData).forEach((key) => {
       if (isTimestamp(convertedData[key])) {
         // Chỉ chuyển đổi nếu là timestamp và cộng thêm 7 tiếng
-        convertedData[key] = moment.unix(convertedData[key]).add(7, "hours")
+        convertedData[key] = moment(convertedData[key]).add(
+          convertedData?.time_before,
+          "months",
+        )
       }
     })
 
