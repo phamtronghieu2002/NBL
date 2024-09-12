@@ -143,7 +143,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
           return (
             <div
               key={item.imei}
-              onMouseDown={() => handleMouseDown(item)} // Nhấn chuột để bắt đầu chọn
+              onMouseDown={() => handleMouseDown(item)} // NhấHum to Kannadan chuột để bắt đầu chọn
               onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
               className="item-container"
             >
