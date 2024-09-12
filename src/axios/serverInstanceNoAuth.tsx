@@ -70,7 +70,7 @@ export const axiosInstance = createNoAuthInstance(
 // )
 
 export const axiosFireBaseInstance = createNoAuthInstance(
-  "http://localhost:3005/api/v1/token-firebase/",
+  "http://192.168.2.42:3005/api/v1/token-firebase/",
 )
 
 // export const axiosInstance = createNoAuthInstance(

@@ -61,6 +61,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     const [randomKey, setRandomKey] = useState<number>(Math.random())
     const [imageFiles, setImageFiles] = useState<any[]>([])
+
+  
     const fetchTire = async () => {
       try {
         const res = await getTire(vhiahicleTire?.license_plate || "", "")

@@ -14,12 +14,11 @@ import { useEffect, useState } from "react"
 import { requestFCMToken, onMessageListener } from "./utils/firebase"
 import { addFirebaseToken } from "./apis/firebaseAPI"
 
-
 export const fetchFCM = async () => {
   try {
     const data: any = await requestFCMToken()
 
-     await addFirebaseToken(data)
+    await addFirebaseToken(data)
   } catch (error) {
     console.log(error)
   }
@@ -27,9 +26,7 @@ export const fetchFCM = async () => {
 export const App: React.FC = () => {
 
 
-
   onMessageListener().then((payload) => {
-   
     // toast(<div>
     //   <p>{payload.notification.title}</p>
     //   <p>{payload.notification.body}</p>
