@@ -172,6 +172,9 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
         {viahicles.map((item: any) => {
           return (
             <div
+              onClick={() => {
+                dispatch.setViahicle(selectedItems)
+              }}
               key={item.id}
               onMouseDown={() => handleMouseDown(item.id)} // Nhấn chuột để bắt đầu chọn
               onMouseUp={() => handleMouseUp(item.id)} // Thả chuột để hiển thị checkbox và chọn item

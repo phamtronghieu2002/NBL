@@ -2,7 +2,6 @@ import { FC, useEffect, useRef, useState } from "react"
 import { ModalCView } from "../ModalC/ModalC"
 import { Button } from "antd"
 import FormAddRemind from "../../pages/manager/RemindMobile/components/Form/FormAddRemind"
-import { FileExcelOutlined } from "@ant-design/icons"
 import { useContext } from "react"
 import {
   viahiclesContext,
