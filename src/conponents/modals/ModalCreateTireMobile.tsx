@@ -5,7 +5,7 @@ import type { FormProps } from "antd"
 import { Button, Input, Form } from "antd"
 import { api } from "../../_helper"
 import { MaskLoader } from "../Loader"
-import { TabTableTire } from "../Draws/DrawViahicle"
+import { TabTableTire } from "../Draws/DrawViahicleMobile"
 import {
   ViahicleProviderContextProps,
   viahiclesContext,

@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from "react"
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react"
 import { DatePicker, TimePicker, Button, Space, Row, Col, message } from "antd"
-import { CloseOutlined } from "@ant-design/icons" // Import icon "X"
+import { CloseOutlined } from "@ant-design/icons"
 import moment from "moment"
-// import 'antd/dist/antd.css';
 
 const { RangePicker } = DatePicker
 
@@ -14,30 +18,35 @@ export interface DateTimeRange {
 
 interface MultiRangeDateWithTimePickerProps {
   initialValues?: DateTimeRange[] // Giá trị ban đầu
+  setValueTime?: any
+  ref?: any
 }
 
-const MultiRangeDateWithTimePicker: React.FC<
+const MultiRangeDateWithTimePicker = forwardRef<
+  HTMLButtonElement, // Bạn có thể định nghĩa kiểu dữ liệu cho ref nếu cần
   MultiRangeDateWithTimePickerProps
-> = ({ initialValues }) => {
+>(({ initialValues, setValueTime }, ref) => {
   const [dateRanges, setDateRanges] = useState<any[]>([])
-  const [errors, setErrors] = useState<any[]>([]) // State để lưu lỗi
+  const [errors, setErrors] = useState<any[]>([])
+
+  console.log("errors >>", errors)
 
   useEffect(() => {
     if (initialValues) {
       const initialRanges = initialValues.map((item) => ({
-        range: [moment(item.start), moment(item.end)], // Chuyển timestamp thành moment
-        time: moment(item.time, "HH:mm:ss"), // Chuyển HH:mm:ss thành moment
+        range: [moment(item.start), moment(item.end)],
+        time: moment(item.time, "HH:mm:ss"),
       }))
       setDateRanges(initialRanges)
       setErrors(
         initialRanges.map(() => ({ rangeError: false, timeError: false })),
-      ) // Khởi tạo state errors
+      )
     }
   }, [initialValues])
 
   const addRange = () => {
     setDateRanges([...dateRanges, { range: null, time: null }])
-    setErrors([...errors, { rangeError: false, timeError: false }]) // Thêm error cho trường mới
+    setErrors([...errors, { rangeError: false, timeError: false }])
   }
 
   const handleRangeChange = (index: number, range: any) => {
@@ -46,7 +55,6 @@ const MultiRangeDateWithTimePicker: React.FC<
     setDateRanges(newRanges)
 
     const newErrors = [...errors]
-    newErrors[index].rangeError = false // Xóa lỗi khi chọn ngày
     setErrors(newErrors)
   }
 
@@ -56,7 +64,6 @@ const MultiRangeDateWithTimePicker: React.FC<
     setDateRanges(newRanges)
 
     const newErrors = [...errors]
-    newErrors[index].timeError = false // Xóa lỗi khi chọn giờ
     setErrors(newErrors)
   }
 
@@ -69,8 +76,8 @@ const MultiRangeDateWithTimePicker: React.FC<
 
   const validateForm = () => {
     const newErrors = dateRanges.map((item) => ({
-      rangeError: !item.range, // Kiểm tra nếu không chọn ngày
-      timeError: !item.time, // Kiểm tra nếu không chọn giờ
+      rangeError: !item.range,
+      timeError: !item.time,
     }))
     setErrors(newErrors)
 
@@ -82,11 +89,8 @@ const MultiRangeDateWithTimePicker: React.FC<
       const selectedRangesWithTime = dateRanges
         .map((item) => {
           if (item.range && item.time) {
-            // Lấy timestamp cho ngày bắt đầu và kết thúc
-            const startTimeStamp = moment(item.range[0]).valueOf() // timestamp cho start date
-            const endTimeStamp = moment(item.range[1]).valueOf() // timestamp cho end date
-
-            // Format time theo HH:mm:ss
+            const startTimeStamp = moment(item.range[0]).valueOf()
+            const endTimeStamp = moment(item.range[1]).valueOf()
             const formattedTime = item.time.format("HH:mm")
 
             return {
@@ -97,21 +101,26 @@ const MultiRangeDateWithTimePicker: React.FC<
           }
           return null
         })
-        .filter(Boolean) // Lọc các giá trị null
+        .filter(Boolean)
 
-      console.log("Dữ liệu submit:", selectedRangesWithTime)
-      message.success("Submit thành công!")
+      setValueTime(selectedRangesWithTime)
     } else {
+      setValueTime([])
       message.error("Vui lòng chọn đầy đủ ngày và giờ cho tất cả các trường!")
     }
   }
 
+  // useImperativeHandle sẽ giúp expose các phương thức ra ngoài thông qua ref
+
   return (
-    <Space direction="vertical" size={12} className="ml-7 mb-10">
+    <Space direction="vertical" size={13} className="mb-10">
       {dateRanges.map((item, index) => (
-        <Row key={index} gutter={16} align="middle">
+        <Row key={index} gutter={1} align="middle" className="!mr-[-100px]">
           <Col>
             <RangePicker
+              disabledDate={(current) => {
+                return current && current < moment().startOf("day")
+              }}
               onChange={(range) => handleRangeChange(index, range)}
               value={item.range}
               placeholder={["Chọn ngày bắt đầu", "Chọn ngày kết thúc"]}
@@ -147,12 +156,9 @@ const MultiRangeDateWithTimePicker: React.FC<
       <Button type="dashed" onClick={addRange}>
         Thêm thời gian nhắc nhở
       </Button>
-
-      {/* <Button type="primary" onClick={handleSubmit}>
-        Submit
-      </Button> */}
+      <button onClick={handleSubmit} className="hidden" ref={ref}></button>
     </Space>
   )
-}
+})
 
 export default MultiRangeDateWithTimePicker

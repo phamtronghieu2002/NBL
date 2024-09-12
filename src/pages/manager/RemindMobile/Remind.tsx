@@ -74,7 +74,6 @@ const Remind: FC<RemindProps> = () => {
       try {
         const res = await getViahicle(keyword)
         const data = getData(res?.data)
-        console.log("=>>>>>>>>>>>>>>", data)
 
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)

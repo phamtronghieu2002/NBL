@@ -10,7 +10,7 @@ export const getIconRemindViahicleGPS = () => {
 
 export const addRemind = (data: any) => {
   return axios.post(
-    "http://localhost:3005/api/v1/remind/main/add-remind",
+    "http://192.168.2.42:3005/api/v1/remind/main/add-remind",
     data,
     {
       headers: {
