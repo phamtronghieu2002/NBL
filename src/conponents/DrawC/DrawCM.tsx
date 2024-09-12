@@ -17,7 +17,7 @@ const DrawCM: FC<DrawProps> = ({
   width="100%" ,
   data,
 }) => {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(true)
 
   const showDrawer = () => {
     setOpen(true)

@@ -12,6 +12,7 @@ import CardCar from "../components/Card/CardCar"
 import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRemindMobile"
 import { PlusCircleOutlined } from "@ant-design/icons"
 import { MaskLoader } from "../../../../conponents/Loader"
+import DrawViahicle from "../../../../conponents/Draws/DrawViahicleMobile"
 
 interface ViahicleGPSType {
   viahicles: ViahicleType[]
@@ -94,7 +95,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
   const handleTouchStart = (item: any) => {
     pressTimer.current = setTimeout(() => {
-      console.log(item)
+      alert("Long press detected")
       setIsPressing(true)
     }, 500) // Thay đổi thời gian giữ ở đây
   }
@@ -156,7 +157,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         right={<></>}
         props={{}}
       >
-        {viahicles.map((item: any) => {
+        {viahicles.map((key: any, item: any) => {
           return (
             <div
               onClick={() => {
@@ -176,6 +177,13 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
                 checked={selectedItems.includes(item)} // Trạng thái checkbox
                 onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
+              {key === 0 && (
+                <DrawViahicle
+                  button={<Button type="primary">Xem chi tiết</Button>}
+                  title="Chi tiết"
+                  data={item}
+                />
+              )}
             </div>
           )
         })}
