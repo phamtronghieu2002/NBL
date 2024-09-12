@@ -62,7 +62,7 @@ const CardCar: FC<CardCarProps> = ({
           <div className="flex-1 mr-10">
             <b>{license_plate}</b>
             {icons?.length > 0 && icons[0] !== null && (
-              <span> ({icons.join(" - ")})</span>
+              <span> ({icons.filter((icon: any) => icon).join(" - ")})</span>
             )}
             <div className=" ">
               <p className="mb-1 mt-1">

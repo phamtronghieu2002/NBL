@@ -106,16 +106,6 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
     >
       {viahiclesStore.loading && <MaskLoader />}
 
-      {/* Nút Chọn Tất Cả */}
-      {showCheckbox && ( // Chỉ hiển thị nút "Chọn tất cả" khi checkbox đang được hiển thị
-        <Button
-          className="ml-2 mt-2"
-          onClick={handleSelectAll}
-          style={{ marginBottom: 16 }}
-        >
-          {selectAll ? "Bỏ chọn tất cả" : "Chọn tất cả"}
-        </Button>
-      )}
       {
         <div className="flex items-center justify-between">
           <div>
