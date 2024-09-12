@@ -91,7 +91,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
       setSelectedItems([])
     } else {
       // Nếu chưa chọn tất cả, chọn tất cả item
-      setSelectedItems(viahicles.map((item) => item.id))
+      setSelectedItems(viahicles.map((item) => item))
     }
     setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
@@ -180,8 +180,8 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 dispatch.setViahicle(selectedItems)
               }}
               key={item.id}
-              onMouseDown={() => handleMouseDown(item.id)} // Nhấn chuột để bắt đầu chọn
-              onMouseUp={() => handleMouseUp(item.id)} // Thả chuột để hiển thị checkbox và chọn item
+              onMouseDown={() => handleMouseDown(item)} // Nhấn chuột để bắt đầu chọn
+              onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
               className="item-container"
             >
               <CardCar
@@ -189,8 +189,8 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 isGPS={false}
                 {...item}
                 showCheckbox={showCheckbox} // Hiển thị checkbox khi người dùng nhấn giữ và thả chuột
-                checked={selectedItems.includes(item.id)} // Trạng thái checkbox
-                onCheckChange={(checked) => handleCheck(item.id, checked)} // Xử lý thay đổi trạng thái checkbox
+                checked={selectedItems.includes(item)} // Trạng thái checkbox
+                onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
             </div>
           )
