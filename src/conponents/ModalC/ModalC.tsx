@@ -76,6 +76,7 @@ export const ModalCView = forwardRef<ModalCViewAction, IProps>(
     return (
       <>
         <div
+          className="inline-block"
           onClick={() => {
             if (isValidToOpen) {
               setOpen(true)

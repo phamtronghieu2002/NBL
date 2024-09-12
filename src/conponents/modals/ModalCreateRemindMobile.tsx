@@ -185,11 +185,13 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
 
   const convertTimestampsToMoment = (data: any) => {
     const convertedData = { ...data }
-
+    console.log('====================================');
+    console.log("convertedData >>>", convertedData);
+    console.log('====================================');
     Object.keys(convertedData).forEach((key) => {
       if (isTimestamp(convertedData[key])) {
         // Chỉ chuyển đổi nếu là timestamp
-        convertedData[key] = moment(convertedData[key])
+        convertedData[key] = moment(convertedData[key]).add(convertedData?.time_before, 'months')
       }
     })
 
