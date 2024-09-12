@@ -40,6 +40,28 @@ import getTime from "../../utils/getTime"
 import moment from "moment"
 import DrawCM from "../DrawC/DrawCM"
 import { TableCM } from "../TableCM/TableCM"
+import {
+  BarcodeOutlined,
+  DeleteOutlined,
+  EditFilled,
+  ExpandOutlined,
+  PlusOutlined,
+  TrademarkCircleOutlined,
+} from "@ant-design/icons"
+import { PiBellRingingBold } from "react-icons/pi"
+import {
+  RiChatHistoryFill,
+  RiCheckLine,
+  RiFolderSettingsFill,
+  RiMapPinTimeLine,
+} from "react-icons/ri"
+import { GiPathDistance } from "react-icons/gi"
+import { FaUniversalAccess } from "react-icons/fa6"
+import { AiOutlineDisconnect } from "react-icons/ai"
+import { TbListDetails } from "react-icons/tb"
+import { GrDocumentUser } from "react-icons/gr"
+import { MdOutlineToggleOn } from "react-icons/md"
+import { FaCheckCircle } from "react-icons/fa"
 
 export interface RemindProps {
   id?: number
@@ -327,6 +349,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         onReload={() => {
           fetchRemind()
         }}
+        hiddenColumnPicker
         search={{
           width: 200,
           onSearch(q) {
@@ -334,26 +357,105 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           },
           limitSearchLegth: 3,
         }}
-        right={
-          <div className="ml-5 flex items-center">
-            <Select
-              className="h-[25px]"
-              defaultValue="all"
-              style={{ width: 120 }}
-              onChange={(value) => {
-                setFilter({ ...filter, select: value })
-              }}
-              options={[
-                { value: "all", label: "Tất cả" },
-                { value: "off", label: "Bật" },
-                { value: "on", label: "Tắt" },
-              ]}
-            />
-          </div>
-        }
         props={{}}
       >
-          RENDER remind items
+        <div style={{ overflow: "overlay" }} className="h-[400px]">
+          {remindsFilter?.map((item: any, index) => {
+            return (
+              <div className="border rounded-md p-3 py-1 my-2">
+                <div className="flex items-center">
+                  <div className="max-w-max">
+                    <p className="" style={{ fontSize: "56px" }}>
+                      {item?.icon ?? item.category_icon}
+                    </p>
+                  </div>
+                  <div className="flex-1 ml-4">
+                    <div className="flex justify-between w-full">
+                      <div className="mr-5">
+                        <p className="flex items-center mb-2">
+                          <PiBellRingingBold
+                            className="flex-shrink-0"
+                            size={18}
+                          />
+                          <span className="ml-2 truncate max-w-[75px]">
+                            {item?.note_repair}
+                          </span>
+                        </p>
+                        <p className="flex items-center mb-2">
+                          <RiFolderSettingsFill size={18} />
+                          <span className="ml-2">{item?.name}</span>
+                        </p>
+                        <p className="flex items-center mb-2">
+                          <GiPathDistance size={18} />
+                          <span className="ml-2">
+                            {item?.cumulative_kilometers}
+                          </span>
+                        </p>
+                      </div>
+                      <div>
+                        <p className="flex items-center mb-2">
+                          <FaUniversalAccess size={18} />
+                          <span className="ml-2">{item?.is_notified}</span>
+                        </p>
+                        <p className="flex items-center mb-2">
+                          <RiMapPinTimeLine size={18} />
+                          <span className="ml-2">{item?.expiration_time}</span>
+                        </p>
+                        <p className="flex items-center mb-2">
+                          <RiChatHistoryFill size={18} />
+                          <span className="ml-2">
+                            {item?.complete_date ?? "-"}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mt-1">
+                      <div className="flex">
+                        <Popconfirm
+                          title="Xác nhận hoàn thành nhắc nhở"
+                          description="Bạn có muốn cập nhật thông tin cho chu kì tiếp theo không?"
+                          onConfirm={confirm}
+                          onCancel={(e) => handleCancel(e, item)}
+                          okText={
+                            <ModalCreateRemind
+                              type="update"
+                              onReload={fetchRemind}
+                              remindData={item}
+                              button={<span>OK</span>}
+                            />
+                          }
+                          cancelText="No"
+                        >
+                          <Button className=" mr-2">
+                            <RiCheckLine />
+                          </Button>
+                        </Popconfirm>
+
+                        <ModalCreateRemind
+                          type="update"
+                          onReload={fetchRemind}
+                          remindData={item}
+                          button={
+                            <Button className="">
+                              <EditFilled />
+                            </Button>
+                          }
+                        />
+                      </div>
+                      <Switch
+                        loading={item?.remind_id === loadingButton}
+                        defaultChecked={item?.is_notified === 0}
+                        onChange={(e) => {
+                          handleOnOf(e, item)
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </TableCM>
     </>
   )
@@ -433,6 +535,7 @@ export const TabTableTire: FC<{
       <TableCM
         hiddenTitle
         title="123"
+        hiddenColumnPicker
         search={{
           width: 200,
           onSearch(q) {
@@ -443,22 +546,76 @@ export const TabTableTire: FC<{
         onReload={() => {
           fetchTire()
         }}
-        right={
-          <div className="ml-5 flex items-center">
-            {isAddTireButton && (
-              <ModalCreateTire
-                onRefresh={() => {
-                  fetchTire()
-                }}
-                button={<Button type="primary">Thêm lốp</Button>}
-                type="add"
-              />
-            )}
-          </div>
-        }
+        // right={
+        //   <div className="ml-5 flex items-center">
+        //     {isAddTireButton && (
+        //       <ModalCreateTire
+        //         onRefresh={() => {
+        //           fetchTire()
+        //         }}
+        //         button={<Button type="primary">Thêm lốp</Button>}
+        //         type="add"
+        //       />
+        //     )}
+        //   </div>
+        // }
         props={{}}
       >
-        Render cac item lop
+        <div style={{ overflow: "overlay" }} className="h-[400px]">
+          {tires?.map((item, index) => (
+            <div className="border rounded-md p-3 py-1 my-1">
+              <div className="flex items-center">
+                <div className="w-[40%]">
+                  <img
+                    width={"100%"}
+                    src="https://thumbs.dreamstime.com/b/tire-icon-vector-design-template-white-background-can-use-web-business-card-etc-tire-icon-vector-design-template-white-264967256.jpg"
+                  />
+                </div>
+                <div className="flex-1 ml-4">
+                  <p className="mb-1">
+                    <BarcodeOutlined size={18} />{" "}
+                    <span className="ml-2">{item?.seri}</span>
+                  </p>
+                  <p className="mb-1">
+                    <TrademarkCircleOutlined size={18} />{" "}
+                    <span className="ml-2">{item?.brand}</span>
+                  </p>
+                  <p className="mb-1">
+                    <ExpandOutlined size={18} />{" "}
+                    <span className="ml-2">{item?.size}</span>
+                  </p>
+                  <div className="flex justify-end w-full">
+                    <ModalCreateTire
+                      onRefresh={() => {
+                        fetchTire()
+                      }}
+                      button={
+                        <Button className="float-right mr-2">
+                          <DeleteOutlined />
+                        </Button>
+                      }
+                      type="delete"
+                      data={item}
+                    />
+
+                    <ModalCreateTire
+                      onRefresh={() => {
+                        fetchTire()
+                      }}
+                      button={
+                        <Button className="float-right">
+                          <EditFilled />
+                        </Button>
+                      }
+                      type="update"
+                      data={item}
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </TableCM>
     </div>
   )
@@ -491,14 +648,22 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
   ]
 
   return (
-    <div className="relative">
-      <div className="absolute z-50 left-[350px] top-[11px]">
+    <div className="relative overflow-x-hidden h-full">
+      <div className="absolute z-50 right-[10px] bottom-[0px]">
         <ModalCreateRemind
           onReload={onReload}
-          button={<Button type="primary">Thêm</Button>}
+          button={
+            <Button
+              type="primary"
+              size="large"
+              className="rounded-full"
+              icon={<PlusOutlined />}
+            />
+          }
         />
       </div>
-      <div className="mt-10">
+      {/* NDK có sửa chỗ này */}
+      <div className="">
         <Tabs items={items(onReload)} />
         {/* <Button onClick={closeModal}>Đóng</Button> */}
       </div>

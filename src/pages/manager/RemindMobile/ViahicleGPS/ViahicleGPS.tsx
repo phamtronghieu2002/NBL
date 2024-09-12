@@ -28,6 +28,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
   const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
   const [isPressing, setIsPressing] = useState(false)
+  const [isIndexDraw, setIndexDraw] = useState<any>(null)
   const pressTimer = useRef<any>()
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -95,7 +96,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
   const handleTouchStart = (item: any) => {
     pressTimer.current = setTimeout(() => {
-      alert("Long press detected")
+      setIndexDraw(item.id)
       setIsPressing(true)
     }, 500) // Thay đổi thời gian giữ ở đây
   }
@@ -103,7 +104,6 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
   const handleTouchEnd = () => {
     clearTimeout(pressTimer.current)
     if (isPressing) {
-      console.log("Long press detected")
       setIsPressing(false)
     }
   }
@@ -157,7 +157,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         right={<></>}
         props={{}}
       >
-        {viahicles.map((key: any, item: any) => {
+        {viahicles.map((item: any, index: any) => {
           return (
             <div
               onClick={() => {
@@ -177,12 +177,9 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
                 checked={selectedItems.includes(item)} // Trạng thái checkbox
                 onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
-              {key === 0 && (
-                <DrawViahicle
-                  button={<Button type="primary">Xem chi tiết</Button>}
-                  title="Chi tiết"
-                  data={item}
-                />
+              {/* reaload set isIndexDraw = null */}
+              {isIndexDraw === item.id && (
+                <DrawViahicle button={<></>} title="Chi tiết" data={item} />
               )}
             </div>
           )
