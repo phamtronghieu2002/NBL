@@ -90,7 +90,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
   return (
     <div
-      className="mt-5"
+      className="mt-5 "
       onMouseUp={() => setIsSelecting(false)} // Kết thúc quá trình chọn nhiều item
       ref={containerRef} // Tham chiếu container để xử lý click ra ngoài
     >
@@ -104,7 +104,11 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
       {/* Nút Chọn Tất Cả */}
       {showCheckbox && ( // Chỉ hiển thị nút "Chọn tất cả" khi checkbox đang được hiển thị
-        <Button onClick={handleSelectAll} style={{ marginBottom: 16 }}>
+        <Button
+          className="ml-2 mt-2"
+          onClick={handleSelectAll}
+          style={{ marginBottom: 16 }}
+        >
           {selectAll ? "Bỏ chọn tất cả" : "Chọn tất cả"}
         </Button>
       )}
@@ -113,9 +117,10 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         checkBox
         title="123"
         hiddenTitle={true}
+        hiddenColumnPicker={true}
         onReload={onReload}
         search={{
-          width: 200,
+          width: 277,
           onSearch(q) {
             dispatch.setKeyword(q)
           },

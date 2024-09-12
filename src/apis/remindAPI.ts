@@ -4,6 +4,10 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 import { CategoryType } from "../interface/interface"
 import { getTokenParam } from "../utils/_param"
 
+export const getIconRemindViahicleGPS = () => {
+  return axiosInstance.get(`/main/get-category-all`)
+}
+
 export const addRemind = (data: any) => {
   return axios.post(
     "http://localhost:3005/api/v1/remind/main/add-remind",
@@ -45,8 +49,6 @@ export const TurnOnRemind = (id: number) => {
 export const TurnOffRemind = (id: number) => {
   return axiosInstance.patch("/main/update-notified-off/" + id)
 }
-
-//localhost:3005/api/v1/remind/main/gps/get-all?vehicle_id=08F596398A&keyword=
 
 export const getRemindVehicleGPS = (
   lisense_plate: string,
