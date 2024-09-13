@@ -4,7 +4,7 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 import { CategoryType } from "../interface/interface"
 
 export const getCategory = () => {
-  return axiosInstance.get("/category/get-all")
+  return axiosInstance.get("/category/get-all/get-all/by-user")
 }
 
 export const createCategory = (name: string,desc:string,icon:string) => {

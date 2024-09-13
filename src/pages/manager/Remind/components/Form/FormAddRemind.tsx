@@ -62,7 +62,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [randomKey, setRandomKey] = useState<number>(Math.random())
     const [imageFiles, setImageFiles] = useState<any[]>([])
 
-  
     const fetchTire = async () => {
       try {
         const res = await getTire(vhiahicleTire?.license_plate || "", "")
@@ -82,8 +81,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     useEffect(() => {
       // call api to get remindType
 
-       console.log("initialValues >>>", initialValues);
-       
+      console.log("initialValues >>>", initialValues)
+
       if (Object.keys(initialValues).length === 0) {
         form.setFieldsValue({
           is_notified: true,
@@ -91,10 +90,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         })
       } else {
         // cộng thêm n tháng
-        
+
         initialValues.expiration_time = moment(
-          initialValues?.expiration_timeStamp
-        ).add(initialValues?.cycle, 'months');
+          initialValues?.expiration_timeStamp,
+        ).add(initialValues?.cycle, "months")
 
         const tire = initialValues?.tire
         if (tire) {
@@ -106,7 +105,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           tire: initialValues?.tire,
           is_notified: initialValues?.is_notified == 0 ? true : false,
         })
-        form.setFieldValue("cycle", initialValues?.cycle)
+
+        // form.setFieldValue("cycle", initialValues?.cycle)
       }
       fetchCategory()
     }, [])
@@ -314,10 +314,14 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 name="km_before"
                 label="Cảnh báo trước"
                 rules={[
-                  { required: true, message: "Vui lòng nhập KM cảnh báo trước" },
+                  {
+                    required: true,
+                    message: "Vui lòng nhập KM cảnh báo trước",
+                  },
                 ]}
               >
                 <InputNumber
+                  value={form.getFieldValue("km_before")}
                   onChange={(value) => {
                     form.setFieldsValue({ km_before: value })
                   }}
@@ -327,7 +331,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 </span>
               </Form.Item>
 
-
               <Form.Item
                 name="cumulative_kilometers"
                 label="KM cảnh báo"
@@ -336,6 +339,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 ]}
               >
                 <InputNumber
+                  value={form.getFieldValue("cumulative_kilometers")}
                   onChange={(value) => {
                     form.setFieldsValue({ cumulative_kilometers: value })
                   }}
