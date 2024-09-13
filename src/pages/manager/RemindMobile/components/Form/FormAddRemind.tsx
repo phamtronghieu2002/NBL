@@ -1,8 +1,10 @@
 import {
+  Col,
   DatePicker,
   Form,
   Input,
   InputNumber,
+  Row,
   Select,
   Switch,
   Upload,
@@ -251,9 +253,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 </Select>
               </Form.Item>
 
-              <div className="relative">
+              <div className="relative flex items-center">
                 <Form.Item
-                  className="flex-1"
+                  className="w-[80%]"
                   name="tire_seri"
                   rules={[{ required: true, message: "Vui lòng chọn lốp" }]}
                   style={{ gap: 10 }}
@@ -277,7 +279,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   button={
                     <Button
                       disabled={!vhiahicleTire}
-                      className="absolute right-[-20px] top-0"
+                      className="ml-3 -mb-[15px] block"
                       icon={<PlusOutlined />}
                     >
                       Thêm lốp
@@ -304,73 +306,94 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
           {viahiclesStore.type ? (
             <>
-              <Form.Item
-                name="km_before"
-                label="Cảnh báo trước"
-                rules={[
-                  { required: true, message: "Vui lòng nhập KM cảnh báo trước" },
-                ]}
-              >
-                <InputNumber
-                  onChange={(value) => {
-                    form.setFieldsValue({ km_before: value })
-                  }}
-                />
-                <span style={{ marginLeft: 10, display: "inline-block" }}>
-                  (KM)
-                </span>
-              </Form.Item>
+              <Form>
+                <Row gutter={16}>
+                  <Col span={12}>
+                    <Form.Item
+                      name="km_before"
+                      label="Cảnh báo trước"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập KM cảnh báo trước",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        onChange={(value) => {
+                          form.setFieldsValue({ km_before: value })
+                        }}
+                      />
+                      <span style={{ marginLeft: 10, display: "inline-block" }}>
+                        (KM)
+                      </span>
+                    </Form.Item>
+                  </Col>
 
-
-              <Form.Item
-                name="cumulative_kilometers"
-                label="KM cảnh báo"
-                rules={[
-                  { required: true, message: "Vui lòng nhập KM cảnh báo" },
-                ]}
-              >
-                <InputNumber
-                  onChange={(value) => {
-                    form.setFieldsValue({ cumulative_kilometers: value })
-                  }}
-                />
-                <span style={{ marginLeft: 10, display: "inline-block" }}>
-                  (KM)
-                </span>
-              </Form.Item>
+                  <Col span={12}>
+                    <Form.Item
+                      name="cumulative_kilometers"
+                      label="KM cảnh báo"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Vui lòng nhập KM cảnh báo",
+                        },
+                      ]}
+                    >
+                      <InputNumber
+                        onChange={(value) => {
+                          form.setFieldsValue({ cumulative_kilometers: value })
+                        }}
+                      />
+                      <span style={{ marginLeft: 10, display: "inline-block" }}>
+                        (KM)
+                      </span>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Form>
             </>
           ) : (
             <></>
           )}
 
-          <Form.Item
-            name="expiration_time"
-            label="Hạn nhắc nhở"
-            rules={[{ required: true, message: "Vui lòng chọn ngày nhắc nhở" }]}
-          >
-            <DatePicker
-              disabledDate={(current) => {
-                return current && current < moment().endOf("day")
-              }}
-              onChange={() => form.validateFields(["remindDate"])}
-            />
-          </Form.Item>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item
+                name="expiration_time"
+                label="Hạn nhắc nhở"
+                rules={[
+                  { required: true, message: "Vui lòng chọn ngày nhắc nhở" },
+                ]}
+              >
+                <DatePicker
+                  disabledDate={(current) => {
+                    return current && current < moment().endOf("day")
+                  }}
+                  onChange={() => form.validateFields(["remindDate"])}
+                />
+              </Form.Item>
+            </Col>
 
-          <Form.Item
-            name="cycle"
-            label="Chu kì"
-            rules={[{ required: true, message: "Vui lòng nhập chu kì" }]}
-          >
-            <InputNumber
-              value={form.getFieldValue("cycle")}
-              onChange={(value) => {
-                form.setFieldsValue({ cycle: value })
-              }}
-            />
-            <span style={{ marginLeft: "10px", display: "inline-block" }}>
-              Tháng
-            </span>
-          </Form.Item>
+            <Col span={12}>
+              <Form.Item
+                name="cycle"
+                label="Chu kì"
+                rules={[{ required: true, message: "Vui lòng nhập chu kì" }]}
+              >
+                <InputNumber
+                  value={form.getFieldValue("cycle")}
+                  onChange={(value) => {
+                    form.setFieldsValue({ cycle: value })
+                  }}
+                />
+                <span style={{ marginLeft: "10px", display: "inline-block" }}>
+                  Tháng
+                </span>
+              </Form.Item>
+            </Col>
+          </Row>
           <Form.Item
             name={"schedules"}
             label="Thời gian"
@@ -438,6 +461,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             name="is_notified"
             label="Bật thông báo"
             valuePropName="checked"
+            hidden
           >
             <Switch defaultChecked />
           </Form.Item>

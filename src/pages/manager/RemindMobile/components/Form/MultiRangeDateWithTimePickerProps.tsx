@@ -76,21 +76,25 @@ const MultiRangeDateWithTimePicker = forwardRef<
 
   const validateForm = () => {
     const newErrors = dateRanges.map((item) => ({
-      rangeError: !item.range,
+      startDateError: !item.startDate,
+      endDateError: !item.endDate,
       timeError: !item.time,
     }))
     setErrors(newErrors)
 
-    return newErrors.every((error) => !error.rangeError && !error.timeError)
+    return newErrors.every(
+      (error) =>
+        !error.startDateError && !error.endDateError && !error.timeError,
+    )
   }
 
   const handleSubmit = () => {
     if (validateForm()) {
       const selectedRangesWithTime = dateRanges
         .map((item) => {
-          if (item.range && item.time) {
-            const startTimeStamp = moment(item.range[0]).valueOf()
-            const endTimeStamp = moment(item.range[1]).valueOf()
+          if (item.startDate && item.endDate && item.time) {
+            const startTimeStamp = moment(item.startDate).valueOf()
+            const endTimeStamp = moment(item.endDate).valueOf()
             const formattedTime = item.time.format("HH:mm")
 
             return {
@@ -110,39 +114,94 @@ const MultiRangeDateWithTimePicker = forwardRef<
     }
   }
 
+  // Handle start date change
+  const handleStartDateChange = (index: number, date: any) => {
+    const newRanges = [...dateRanges]
+    newRanges[index].startDate = date
+    setDateRanges(newRanges)
+
+    const newErrors = [...errors]
+    newErrors[index].startDateError = !date
+    setErrors(newErrors)
+  }
+
+  // Handle end date change
+  const handleEndDateChange = (index: number, date: any) => {
+    const newRanges = [...dateRanges]
+    newRanges[index].endDate = date
+    setDateRanges(newRanges)
+
+    const newErrors = [...errors]
+    newErrors[index].endDateError = !date
+    setErrors(newErrors)
+  }
+
   // useImperativeHandle sẽ giúp expose các phương thức ra ngoài thông qua ref
 
   return (
-    <Space direction="vertical" size={13} className="mb-10">
+    <Space direction="vertical" size={13} className="mb-0">
       {dateRanges.map((item, index) => (
-        <Row key={index} gutter={1} align="middle" className="!mr-[-100px]">
-          <Col>
-            <RangePicker
+        <Row key={index} gutter={[8, 8]} align="middle">
+          {/* DatePicker for Start Date */}
+          <Col xs={10} sm={8} md={6}>
+            <DatePicker
               disabledDate={(current) => {
                 return current && current < moment().startOf("day")
               }}
-              onChange={(range) => handleRangeChange(index, range)}
-              value={item.range}
-              placeholder={["Chọn ngày bắt đầu", "Chọn ngày kết thúc"]}
-              style={errors[index]?.rangeError ? { borderColor: "red" } : {}}
+              onChange={(date) => handleStartDateChange(index, date)}
+              value={item.startDate}
+              placeholder="Ngày bắt đầu"
+              style={
+                errors[index]?.startDateError
+                  ? { borderColor: "red", width: "100%" }
+                  : { width: "100%" }
+              }
             />
-            {errors[index]?.rangeError && (
-              <div style={{ color: "red" }}>Vui lòng chọn ngày</div>
+            {errors[index]?.startDateError && (
+              <div style={{ color: "red" }}>Vui lòng chọn ngày bắt đầu</div>
             )}
           </Col>
-          <Col>
+
+          {/* DatePicker for End Date */}
+          <Col xs={10} sm={8} md={6}>
+            <DatePicker
+              disabledDate={(current) => {
+                return current && current < moment(item.startDate).endOf("day")
+              }}
+              onChange={(date) => handleEndDateChange(index, date)}
+              value={item.endDate}
+              placeholder="Ngày kết thúc"
+              style={
+                errors[index]?.endDateError
+                  ? { borderColor: "red", width: "100%" }
+                  : { width: "100%" }
+              }
+            />
+            {errors[index]?.endDateError && (
+              <div style={{ color: "red" }}>Vui lòng chọn ngày kết thúc</div>
+            )}
+          </Col>
+
+          {/* TimePicker */}
+          <Col xs={6} sm={6} md={6}>
             <TimePicker
               onChange={(time) => handleTimeChange(index, time)}
               value={item.time}
-              placeholder="Chọn giờ"
-              style={errors[index]?.timeError ? { borderColor: "red" } : {}}
+              placeholder="Giờ"
+              style={
+                errors[index]?.timeError
+                  ? { borderColor: "red", width: "100%" }
+                  : { width: "100%" }
+              }
               format="HH:mm:ss"
             />
             {errors[index]?.timeError && (
               <div style={{ color: "red" }}>Vui lòng chọn giờ</div>
             )}
           </Col>
-          <Col>
+
+          {/* Close Button */}
+          <Col xs={3} sm={2} md={2}>
             <Button
               type="link"
               icon={<CloseOutlined />}

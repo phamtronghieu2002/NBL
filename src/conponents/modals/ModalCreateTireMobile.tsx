@@ -56,7 +56,7 @@ const FormAdd: FC<{
   onRefresh,
   isInModalRemind,
   isReload,
-  isAddTireButton
+  isAddTireButton,
 }) => {
   const [form] = Form.useForm()
 
@@ -177,7 +177,7 @@ const FormAdd: FC<{
         </Form>
       )}
 
-      {isInModalRemind && <TabTableTire  isAddTireButton={isAddTireButton} isReload={isReload} data={data} />}
+      {/* {isInModalRemind && <TabTableTire  isAddTireButton={isAddTireButton} isReload={isReload} data={data} />} */}
 
       <div className="flex justify-end gap-2">
         {/* {<MaskLoader />} */}
@@ -201,7 +201,7 @@ const ModalCreateTire: FC<ModalCreateTireProps> = ({
   onRefresh,
   isInModalRemind,
   isReload,
-  isAddTireButton
+  isAddTireButton,
 }) => {
   const getAction = () => {
     if (type === "add") {

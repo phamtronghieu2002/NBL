@@ -55,8 +55,8 @@ import {
   RiFolderSettingsFill,
   RiMapPinTimeLine,
 } from "react-icons/ri"
-import { GiPathDistance } from "react-icons/gi"
-import { FaUniversalAccess } from "react-icons/fa6"
+import { GiCarWheel, GiPathDistance } from "react-icons/gi"
+import { FaCarSide, FaUniversalAccess } from "react-icons/fa6"
 import { AiOutlineDisconnect } from "react-icons/ai"
 import { TbListDetails } from "react-icons/tb"
 import { GrDocumentUser } from "react-icons/gr"
@@ -550,21 +550,24 @@ export const TabTableTire: FC<{
         onReload={() => {
           fetchTire()
         }}
-        // right={
-        //   <div className="ml-5 flex items-center">
-        //     {isAddTireButton && (
-        //       <ModalCreateTire
-        //         onRefresh={() => {
-        //           fetchTire()
-        //         }}
-        //         button={<Button type="primary">Thêm lốp</Button>}
-        //         type="add"
-        //       />
-        //     )}
-        //   </div>
-        // }
         props={{}}
       >
+        <div className="absolute -bottom-[38px] right-14">
+          <ModalCreateTire
+            onRefresh={() => {
+              fetchTire()
+            }}
+            button={
+              <Button
+                type="primary"
+                size="large"
+                className="rounded-full"
+                icon={<GiCarWheel size={18} />}
+              />
+            }
+            type="add"
+          />
+        </div>
         <div style={{ overflow: "overlay" }} className="h-[400px]">
           {tires?.map((item, index) => (
             <div className="border rounded-md p-3 py-1 my-1">
