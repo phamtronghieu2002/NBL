@@ -396,7 +396,7 @@ export const TableCM: React.FC<IProps> = ({
       ) : null}
       {/* gọi card components */}
       {/* NDK có sửa chỗ này */}
-      <div className="overflow-scroll pt-1">{children}</div>
+      <div className="overflow-scroll pt-1 max-h-[650px]">{children}</div>
     </div>
   )
 }

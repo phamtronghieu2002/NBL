@@ -123,7 +123,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
   const [loadingButton, setLoadingButton] = useState<number>(0)
   const [isShowModal, setIsShowModal] = useState(false)
 
-  const confirm: PopconfirmProps["onConfirm"] = (e) => {  
+  const confirm: PopconfirmProps["onConfirm"] = (e) => {
     setIsShowModal(true)
   }
 
@@ -385,7 +385,9 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
                         </p>
                         <p className="flex items-center mb-2">
                           <RiFolderSettingsFill size={18} />
-                          <span className="ml-2">{item?.name}</span>
+                          <span className="ml-2 truncate max-w-[75px]">
+                            {item?.name}
+                          </span>
                         </p>
                         <p className="flex items-center mb-2">
                           <GiPathDistance size={18} />
