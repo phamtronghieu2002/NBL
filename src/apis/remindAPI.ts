@@ -3,6 +3,7 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
 import { CategoryType } from "../interface/interface"
 import { getTokenParam } from "../utils/_param"
+import storage from "../utils/storage"
 
 export const getIconRemindViahicleGPS = () => {
   return axiosInstance.get(`/main/get-category-all`)
@@ -15,7 +16,7 @@ export const addRemind = (data: any) => {
     {
       headers: {
         "Content-Type": "multipart/form-data",
-        "x-mobicam-token": getTokenParam(),
+        "x-mobicam-token": storage.getAccessToken(),
       },
     },
   )

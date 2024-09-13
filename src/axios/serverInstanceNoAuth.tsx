@@ -15,7 +15,7 @@ const createNoAuthInstance = (API: string) => {
   })
 
   const interceptorsRq = (config: InternalAxiosRequestConfig<any>) => {
-    let accessToken = getTokenParam() || storage.getAccessToken()
+    let accessToken = storage.getAccessToken() ||  getTokenParam()
 
     config.headers["x-mobicam-token"] = getTokenAuthHeader(accessToken)
 

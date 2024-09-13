@@ -78,9 +78,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [previewImage, setPreviewImage] = useState<string | null>(null)
     const [previewVisible, setPreviewVisible] = useState<boolean>(false)
 
-    console.log("====================================")
-    console.log("vhiahicleTire >>>", vhiahicleTire)
-    console.log("====================================")
+  
     useEffect(() => {
       const fetchTime = async (id: number) => {
         try {
@@ -97,7 +95,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }, [])
     const fetchTire = async () => {
       try {
-        const res = await getTire(vhiahicleTire?.license_plate || "", "")
+   
+        const license_plate = vhiahicleTire?.license_plate || ""
+        console.log('====================================');
+        console.log("license_plate >>",license_plate);
+        console.log('====================================');
+        const res = await getTire(license_plate || "", "")
+        console.log('====================================');
+        console.log("du lieu lop cua xe",res?.data);
+        console.log('====================================');
         setTires(res?.data)
       } catch (error) {
         api.message?.error("Lỗi khi lấy dữ liệu lốp")
@@ -181,7 +187,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     useEffect(() => {
       if (vhiahicleTire) {
-        alert("fetch tire")
         fetchTire()
       }
     }, [vhiahicleTire?.license_plate])
