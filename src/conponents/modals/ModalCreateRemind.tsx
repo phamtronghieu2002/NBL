@@ -69,7 +69,6 @@ const Form: FC<{
     } catch (error) {
       api.message?.error("Thêm nhắc nhở thất bại")
       setLoading(false)
-
     }
   }
   const handleUpdate = async (formData: any, callback: any) => {
@@ -185,7 +184,6 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const { viahiclesStore } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
-  console.log("viahiclesStore", viahiclesStore)
 
   const isTimestamp = (value: any) => {
     return typeof value === "number" && value > 1000000000
@@ -216,7 +214,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
 
     if (type === "update") {
       return {
-        title: `sửa nhắc nhở  ${remindData?.license_plate}`,
+        title: `sửa nhắc nhở  ${remindData?.note_repair}`,
       }
     }
   }

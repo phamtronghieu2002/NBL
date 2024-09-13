@@ -182,12 +182,10 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const isTimestamp = (value: any) => {
     return typeof value === "number" && value > 1000000000
   }
-
+   
   const convertTimestampsToMoment = (data: any) => {
     const convertedData = { ...data }
-    console.log('====================================');
-    console.log("convertedData >>>", convertedData);
-    console.log('====================================');
+  
     Object.keys(convertedData).forEach((key) => {
       if (isTimestamp(convertedData[key])) {
         // Chỉ chuyển đổi nếu là timestamp
@@ -207,7 +205,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
 
     if (type === "update") {
       return {
-        title: `sửa nhắc nhở  ${remindData?.license_plate}`,
+        title: `Sửa nhắc nhở  ${remindData?.note_repair}`,
       }
     }
   }

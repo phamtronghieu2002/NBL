@@ -29,6 +29,8 @@ import { getTire } from "../../../../../apis/tireAPI"
 import { t } from "i18next"
 import MultiDateTimePicker from "./MultiRangeDateWithTimePickerProps"
 import { log } from "console"
+import { getTimeRemind } from "../../../../../apis/remindAPI"
+import { MaskLoader } from "../../../../../conponents/Loader"
 
 interface FormAddRemindProps {
   viahicleSelected?: ViahicleType[]
@@ -61,13 +63,32 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     const [randomKey, setRandomKey] = useState<number>(Math.random())
     const [imageFiles, setImageFiles] = useState<any[]>([])
+    const [schedules, setSchedules] = useState<any[]>([])
+    const [loading, setLoading] = useState<boolean>(false)
 
+    console.log("====================================")
+    console.log("tire >>>", tires)
+    console.log("====================================")
+    useEffect(() => {
+      const fetchTime = async (id: number) => {
+        try {
+          const res = await getTimeRemind(id)
+          setSchedules(res?.data)
+        } catch (error) {
+          console.log("error time >>>", error)
+        }
+      }
+
+      if (initialValues?.id) {
+        fetchTime(initialValues?.id)
+      }
+    }, [])
     const fetchTire = async () => {
       try {
         const res = await getTire(vhiahicleTire?.license_plate || "", "")
         setTires(res?.data)
       } catch (error) {
-        // api.message?.error("Lỗi khi lấy dữ liệu lốp")
+        api.message?.error("Lỗi khi lấy dữ liệu lốp")
       }
       // setIsReloadTableTire(Math.random())
     }
@@ -90,7 +111,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         })
       } else {
         // cộng thêm n tháng
-
+        setLoading(true)
         initialValues.expiration_time = moment(
           initialValues?.expiration_timeStamp,
         ).add(initialValues?.cycle, "months")
@@ -105,13 +126,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           tire: initialValues?.tire,
           is_notified: initialValues?.is_notified == 0 ? true : false,
         })
-
-        // form.setFieldValue("cycle", initialValues?.cycle)
       }
       fetchCategory()
+      setLoading(false)
     }, [])
     //  handle getDataForm
-    console.log("viahicle Store >>>", viahiclesStore)
 
     useEffect(() => {
       if (timeSelect.length > 0) {
@@ -140,8 +159,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               formData.append("images", file.originFileObj) // Đảm bảo là tệp ảnh gốc
             })
 
-            console.log("formData >>>", formData)
-
             onSubmit(processedValuesForm, fetchCategory, formData) // Gửi dữ liệu đã xử lý
           })
           .catch(() => {
@@ -152,6 +169,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     useEffect(() => {
       if (vhiahicleTire) {
+        alert("fetch tire")
         fetchTire()
       }
     }, [vhiahicleTire?.license_plate])
@@ -169,7 +187,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       } else {
         setIsName(false)
       }
-
       if (value === 8) {
         setIsTireSelect(true)
         fetchTire()
@@ -187,8 +204,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       return false // Prevent automatic upload
     }
 
-    console.log("imageFiles >>", imageFiles)
-
     const handleGetDataForm = () => {
       buttonDateRef.current?.click()
       setRandomKey(Math.random())
@@ -196,6 +211,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     return (
       <div>
+        {loading && <MaskLoader />}
         <Form
           form={form}
           labelCol={{ span: 6 }}
@@ -220,9 +236,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 </Select.Option>
               ))}
 
-              <Select.Option value="khác" key={100}>
+              {/* <Select.Option value="khác" key={100}>
                 Khác
-              </Select.Option>
+              </Select.Option> */}
             </Select>
           </Form.Item>
 
@@ -282,7 +298,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   type="add"
                   button={
                     <Button
-                      disabled={!vhiahicleTire}
+                      disabled={vhiahicleTire ? false : true}
                       className="absolute right-[-20px] top-0"
                       icon={<PlusOutlined />}
                     >
@@ -389,6 +405,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             ]}
           >
             <MultiDateTimePicker
+              initialValues={schedules}
               ref={buttonDateRef}
               setValueTime={(value: any) => {
                 setTimeSelect(value)
@@ -462,3 +479,14 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 )
 
 export default FormAddRemind
+
+
+
+// Lịch bảo dưỡng PT,
+// Hạn đăng kiểm PT,
+// Bảo hiểm TNDS bắt buộc ,
+// Bảo hiểm tự nguyện,
+// Lịch gia hạn phù hiệu KDVT ,
+// Thay dầu, nhớt định kỳ 
+// Thay bình Accu định kỳ,
+// Thay lốp định kỳ,

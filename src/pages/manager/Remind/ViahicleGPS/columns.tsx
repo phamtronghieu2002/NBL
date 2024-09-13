@@ -39,7 +39,7 @@ const getColumnViahicleGPS = (
       sorter: (a, b) => a.license.localeCompare(b.license),
     },
     {
-      title: "Đang có nhắc nhở",
+      title: "Việc cần làm",
       dataIndex: "icons",
       key: "icons",
       render(value, record, index) {

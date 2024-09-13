@@ -98,7 +98,9 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
 
   const [loadingButton, setLoadingButton] = useState<number>(0)
   const [isShowModal, setIsShowModal] = useState(false)
-
+  console.log('====================================');
+  console.log("reminds", remindsFilter);
+  console.log('====================================');
   const confirm: PopconfirmProps["onConfirm"] = (e) => {
     setIsShowModal(true)
   }
@@ -165,40 +167,25 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
     fetchRemind(keyword)
     // switch (selectType) {
     //   case "all":
-    //     if (filter.keyword) {
-    //       //
-    //       setRemindsFilter(
-    //         reminds.filter((item) => item.name.includes(filter.keyword)),
-    //       )
-    //       return
-    //     }
+    //     fetchRemind(keyword)
     //     break
-    //   case "finish":
-    //     if (filter.keyword) {
+    //   case "on":
     //       setRemindsFilter(
     //         reminds
-    //           .filter((item) => item.name.includes(filter.keyword))
-    //           .filter((item) => item.isFinish),
+    //           .filter((item) => item.is_notified),
     //       )
     //       return
+    //       case "ò":
+    //         setRemindsFilter(
+    //           reminds
+    //             .filter((item) => !item.is_notified),
+    //         )
+    //         return
+          
     //     }
-    //     setRemindsFilter(reminds.filter((item) => item.isFinish))
-    //     break
-    //   case "noFinish":
-    //     if (filter.keyword) {
-    //       setRemindsFilter(
-    //         reminds
-    //           .filter((item) => item.name.includes(filter.keyword))
-    //           .filter((item) => !item.isFinish),
-    //       )
-    //       return
-    //     }
-    //     setRemindsFilter(reminds.filter((item) => !item.isFinish))
-    //     break
-    //   default:
-    //     break
-    // }
-  }, [filter.keyword, filter.select, isReload])
+        
+     
+    }, [filter.keyword, filter.select, isReload])
   //   column
 
   const handleOnOf = async (checked: boolean, data: RemindProps) => {
@@ -216,6 +203,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
       }
       api.message?.success(notifyTilte)
       setLoadingButton(0)
+      fetchRemind()
     } catch (error) {
       console.log(error)
     }
