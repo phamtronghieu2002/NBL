@@ -79,6 +79,50 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [previewVisible, setPreviewVisible] = useState<boolean>(false)
     const [form] = Form.useForm()
 
+    console.log("====================================")
+    console.log("initialValues >>>", initialValues)
+    console.log("====================================")
+    const imageUrls = [
+      "http://26.73.188.74:3005\\uploads\\Screenshot 2024-08-15 224100.png",
+    ]
+
+    useEffect(() => {
+      // Chuyển đổi URL thành các đối tượng File ảo
+    }, [])
+    useEffect(() => {
+      if (initialValues?.remind_img_url) {
+        const convertUrlsToFiles = async (urls: string[]) => {
+          return Promise.all(
+            urls.map(async (url) => {
+              const response = await fetch(url)
+              const blob = await response.blob()
+              const file = new File([blob], url.split("/").pop() || "file", {
+                type: blob.type,
+              })
+              return {
+                source: url,
+                options: {
+                  type: "local",
+                  file: file,
+                },
+              }
+            }),
+          )
+        }
+
+        const urls = initialValues?.remind_img_url?.split(",")?.map(
+          (url: string, index: number) =>
+            `http://26.73.188.74:3005${url.trim()}`, // The URL of the image
+        )
+
+        const initFiles = async () => {
+          const files = await convertUrlsToFiles(urls)
+          setImageFiles(files)
+        }
+        initFiles()
+      }
+    }, [])
+
     useEffect(() => {
       const fetchTime = async (id: number) => {
         try {

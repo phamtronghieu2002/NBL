@@ -35,9 +35,7 @@ const Form: FC<{
 
   const handleSubmit = async (formData: any, callback: any, images?: any) => {
     try {
-      console.log("====================================")
-      console.log("formData >>", formData)
-      console.log("====================================")
+
       const cate_name = formData["cat_name"]
       if (cate_name) {
         const cat = await createCategory(cate_name, "", "")
@@ -74,11 +72,25 @@ const Form: FC<{
       setLoading(false)
     }
   }
-  const handleUpdate = async (formData: any, callback: any) => {
-    console.log("formData", formData)
+  const handleUpdate = async (formData: any, callback: any,images?: any) => {
+  
     // call api sửa nhắc nhở
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        const value = formData[key]
+        // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
+        if (Array.isArray(value) || typeof value === "object") {
+          images.append(key, JSON.stringify(value))
+        } else if (typeof value === "number") {
+          images.append(key, value)
+        } else {
+          images.append(key, value)
+        }
+      }
+    }
+    images.append("token", storage.getAccessToken())
     setLoading(true)
-    await updateRemind(remindData?.remind_id, formData)
+    await updateRemind(remindData?.remind_id, images)
     action?.closeModal?.()
     api.message?.success("cập nhật nhắc nhở thành công")
     onReload?.()
