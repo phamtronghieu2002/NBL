@@ -56,6 +56,9 @@ const Form: FC<{
         }
       }
     }
+    console.log('====================================');
+    console.log("token", storage.getAccessToken());
+    console.log('====================================');
     images.append("token", storage.getAccessToken())
 
     // call api thêm nhắc nhở

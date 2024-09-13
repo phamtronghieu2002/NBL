@@ -102,6 +102,24 @@ body {
   display: block;
 }
 
+.filepond--credits{
+  display: none !important;
+}
+
 .realtime-map-box-wrapper___ div {
   font-size: 12px !important;
+}
+
+
+/* Điều chỉnh chiều rộng của mỗi ảnh */
+.filepond--item {
+    width: calc(47%); /* 50% chia đều cho mỗi ảnh, trừ đi khoảng cách giữa các ảnh */
+    margin-bottom: 10px; /* Khoảng cách giữa các hàng */
+}
+
+/* Điều chỉnh để ảnh nằm trên một dòng */
+.filepond--list {
+    display: flex;
+    flex-wrap: wrap; /* Giúp các ảnh tự động chuyển dòng nếu không đủ chỗ */
+    justify-content: space-between; /* Khoảng cách giữa các ảnh */
 }

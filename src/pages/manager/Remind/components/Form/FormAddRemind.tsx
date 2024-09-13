@@ -77,8 +77,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [loading, setLoading] = useState<boolean>(false)
     const [previewImage, setPreviewImage] = useState<string | null>(null)
     const [previewVisible, setPreviewVisible] = useState<boolean>(false)
+    const [form] = Form.useForm()
 
-  
     useEffect(() => {
       const fetchTime = async (id: number) => {
         try {
@@ -89,21 +89,16 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         }
       }
 
-      if (initialValues?.id) {
-        fetchTime(initialValues?.id)
+      if (initialValues?.remind_id) {
+        fetchTime(initialValues?.remind_id)
       }
     }, [])
+
     const fetchTire = async () => {
       try {
-   
         const license_plate = vhiahicleTire?.license_plate || ""
-        console.log('====================================');
-        console.log("license_plate >>",license_plate);
-        console.log('====================================');
-        const res = await getTire(license_plate || "", "")
-        console.log('====================================');
-        console.log("du lieu lop cua xe",res?.data);
-        console.log('====================================');
+        const res = await getTire(license_plate, "")
+
         setTires(res?.data)
       } catch (error) {
         api.message?.error("Lỗi khi lấy dữ liệu lốp")
@@ -112,43 +107,48 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }
 
     const fetchCategory = async () => {
+      setLoading(true)
       const res = await getCategory()
+      setLoading(false)
       setCategories(res?.data)
     }
-    const [form] = Form.useForm()
 
+    // fetch category
     useEffect(() => {
       // call api to get remindType
-
-      console.log("initialValues >>>", initialValues)
-
-      if (Object.keys(initialValues).length === 0) {
-        form.setFieldsValue({
-          is_notified: true,
-          note_repair: "Tới hạn thay dầu rồi,đi thay dầu thôi !!",
-        })
-      } else {
-        // cộng thêm n tháng
-        setLoading(true)
-        initialValues.expiration_time = moment(
-          initialValues?.expiration_timeStamp,
-        ).add(initialValues?.cycle, "months")
-
-        const tire = initialValues?.tire
-        if (tire) {
-          handleSelectViahicle(viahiclesStore?.viahiclesStore[0]?.license_plate)
-        }
-        form.setFieldsValue({
-          ...initialValues,
-          vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
-          tire: initialValues?.tire,
-          is_notified: initialValues?.is_notified == 0 ? true : false,
-        })
-      }
       fetchCategory()
-      setLoading(false)
     }, [])
-    //  handle getDataForm
+
+    //  initial value
+    useEffect(() => {
+      if (categories?.length > 0) {
+        if (Object.keys(initialValues).length === 0) {
+          form.setFieldsValue({
+            is_notified: true,
+            note_repair: "Tới hạn thay dầu rồi,đi thay dầu thôi !!",
+          })
+        } else {
+          // cộng thêm n tháng
+
+          initialValues.expiration_time = moment(
+            initialValues?.expiration_timeStamp,
+          ).add(initialValues?.cycle, "months")
+
+          const tire = initialValues?.tire
+          if (tire) {
+            handleSelectViahicle(
+              viahiclesStore?.viahiclesStore[0]?.license_plate,
+            )
+          }
+          form.setFieldsValue({
+            ...initialValues,
+            vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
+            tire: initialValues?.tire,
+            is_notified: initialValues?.is_notified == 0 ? true : false,
+          })
+        }
+      }
+    }, [categories?.length])
 
     useEffect(() => {
       if (timeSelect.length > 0) {
@@ -172,9 +172,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             }
 
             const formData = new FormData()
-            // Thêm dữ liệu vào formData
+
             imageFiles.forEach((file) => {
-              formData.append("images", file.originFileObj) // Đảm bảo là tệp ảnh gốc
+              formData.append("images", file) // Thêm ảnh vào FormData
             })
 
             onSubmit(processedValuesForm, fetchCategory, formData) // Gửi dữ liệu đã xử lý
@@ -193,13 +193,12 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     const handleSelectViahicle = (value: string) => {
       const viahicle: any = viahicleSelected?.find((item: ViahicleType) =>
-        viahiclesStore?.type == 0 ? item?.license_plate : item?.imei == value,
+        viahiclesStore?.type == 0
+          ? item?.license_plate == value
+          : item?.imei == value,
       )
       setViahicleTire(viahicle)
     }
-    console.log("====================================")
-    console.log("selected viahicle", viahicleSelected)
-    console.log("====================================")
 
     const handleSelectTypeRemind = (value: any) => {
       if (value === "khác") {
@@ -207,9 +206,20 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       } else {
         setIsName(false)
       }
-      if (value === 8) {
+      if (value === 6) {
+        if (viahicleSelected?.length == 1) {
+          setViahicleTire(viahiclesStore?.viahiclesStore[0])
+          //  xử lí khi  chọn 1 xe
+          viahicleSelected?.length == 1
+            ? viahiclesStore?.type == 1
+              ? form.setFieldValue("vehicles", viahicleSelected[0]?.imei)
+              : form.setFieldValue(
+                  "vehicles",
+                  viahicleSelected[0]?.license_plate,
+                )
+            : ""
+        }
         setIsTireSelect(true)
-        fetchTire()
       } else {
         setIsTireSelect(false)
       }
@@ -219,10 +229,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const handleImageUpload = (file: any, action: string) => {
       const formData = new FormData()
       if (action === "add") {
-        console.log("====================================")
-        console.log("filehihhihihihi", file)
-        console.log("====================================")
-        formData.append("image", file) // Thêm ảnh mới vào FormData
+        formData.append("images", file) // Thêm ảnh mới vào FormData
         setImageFiles((prev) => [...prev, formData])
       } else if (action === "remove") {
         setImageFiles((prev) => prev.filter((item) => item.name !== file.name)) // Xóa ảnh
@@ -231,17 +238,12 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       return false // Ngăn việc upload tự động
     }
 
-    console.log("====================================")
-    console.log("imageFiles", imageFiles)
-    console.log("====================================")
-
     const handleGetDataForm = () => {
       buttonDateRef.current?.click()
       setRandomKey(Math.random())
     }
 
     const handleImagePreview = (file: any) => {
-      alert("preview")
       setPreviewImage(file.thumbUrl || file.url)
       setPreviewVisible(true)
     }
@@ -285,7 +287,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           </Form.Item>
 
           {/* chọn phương tiện */}
-          {(isTireSelect || initialValues?.remind_category_id == 8) && (
+          {(isTireSelect || initialValues?.remind_category_id == 6) && (
             <>
               <Form.Item
                 name="vehicles"
@@ -376,6 +378,12 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                     required: true,
                     message: "Vui lòng nhập KM cảnh báo trước",
                   },
+                  {
+                    validator: (_, value) =>
+                      value > 0
+                        ? Promise.resolve()
+                        : Promise.reject("KM phải lớn hơn 0"),
+                  },
                 ]}
               >
                 <InputNumber
@@ -394,6 +402,12 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 label="KM cảnh báo"
                 rules={[
                   { required: true, message: "Vui lòng nhập KM cảnh báo" },
+                  {
+                    validator: (_, value) =>
+                      value > 0
+                        ? Promise.resolve()
+                        : Promise.reject("KM phải lớn hơn 0"),
+                  },
                 ]}
               >
                 <InputNumber
@@ -427,7 +441,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           <Form.Item
             name="cycle"
             label="Chu kì"
-            rules={[{ required: true, message: "Vui lòng nhập chu kì" }]}
+            rules={[
+              { required: true },
+              {
+                validator: (_, value) =>
+                  value > 0
+                    ? Promise.resolve()
+                    : Promise.reject("Chu kì phải lớn hơn 0"),
+              },
+            ]}
           >
             <InputNumber
               value={form.getFieldValue("cycle")}
@@ -459,11 +481,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               type="hidden"
             />
           </Form.Item>
-          {/* đoạn này nè */}
+          <Form.Item name="note_repair" label="Nội dung">
+            <TextArea />
+          </Form.Item>
 
           {/* Upload ảnh */}
           <Form.Item label="Tải lên hình ảnh" style={{ gap: 10 }}>
             <FilePond
+              imagePreviewHeight={200} // Chiều cao của ảnh preview
+              imagePreviewMaxHeight={200} // Chiều cao tối đa của ảnh preview
               files={imageFiles}
               allowMultiple={true}
               maxFiles={5}
@@ -473,7 +499,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               }}
               acceptedFileTypes={["image/*"]}
               name="images"
-              labelIdle='Drag & Drop your images or <span class="filepond--label-action">Browse</span>'
+              labelIdle='Kéo thả hình hoặc<span class="filepond--label-action">       Chọn </span>'
               onaddfile={(error, fileItem) => {
                 if (!error) {
                   handleImageUpload(fileItem.file, "add") // Handle add action
@@ -485,49 +511,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 }
               }}
             />
-            {/* <Upload
-              multiple={true}
-              accept=".png, .jpg, .jpeg"
-              listType="picture-card"
-              customRequest={({ file }) => handleImageUpload(file)} // Xử lý khi tải ảnh
-              fileList={imageFiles} // Danh sách các ảnh đã tải lên
-              onPreview={handleImagePreview}
-              onChange={({ fileList }) => setImageFiles(fileList)} // Cập nhật danh sách ảnh
-              onRemove={(file) => {
-                // Xóa ảnh
-                setImageFiles((prev) => prev.filter((f) => f.uid !== file.uid));
-              }}
-              beforeUpload={(file) => {
-                // Tạo URL xem trước ảnh
-                ;(file as any).thumbUrl = URL.createObjectURL(file);
-                return false; // Ngăn chặn tự động upload
-              }}
-            >
-              {imageFiles.length >= 5 ? null : ( // Giới hạn số lượng ảnh được tải lên
-                <div>
-                  <PlusOutlined />
-                  <div style={{ marginTop: 8 }}>Upload</div>
-                </div>
-              )}
-            </Upload>
-            <Modal
-              visible={previewVisible}
-              footer={null}
-              onCancel={handleCancelPreview}
-            >
-              <img
-                alt="preview"
-                style={{ width: "100%" }}
-                src={previewImage ?? ""}
-              />
-            </Modal> */}
-          </Form.Item>
-
-          <Form.Item name="note_repair" label="Nội dung">
-            <TextArea />
           </Form.Item>
 
           <Form.Item
+            className="hidden"
             name="is_notified"
             label="Bật thông báo"
             valuePropName="checked"

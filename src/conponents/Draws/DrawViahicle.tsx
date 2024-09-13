@@ -98,9 +98,9 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
 
   const [loadingButton, setLoadingButton] = useState<number>(0)
   const [isShowModal, setIsShowModal] = useState(false)
-  console.log('====================================');
-  console.log("reminds", remindsFilter);
-  console.log('====================================');
+  console.log("====================================")
+  console.log("reminds", remindsFilter)
+  console.log("====================================")
   const confirm: PopconfirmProps["onConfirm"] = (e) => {
     setIsShowModal(true)
   }
@@ -181,11 +181,9 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
     //             .filter((item) => !item.is_notified),
     //         )
     //         return
-          
+
     //     }
-        
-     
-    }, [filter.keyword, filter.select, isReload])
+  }, [filter.keyword, filter.select, isReload])
   //   column
 
   const handleOnOf = async (checked: boolean, data: RemindProps) => {
@@ -259,11 +257,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         />
       ),
     },
-    {
-      title: "Ngày hoàn thành",
-      dataIndex: "dayFinish",
-      key: "dayFinish",
-    },
+
     {
       title: "Thao tác",
       dataIndex: "action",
@@ -353,7 +347,7 @@ export const TabTableTire: FC<{
   data: ViahicleType | TireProps
   isReload?: number
   onReFresh?: () => void
-}> = ({ data, isReload, isAddTireButton }) => {
+}> = ({ data, isReload, isAddTireButton, onReFresh }) => {
   const columns: TableColumnsType<TireProps> = [
     {
       title: "STT",
@@ -386,6 +380,7 @@ export const TabTableTire: FC<{
           <ModalCreateTire
             onRefresh={() => {
               fetchTire()
+              onReFresh?.()
             }}
             button={<Button type="link">Cập nhật</Button>}
             type="update"
@@ -394,6 +389,8 @@ export const TabTableTire: FC<{
           <ModalCreateTire
             onRefresh={() => {
               fetchTire()
+              onReFresh?.()
+
             }}
             button={<Button type="link">Xóa</Button>}
             type="delete"
@@ -433,6 +430,7 @@ export const TabTableTire: FC<{
         }}
         onReload={() => {
           fetchTire()
+          onReFresh?.()
         }}
         right={
           <div className="ml-5 flex items-center">
@@ -440,6 +438,7 @@ export const TabTableTire: FC<{
               <ModalCreateTire
                 onRefresh={() => {
                   fetchTire()
+                  onReFresh?.()
                 }}
                 button={<Button type="primary">Thêm lốp</Button>}
                 type="add"

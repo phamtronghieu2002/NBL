@@ -16,6 +16,7 @@ import { log } from "console"
 import { createCategory } from "../../apis/categoryAPI"
 import moment from "moment"
 import { getTokenParam } from "../../utils/_param"
+import storage from "../../utils/storage"
 interface ModalCreateRemindProps {
   remindData?: any
   button: React.ReactNode
@@ -57,10 +58,10 @@ const Form: FC<{
           }
         }
       }
-      images.append("token", getTokenParam())
-      console.log('====================================');
-      console.log("payload", images);
-      console.log('====================================');
+      images.append("token", storage.getAccessToken())
+      console.log("====================================")
+      console.log("payload", images)
+      console.log("====================================")
       // call api thêm nhắc nhở
       // setLoading(true)
       await addRemind(images)
