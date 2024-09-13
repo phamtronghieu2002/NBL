@@ -29,7 +29,6 @@ const MultiRangeDateWithTimePicker = forwardRef<
   const [dateRanges, setDateRanges] = useState<any[]>([])
   const [errors, setErrors] = useState<any[]>([])
 
-  console.log("errors >>", errors)
 
   useEffect(() => {
     if (initialValues) {
