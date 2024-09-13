@@ -5,7 +5,7 @@ interface MobileLayoutProps {
 }
 
 const MobileLayout: FC<MobileLayoutProps> = ({ children }) => {
-  return <div className="h-[100vh] overflow-scroll pt-2">{children}</div>
+  return <div className="overflow-hidden pt-2 ">{children}</div>
 }
 
 export default MobileLayout
