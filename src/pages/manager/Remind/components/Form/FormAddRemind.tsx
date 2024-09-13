@@ -6,120 +6,142 @@ import {
   Select,
   Switch,
   Upload,
-} from "antd"
-import TextArea from "antd/es/input/TextArea"
-import { FC, useContext, useEffect, useState, forwardRef, useRef } from "react"
-import moment from "moment"
-import { use } from "i18next"
+  Modal,
+} from "antd";
+import TextArea from "antd/es/input/TextArea";
+import { FC, useContext, useEffect, useState, forwardRef, useRef } from "react";
+import moment from "moment";
+import { use } from "i18next";
 import {
   CategoryType,
   TireProps,
   ViahicleType,
-} from "../../../../../interface/interface"
+} from "../../../../../interface/interface";
 import {
   ViahicleProviderContextProps,
   viahiclesContext,
-} from "../../providers/ViahicleProvider"
-import ModalCreateTire from "../../../../../conponents/modals/ModalCreateTire"
-import { Button } from "antd"
-import { PlusOutlined } from "@ant-design/icons"
-import { getCategory } from "../../../../../apis/categoryAPI"
-import { api } from "../../../../../_helper"
-import { getTire } from "../../../../../apis/tireAPI"
-import { t } from "i18next"
-import MultiDateTimePicker from "./MultiRangeDateWithTimePickerProps"
-import { log } from "console"
+} from "../../providers/ViahicleProvider";
+import ModalCreateTire from "../../../../../conponents/modals/ModalCreateTire";
+import { Button } from "antd";
+import { PlusOutlined } from "@ant-design/icons";
+import { getCategory } from "../../../../../apis/categoryAPI";
+import { api } from "../../../../../_helper";
+import { getTire } from "../../../../../apis/tireAPI";
+import { t } from "i18next";
+import MultiDateTimePicker from "./MultiRangeDateWithTimePickerProps";
+import { log } from "console";
+import { getTimeRemind } from "../../../../../apis/remindAPI";
+import { MaskLoader } from "../../../../../conponents/Loader";
 
 interface FormAddRemindProps {
-  viahicleSelected?: ViahicleType[]
-  initialValues?: any
-  onSubmit: (formData: any, callback: any, images: any) => void
+  viahicleSelected?: ViahicleType[];
+  initialValues?: any;
+  onSubmit: (formData: any, callback: any, images: any) => void;
 }
 
 const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
   ({ onSubmit, initialValues, viahicleSelected }, ref) => {
-    const [isName, setIsName] = useState<boolean>(false)
-    const [isTireSelect, setIsTireSelect] = useState<boolean>(false)
-    const [tires, setTires] = useState<any>([])
+    const [isName, setIsName] = useState<boolean>(false);
+    const [isTireSelect, setIsTireSelect] = useState<boolean>(false);
+    const [tires, setTires] = useState<any[]>([]);
 
     const [isReloadTableTire, setIsReloadTableTire] = useState<number>(
       Math.random(),
-    )
-    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined) // State để lưu URL của ảnh preview
+    );
+    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined); // State để lưu URL của ảnh preview
 
-    const [categories, setCategories] = useState<CategoryType[]>([])
+    const [categories, setCategories] = useState<CategoryType[]>([]);
 
     const { viahiclesStore } = useContext(
       viahiclesContext,
-    ) as ViahicleProviderContextProps
+    ) as ViahicleProviderContextProps;
 
-    const [vhiahicleTire, setViahicleTire] = useState<ViahicleType | null>(null)
+    const [vhiahicleTire, setViahicleTire] = useState<ViahicleType | null>(null);
 
-    const [timeSelect, setTimeSelect] = useState<any>([])
+    const [timeSelect, setTimeSelect] = useState<any[]>([]);
 
-    const buttonDateRef = useRef<HTMLButtonElement>(null)
+    const buttonDateRef = useRef<HTMLButtonElement>(null);
 
-    const [randomKey, setRandomKey] = useState<number>(Math.random())
-    const [imageFiles, setImageFiles] = useState<any[]>([])
+    const [randomKey, setRandomKey] = useState<number>(Math.random());
+    const [imageFiles, setImageFiles] = useState<any[]>([]);
+    const [schedules, setSchedules] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+    const [previewVisible, setPreviewVisible] = useState<boolean>(false);
 
+    console.log("====================================");
+    console.log("tire >>>", tires);
+    console.log("====================================");
+    useEffect(() => {
+      const fetchTime = async (id: number) => {
+        try {
+          const res = await getTimeRemind(id);
+          setSchedules(res?.data);
+        } catch (error) {
+          console.log("error time >>>", error);
+        }
+      };
+
+      if (initialValues?.id) {
+        fetchTime(initialValues?.id);
+      }
+    }, []);
     const fetchTire = async () => {
       try {
-        const res = await getTire(vhiahicleTire?.license_plate || "", "")
-        setTires(res?.data)
+        const res = await getTire(vhiahicleTire?.license_plate || "", "");
+        setTires(res?.data);
       } catch (error) {
-        // api.message?.error("Lỗi khi lấy dữ liệu lốp")
+        api.message?.error("Lỗi khi lấy dữ liệu lốp");
       }
       // setIsReloadTableTire(Math.random())
-    }
+    };
 
     const fetchCategory = async () => {
-      const res = await getCategory()
-      setCategories(res?.data)
-    }
-    const [form] = Form.useForm()
+      const res = await getCategory();
+      setCategories(res?.data);
+    };
+    const [form] = Form.useForm();
 
     useEffect(() => {
       // call api to get remindType
 
-      console.log("initialValues >>>", initialValues)
+      console.log("initialValues >>>", initialValues);
 
       if (Object.keys(initialValues).length === 0) {
         form.setFieldsValue({
           is_notified: true,
           note_repair: "Tới hạn thay dầu rồi,đi thay dầu thôi !!",
-        })
+        });
       } else {
         // cộng thêm n tháng
-
+        setLoading(true);
         initialValues.expiration_time = moment(
           initialValues?.expiration_timeStamp,
-        ).add(initialValues?.cycle, "months")
+        ).add(initialValues?.cycle, "months");
 
-        const tire = initialValues?.tire
+        const tire = initialValues?.tire;
         if (tire) {
-          handleSelectViahicle(viahiclesStore?.viahiclesStore[0]?.license_plate)
+          handleSelectViahicle(viahiclesStore?.viahiclesStore[0]?.license_plate);
         }
         form.setFieldsValue({
           ...initialValues,
           vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
           tire: initialValues?.tire,
           is_notified: initialValues?.is_notified == 0 ? true : false,
-        })
-
-        // form.setFieldValue("cycle", initialValues?.cycle)
+        });
       }
-      fetchCategory()
-    }, [])
+      fetchCategory();
+      setLoading(false);
+    }, []);
     //  handle getDataForm
-    console.log("viahicle Store >>>", viahiclesStore)
 
     useEffect(() => {
       if (timeSelect.length > 0) {
-        form.setFieldValue("schedules", timeSelect)
+        form.setFieldValue("schedules", timeSelect);
         form
           ?.validateFields()
           .then((values) => {
-            console.log("values ne cac ban", values)
+            console.log("values ne cac ban", values);
 
             const processedValuesForm = {
               ...values,
@@ -132,70 +154,77 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                     viahiclesStore?.type ? item?.imei : item.license_plate,
                   ),
               is_notified: values.is_notified ? 0 : 1,
-            }
+            };
 
-            const formData = new FormData()
+            const formData = new FormData();
             // Thêm dữ liệu vào formData
             imageFiles.forEach((file) => {
-              formData.append("images", file.originFileObj) // Đảm bảo là tệp ảnh gốc
-            })
+              formData.append("images", file.originFileObj); // Đảm bảo là tệp ảnh gốc
+            });
 
-            console.log("formData >>>", formData)
-
-            onSubmit(processedValuesForm, fetchCategory, formData) // Gửi dữ liệu đã xử lý
+            onSubmit(processedValuesForm, fetchCategory, formData); // Gửi dữ liệu đã xử lý
           })
           .catch(() => {
-            console.log("Lỗi xác thực:")
-          })
+            console.log("Lỗi xác thực:");
+          });
       }
-    }, [timeSelect.length, randomKey])
+    }, [timeSelect.length, randomKey]);
 
     useEffect(() => {
       if (vhiahicleTire) {
-        fetchTire()
+        alert("fetch tire");
+        fetchTire();
       }
-    }, [vhiahicleTire?.license_plate])
+    }, [vhiahicleTire?.license_plate]);
 
     const handleSelectViahicle = (value: string) => {
       const viahicle: any = viahicleSelected?.find((item: ViahicleType) =>
         viahiclesStore?.type == 0 ? item?.license_plate : item?.imei == value,
-      )
-      setViahicleTire(viahicle)
-    }
+      );
+      setViahicleTire(viahicle);
+    };
 
     const handleSelectTypeRemind = (value: any) => {
       if (value === "khác") {
-        setIsName(true)
+        setIsName(true);
       } else {
-        setIsName(false)
+        setIsName(false);
       }
-
       if (value === 8) {
-        setIsTireSelect(true)
-        fetchTire()
+        setIsTireSelect(true);
+        fetchTire();
       } else {
-        setIsTireSelect(false)
+        setIsTireSelect(false);
       }
-    }
+    };
 
     // Hàm xử lý khi ảnh được chọn
     const handleImageUpload = (file: any) => {
-      const formData = new FormData()
-      formData.append("image", file)
-      setImageFiles((prev) => [...prev, formData])
+      const formData = new FormData();
+      formData.append("image", file);
+      setImageFiles((prev) => [...prev, formData]);
 
-      return false // Prevent automatic upload
-    }
-
-    console.log("imageFiles >>", imageFiles)
+      return false; // Prevent automatic upload
+    };
 
     const handleGetDataForm = () => {
-      buttonDateRef.current?.click()
-      setRandomKey(Math.random())
-    }
+      buttonDateRef.current?.click();
+      setRandomKey(Math.random());
+    };
+
+    const handleImagePreview = (file: any) => {
+      setPreviewImage(file.thumbUrl || file.url);
+      setPreviewVisible(true);
+    };
+
+    const handleCancelPreview = () => {
+      setPreviewImage(null);
+      setPreviewVisible(false);
+    };
 
     return (
       <div>
+        {loading && <MaskLoader />}
         <Form
           form={form}
           labelCol={{ span: 6 }}
@@ -220,9 +249,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 </Select.Option>
               ))}
 
-              <Select.Option value="khác" key={100}>
+              {/* <Select.Option value="khác" key={100}>
                 Khác
-              </Select.Option>
+              </Select.Option> */}
             </Select>
           </Form.Item>
 
@@ -238,8 +267,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 <Select
                   className="select-viahicle"
                   onChange={(value: any) => {
-                    handleSelectViahicle(value)
-                    form.validateFields(["vehicles"])
+                    handleSelectViahicle(value);
+                    form.validateFields(["vehicles"]);
                   }}
                 >
                   {viahicleSelected?.map((item: ViahicleType) => (
@@ -282,7 +311,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   type="add"
                   button={
                     <Button
-                      disabled={!vhiahicleTire}
+                      disabled={vhiahicleTire ? false : true}
                       className="absolute right-[-20px] top-0"
                       icon={<PlusOutlined />}
                     >
@@ -323,7 +352,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 <InputNumber
                   value={form.getFieldValue("km_before")}
                   onChange={(value) => {
-                    form.setFieldsValue({ km_before: value })
+                    form.setFieldsValue({ km_before: value });
                   }}
                 />
                 <span style={{ marginLeft: 10, display: "inline-block" }}>
@@ -341,7 +370,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 <InputNumber
                   value={form.getFieldValue("cumulative_kilometers")}
                   onChange={(value) => {
-                    form.setFieldsValue({ cumulative_kilometers: value })
+                    form.setFieldsValue({ cumulative_kilometers: value });
                   }}
                 />
                 <span style={{ marginLeft: 10, display: "inline-block" }}>
@@ -360,7 +389,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           >
             <DatePicker
               disabledDate={(current) => {
-                return current && current < moment().endOf("day")
+                return current && current < moment().endOf("day");
               }}
               onChange={() => form.validateFields(["remindDate"])}
             />
@@ -374,7 +403,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             <InputNumber
               value={form.getFieldValue("cycle")}
               onChange={(value) => {
-                form.setFieldsValue({ cycle: value })
+                form.setFieldsValue({ cycle: value });
               }}
             />
             <span style={{ marginLeft: "10px", display: "inline-block" }}>
@@ -389,9 +418,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             ]}
           >
             <MultiDateTimePicker
+              initialValues={schedules}
               ref={buttonDateRef}
               setValueTime={(value: any) => {
-                setTimeSelect(value)
+                setTimeSelect(value);
               }}
             />
             <Input
@@ -410,25 +440,16 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               listType="picture-card"
               customRequest={({ file }) => handleImageUpload(file)} // Xử lý khi tải ảnh
               fileList={imageFiles} // Danh sách các ảnh đã tải lên
-              onPreview={(file) => {
-                // Hiển thị xem trước ảnh từ URL hoặc Blob
-                const previewUrl =
-                  file.url ||
-                  file.thumbUrl ||
-                  (file.originFileObj &&
-                    URL.createObjectURL(file.originFileObj))
-                const imgWindow = window.open(previewUrl)
-                imgWindow?.document.write('<img src="' + previewUrl + '" />')
-              }}
+              onPreview={handleImagePreview}
               onChange={({ fileList }) => setImageFiles(fileList)} // Cập nhật danh sách ảnh
               onRemove={(file) => {
                 // Xóa ảnh
-                setImageFiles((prev) => prev.filter((f) => f.uid !== file.uid))
+                setImageFiles((prev) => prev.filter((f) => f.uid !== file.uid));
               }}
               beforeUpload={(file) => {
                 // Tạo URL xem trước ảnh
-                ;(file as any).thumbUrl = URL.createObjectURL(file)
-                return false // Ngăn chặn tự động upload
+                ;(file as any).thumbUrl = URL.createObjectURL(file);
+                return false; // Ngăn chặn tự động upload
               }}
             >
               {imageFiles.length >= 5 ? null : ( // Giới hạn số lượng ảnh được tải lên
@@ -438,6 +459,17 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 </div>
               )}
             </Upload>
+            <Modal
+              visible={previewVisible}
+              footer={null}
+              onCancel={handleCancelPreview}
+            >
+              <img
+                alt="preview"
+                style={{ width: "100%" }}
+                src={previewImage ?? ""}
+              />
+            </Modal>
           </Form.Item>
 
           <Form.Item name="note_repair" label="Nội dung">
@@ -457,8 +489,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
         <button onClick={handleGetDataForm} ref={ref}></button>
       </div>
-    )
+    );
   },
-)
+);
 
-export default FormAddRemind
+export default FormAddRemind;

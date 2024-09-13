@@ -32,10 +32,16 @@ const MultiRangeDateWithTimePicker = forwardRef<
 
   useEffect(() => {
     if (initialValues) {
-      const initialRanges = initialValues.map((item) => ({
-        range: [moment(item.start), moment(item.end)],
-        time: moment(item.time, "HH:mm:ss"),
-      }))
+      console.log('====================================');
+      console.log('initialValues', initialValues);
+      console.log('====================================');
+      const initialRanges = initialValues?.map((item) => {          
+        return {
+        
+          range: [moment(item.start), moment(item.end)],
+          time: moment(item.time, "HH:mm"),
+        }
+      })
       setDateRanges(initialRanges)
       setErrors(
         initialRanges.map(() => ({ rangeError: false, timeError: false })),

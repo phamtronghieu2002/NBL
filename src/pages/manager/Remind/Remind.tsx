@@ -98,7 +98,7 @@ const Remind: FC<RemindProps> = () => {
 
   return (
     <div className="relative">
-      <div className="mb-10 font-bold text-lg">Quản lí phương tiện</div>
+      <div className="mb-10 font-bold text-lg  "  style={{visibility:'hidden'}}>Quản lí Việc</div>
       <div className="action_create_remind flex justify-end absolute left-[450px] top-[80px] z-50 ">
         <ModalCreateRemind
           button={

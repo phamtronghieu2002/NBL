@@ -160,10 +160,11 @@ export const TableC: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-  
     // alert('chay vao')
-    deselectAll()
-  }, [viahiclesStore?.type])
+    if (viahiclesStore?.viahiclesStore?.length == 0) {
+      deselectAll()
+    }
+  }, [viahiclesStore?.type, viahiclesStore?.viahiclesStore])
 
   const deselectAll = () => {
     setSelectedRowKeys([]) // Đặt mảng rỗng để bỏ chọn tất cả các checkbox

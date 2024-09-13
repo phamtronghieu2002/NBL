@@ -25,6 +25,10 @@ export const updateRemind = (id: number, data: any) => {
   return axiosInstance.put("/main/update/" + id, data)
 }
 
+export const getTimeRemind = (id: number) => {
+  return axiosInstance.get("/main/get-schedule/" + id )
+}
+
 export const AutoFinishRemind = (id: number) => {
   return axiosInstance.post("/main/finish-remind/" + id)
 }
