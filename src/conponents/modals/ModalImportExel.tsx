@@ -68,26 +68,24 @@ const ImportExel: FC<{
       const licensePlates = dataNewVehicles.map((item) => item.license_plate)
       const licensePlatesGPS = viahicleGPS?.map((item) => item.license_plate)
 
-      
       const duplicateLicensePlates = licensePlates.filter((item) =>
         licensePlatesGPS?.includes(item),
       )
-      console.log("duplicateLicensePlates;", duplicateLicensePlates);
-      
+      console.log("duplicateLicensePlates;", duplicateLicensePlates)
 
       if (duplicateLicensePlates.length > 0) {
         api.message?.error(
-          `Biển số xe ${duplicateLicensePlates.join(", ")} đã tồn tại trong danh sách phương tiện GPS`,
+          `Biển số xe ${duplicateLicensePlates.join(
+            ", ",
+          )} đã tồn tại trong danh sách phương tiện GPS`,
         )
         return
       }
 
-
       setLoading(true)
-    
+
       await addViahicleExel(dataNewVehicles)
       dispatch?.freshKey()
-
 
       const parsedRemindTireData = excelData.flatMap((item) =>
         item.remindTire
@@ -103,13 +101,12 @@ const ImportExel: FC<{
           }),
       )
 
-
       for (let i = 0; i < parsedRemindTireData.length; i++) {
-            try {
-              await addTire(parsedRemindTireData[i])
-            } catch (error) {
-                api.message?.error("Thêm lốp bị trùng series")
-            }
+        try {
+          await addTire(parsedRemindTireData[i])
+        } catch (error) {
+          api.message?.error("Thêm lốp bị trùng series")
+        }
       }
       const convertToUnix = (dateString: string): any => {
         try {
@@ -137,9 +134,8 @@ const ImportExel: FC<{
       }
       const res = await getCategory()
       const type = res?.data
-      
-      const formattedData = excelData.map( function (item) {
-  
+
+      const formattedData = excelData.map(function (item) {
         return {
           type: item.type,
           remind_category_id: "",
@@ -161,31 +157,40 @@ const ImportExel: FC<{
                 time: timeOnly,
               }
             }),
-            is_notified: 0,
+          is_notified: 0,
           vehicles: [item.license_plate?.toString()],
         }
       })
+      console.log("====================================")
+      console.log("formattedData truoc>>>>>>>>>>>>>", formattedData)
+      console.log("====================================")
+      for (let i = 0; i < formattedData.length; i++) {
+        let cate_id = ""
+        let typeFind = type.find(
+          (itemType: any) => itemType.name === formattedData[i].type,
+        )
 
-     for(let i = 0; i < formattedData.length; i++){
-      let cate_id = ""
-      let typeFind = type.find((itemType: any) => itemType.name === formattedData[i].type)
-
-      if (typeFind?.id) {
-        cate_id = typeFind?.id
-      } else {
-        const res = await createCategory(formattedData[i]?.type, "", "")
-        cate_id = res?.data?.id
+        if (typeFind?.id) {
+          cate_id = typeFind?.id
+        } else {
+          const res = await createCategory(formattedData[i]?.type, "", "")
+          console.log('====================================');
+          console.log();
+          console.log('====================================');
+          cate_id = res?.data
+        }
+        formattedData[i].remind_category_id = cate_id
       }
-      formattedData[i].remind_category_id = cate_id
-     }
-   
+
       for (let i = 0; i < formattedData.length; i++) {
         await addRemind(formattedData[i])
       }
       setLoading(false)
     } catch (error) {
       console.log("error >>", error)
-      api?.message?.error("Import thất bại seri lốp bị trùng hoặc biển số xe bị trùng")
+      api?.message?.error(
+        "Import thất bại seri lốp bị trùng hoặc biển số xe bị trùng",
+      )
     }
   }
 
