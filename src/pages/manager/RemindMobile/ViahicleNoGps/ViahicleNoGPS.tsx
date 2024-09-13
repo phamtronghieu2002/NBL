@@ -18,6 +18,7 @@ import CardCar from "../components/Card/CardCar"
 import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRemindMobile"
 import { PlusCircleOutlined, UploadOutlined } from "@ant-design/icons"
 import { MaskLoader } from "../../../../conponents/Loader"
+import DrawViahicle from "../../../../conponents/Draws/DrawViahicleMobile"
 interface ViahicleNoGPSType {
   viahicles: ViahicleType[]
 }
@@ -41,6 +42,8 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
   const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
   const [isPressing, setIsPressing] = useState(false)
+  const [isIndexDraw, setIndexDraw] = useState<any>(null)
+
   const pressTimer = useRef<any>()
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -102,7 +105,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
 
   const handleTouchStart = (item: any) => {
     pressTimer.current = setTimeout(() => {
-      console.log(item)
+      setIndexDraw(item.id)
       setIsPressing(true)
     }, 500) // Thay đổi thời gian giữ ở đây
   }
@@ -214,7 +217,9 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 checked={selectedItems.includes(item)} // Trạng thái checkbox
                 onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
-              
+              {isIndexDraw === item.id && (
+                <DrawViahicle button={<></>} title="Chi tiết" data={item} />
+              )}
             </div>
           )
         })}

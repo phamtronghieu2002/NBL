@@ -42,9 +42,10 @@ const DrawCM: FC<DrawProps> = ({
       </div>
       {open && (
         <Drawer
+          height={650}
           style={{ width: "100% !important" }}
           title={title}
-          placement="right"
+          placement="bottom"
           onClose={onClose}
           open={open}
         >
