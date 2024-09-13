@@ -58,14 +58,16 @@ const Form: FC<{
         }
       }
       images.append("token", getTokenParam())
-
+      console.log('====================================');
+      console.log("payload", images);
+      console.log('====================================');
       // call api thêm nhắc nhở
-      setLoading(true)
+      // setLoading(true)
       await addRemind(images)
-      action?.closeModal?.()
+      // action?.closeModal?.()
       api.message?.success("Thêm nhắc nhở thành công")
       onReload?.()
-      setLoading(true)
+      // setLoading(true)
     } catch (error) {
       api.message?.error("Thêm nhắc nhở thất bại")
       setLoading(false)
