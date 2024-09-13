@@ -53,21 +53,21 @@ export const addressInstance = createNoAuthInstance(ADDRESS_DOMAIN)
 //   "https://midvnremindbe-production.up.railway.app/api/v1/remind/",
 // )
 
+// export const axiosInstance = createNoAuthInstance(
+//   "http://192.168.2.24:3005/api/v1/remind/",
+// )
+
+// export const axiosInstance = createNoAuthInstance(
+//   "http://192.168.2.42:3005/api/v1/remind/",
+// )
+
+// export const axiosInstance = createNoAuthInstance(
+//   "http://192.168.2.42:3005/api/v1/remind/",
+// )
+
 export const axiosInstance = createNoAuthInstance(
-  "http://192.168.2.24:3005/api/v1/remind/",
+  "http://26.73.188.74:3005/api/v1/remind/",
 )
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://192.168.2.42:3005/api/v1/remind/",
-// )
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://192.168.2.42:3005/api/v1/remind/",
-// )
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://26.73.188.74:3005/api/v1/remind/",
-// )
 
 export const axiosFireBaseInstance = createNoAuthInstance(
   "http://192.168.2.42:3005/api/v1/token-firebase/",
