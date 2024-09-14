@@ -38,6 +38,7 @@ import "filepond/dist/filepond.min.css"
 import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
+const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 
 // Đăng ký plugin
 registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType)
@@ -60,7 +61,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [imageUrl, setImageUrl] = useState<string | undefined>(undefined) // State để lưu URL của ảnh preview
 
     const [categories, setCategories] = useState<CategoryType[]>([])
- 
+
     const { viahiclesStore } = useContext(
       viahiclesContext,
     ) as ViahicleProviderContextProps
@@ -79,14 +80,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [previewVisible, setPreviewVisible] = useState<boolean>(false)
     const [form] = Form.useForm()
 
-   
-
-    useEffect(() => {
-      // Chuyển đổi URL thành các đối tượng File ảo
-    }, [])
     useEffect(() => {
       if (initialValues?.remind_img_url) {
-
         const convertUrlsToFiles = async (urls: string[]) => {
           return Promise.all(
             urls.map(async (url) => {
@@ -108,7 +103,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
         const urls = initialValues?.remind_img_url?.split(",")?.map(
           (url: string, index: number) =>
-            `http://192.168.2.24:3005${url.trim()}`, // The URL of the image
+            `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
 
         const initFiles = async () => {
@@ -196,8 +191,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         form
           ?.validateFields()
           .then((values) => {
-            console.log("values ne cac ban", values)
-
             const processedValuesForm = {
               ...values,
               expiration_time: values.expiration_time

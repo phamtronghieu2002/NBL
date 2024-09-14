@@ -57,16 +57,14 @@ const Form: FC<{
         }
       }
       images.append("token", storage.getAccessToken())
-      console.log("====================================")
-      console.log("payload", images)
-      console.log("====================================")
+
       // call api thêm nhắc nhở
-      // setLoading(true)
+      setLoading(true)
       await addRemind(images)
-      // action?.closeModal?.()
+      action?.closeModal?.()
       api.message?.success("Thêm nhắc nhở thành công")
       onReload?.()
-      // setLoading(true)
+      setLoading(false)
     } catch (error) {
       api.message?.error("Thêm nhắc nhở thất bại")
       setLoading(false)
@@ -74,6 +72,10 @@ const Form: FC<{
   }
   const handleUpdate = async (formData: any, callback: any,images?: any) => {
   
+
+    console.log('====================================');
+    console.log("images co phai form data ko >>>",images);
+    console.log('====================================');
     // call api sửa nhắc nhở
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {

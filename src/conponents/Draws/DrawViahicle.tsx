@@ -315,20 +315,8 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           limitSearchLegth: 3,
         }}
         right={
-          <div className="ml-5 flex items-center">
-            <Select
-              className="h-[25px]"
-              defaultValue="all"
-              style={{ width: 120 }}
-              onChange={(value) => {
-                setFilter({ ...filter, select: value })
-              }}
-              options={[
-                { value: "all", label: "Tất cả" },
-                { value: "off", label: "Bật" },
-                { value: "on", label: "Tắt" },
-              ]}
-            />
+          <div className="">
+ 
           </div>
         }
         props={{
