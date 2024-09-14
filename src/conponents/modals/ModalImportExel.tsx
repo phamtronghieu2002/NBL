@@ -140,8 +140,11 @@ const ImportExel: FC<{
       }
       const res = await getCategory()
       const type = res?.data
-      const formattedData = excelData.map(function (item) {
+      console.log("excelData", excelData)
+
+      const formattedData = excelData.map(function (item, index) {
         return {
+          tire_seri: parsedRemindTireData?.[index]?.seri,
           type: item.type,
           remind_category_id: "",
           expiration_time: convertToUnix(item.exp),
@@ -178,9 +181,7 @@ const ImportExel: FC<{
           cate_id = typeFind?.id
         } else {
           const res = await createCategory(formattedData[i]?.type, "", "")
-          console.log("====================================")
-          console.log()
-          console.log("====================================")
+
           cate_id = res?.data
         }
         formattedData[i].remind_category_id = cate_id

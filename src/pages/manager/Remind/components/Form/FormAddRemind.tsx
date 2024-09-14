@@ -109,9 +109,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           (url: string, index: number) =>
             `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
-        console.log("====================================")
-        console.log("urls >>", urls)
-        console.log("====================================")
+      
         const initFiles = async () => {
           const files = await convertUrlsToFiles(urls)
           setImageFiles(files)
@@ -137,8 +135,13 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     const fetchTire = async () => {
       try {
-        const license_plate = vhiahicleTire?.license_plate || ""
-        const res = await getTire(license_plate, "")
+        console.log("vhiahicleTire  >>>", vhiahicleTire)
+
+        const license_plate =
+          viahiclesStore?.type == 1
+            ? vhiahicleTire?.imei
+            : vhiahicleTire?.license_plate
+        const res = await getTire(license_plate ?? "", "")
 
         setTires(res?.data)
       } catch (error) {
@@ -174,9 +177,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           initialValues.expiration_time = moment(
             initialValues?.expiration_timeStamp,
           ).add(isUpdateCycleForm ? initialValues?.cycle : 0, "months")
-        console.log('====================================');
-        console.log('initialValues >>>>', initialValues);
-        console.log('====================================');
+          console.log("====================================")
+          console.log("initialValues >>>>", initialValues)
+          console.log("====================================")
           const tire = initialValues?.tire
           if (tire) {
             handleSelectViahicle(
