@@ -283,6 +283,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           onCancel={(e) => handleCancel(e, record)}
           okText={
             <ModalCreateRemind
+              isUpdateCycleForm
               type="add"
               onReload={fetchRemind}
               remindData={record}
@@ -314,11 +315,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           },
           limitSearchLegth: 3,
         }}
-        right={
-          <div className="">
- 
-          </div>
-        }
+        right={<div className=""></div>}
         props={{
           columns: columns,
           dataSource: remindsFilter,
@@ -378,7 +375,6 @@ export const TabTableTire: FC<{
             onRefresh={() => {
               fetchTire()
               onReFresh?.()
-
             }}
             button={<Button type="link">Xóa</Button>}
             type="delete"

@@ -44,13 +44,14 @@ const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType)
 
 interface FormAddRemindProps {
+  isUpdateCycleForm?: boolean
   viahicleSelected?: ViahicleType[]
   initialValues?: any
   onSubmit: (formData: any, callback: any, images: any) => void
 }
 
 const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
-  ({ onSubmit, initialValues, viahicleSelected }, ref) => {
+  ({ onSubmit, initialValues, viahicleSelected, isUpdateCycleForm }, ref) => {
     const [isName, setIsName] = useState<boolean>(false)
     const [isTireSelect, setIsTireSelect] = useState<boolean>(false)
     const [tires, setTires] = useState<any[]>([])
@@ -81,6 +82,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [form] = Form.useForm()
 
     useEffect(() => {
+      console.log("====================================")
+      console.log("initialValues >>", initialValues)
+      console.log("====================================")
       if (initialValues?.remind_img_url) {
         const convertUrlsToFiles = async (urls: string[]) => {
           return Promise.all(
@@ -105,7 +109,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           (url: string, index: number) =>
             `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
-
+        console.log("====================================")
+        console.log("urls >>", urls)
+        console.log("====================================")
         const initFiles = async () => {
           const files = await convertUrlsToFiles(urls)
           setImageFiles(files)
@@ -167,8 +173,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
           initialValues.expiration_time = moment(
             initialValues?.expiration_timeStamp,
-          ).add(initialValues?.cycle, "months")
-
+          ).add(isUpdateCycleForm ? initialValues?.cycle : 0, "months")
+        console.log('====================================');
+        console.log('initialValues >>>>', initialValues);
+        console.log('====================================');
           const tire = initialValues?.tire
           if (tire) {
             handleSelectViahicle(
@@ -184,7 +192,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         }
       }
     }, [categories?.length])
-
     useEffect(() => {
       if (timeSelect.length > 0) {
         form.setFieldValue("schedules", timeSelect)
@@ -219,9 +226,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }, [timeSelect.length, randomKey])
 
     useEffect(() => {
-
       if (vhiahicleTire) {
-        alert("co fetch")
         fetchTire()
       }
     }, [vhiahicleTire?.license_plate])
