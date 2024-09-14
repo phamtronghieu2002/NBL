@@ -4,6 +4,7 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 import { CategoryType } from "../interface/interface"
 import { getTokenParam } from "../utils/_param"
 import storage from "../utils/storage"
+import { store } from "../app/store"
 const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN
 
 export const getIconRemindViahicleGPS = () => {
@@ -33,7 +34,9 @@ export const getTimeRemind = (id: number) => {
 }
 
 export const AutoFinishRemind = (id: number) => {
-  return axiosInstance.post("/main/finish-remind/" + id)
+  return axiosInstance.post("/main/finish-remind/" + id, {
+    token: storage?.getAccessToken(),
+  })
 }
 export const getRemindByLisencePlate = (lisense_plate: string) => {
   return axiosInstance.get("/main/get-vehicle-id/" + lisense_plate)
