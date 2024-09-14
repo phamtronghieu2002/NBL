@@ -1,4 +1,4 @@
-import { fetchFCM } from "../App"
+// import { fetchFCM } from "../App"
 import { _const } from "../_constant"
 import { api, history } from "../_helper"
 import { ICmcServer } from "../_types/devServerType"
@@ -45,7 +45,7 @@ import {
   resetPassService,
 } from "../services/userServices"
 import { _array } from "./_array"
-import { requestFCMToken } from "./firebase"
+// import { requestFCMToken } from "./firebase"
 import { getString } from "./getString"
 import storage from "./storage"
 
