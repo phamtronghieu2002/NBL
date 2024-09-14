@@ -219,7 +219,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }, [timeSelect.length, randomKey])
 
     useEffect(() => {
+
       if (vhiahicleTire) {
+        alert("co fetch")
         fetchTire()
       }
     }, [vhiahicleTire?.license_plate])
