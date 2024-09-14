@@ -22,6 +22,7 @@ import {
   getRemindVehicleGPS,
 } from "../../../apis/remindAPI"
 import { getTokenParam } from "../../../utils/_param"
+import storage from "../../../utils/storage"
 interface RemindProps {}
 
 const Remind: FC<RemindProps> = () => {
@@ -45,7 +46,7 @@ const Remind: FC<RemindProps> = () => {
           `https://sys01.midvietnam.net/api/v1/device/rows?keyword=${keyword}&offset=0&limit=50&type=1`,
           {
             headers: {
-              Authorization: `Bearer ${getTokenParam()}`,
+              Authorization: `Bearer ${storage.getAccessToken()}`,
             },
           },
         )

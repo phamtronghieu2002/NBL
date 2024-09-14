@@ -3,6 +3,7 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
 import { CategoryType } from "../interface/interface"
 import { getTokenParam } from "../utils/_param"
+import storage from "../utils/storage"
 
 export const getIconRemindViahicleGPS = () => {
   return axiosInstance.get(`/main/get-category-all`)
@@ -10,12 +11,12 @@ export const getIconRemindViahicleGPS = () => {
 
 export const addRemind = (data: any) => {
   return axios.post(
-    "http://192.168.2.42:3005/api/v1/remind/main/add-remind",
+    "http://26.73.188.74:3005/api/v1/remind/main/add-remind",
     data,
     {
       headers: {
         "Content-Type": "multipart/form-data",
-        "x-mobicam-token": getTokenParam(),
+        "x-mobicam-token": storage.getAccessToken(),
       },
     },
   )
@@ -26,7 +27,7 @@ export const updateRemind = (id: number, data: any) => {
 }
 
 export const getTimeRemind = (id: number) => {
-  return axiosInstance.get("/main/get-schedule/" + id )
+  return axiosInstance.get("/main/get-schedule/" + id)
 }
 
 export const AutoFinishRemind = (id: number) => {
