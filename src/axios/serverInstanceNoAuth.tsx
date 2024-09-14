@@ -74,9 +74,9 @@ export const addressInstance = createNoAuthInstance(ADDRESS_DOMAIN)
 // )
 
 export const axiosFireBaseInstance = createNoAuthInstance(
-  "http://localhost:3005/api/v1/token-firebase/",
+  "http://localhost:5012/api/v1/token-firebase/",
 )
 
 export const axiosInstance = createNoAuthInstance(
-  "http://localhost:3005/api/v1/remind/",
+  "http://localhost:5012/api/v1/remind/",
 )
