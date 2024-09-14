@@ -37,6 +37,7 @@ export const MainLayout: React.FC<IProps> = ({
   const { t } = useTranslation()
 
   return (
+    <AuthHoc>
       <Layout className="h-[100vh]">
         <LayoutSideBar />
         <Layout>
@@ -85,5 +86,6 @@ export const MainLayout: React.FC<IProps> = ({
           </Content>
         </Layout>
       </Layout>
+    </AuthHoc>
   )
 }
