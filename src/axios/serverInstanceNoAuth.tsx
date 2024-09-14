@@ -1,5 +1,7 @@
 const SERVER_DOMAIN = import.meta.env.VITE_SERVER_DOMAIN
 const ADDRESS_DOMAIN = import.meta.env.VITE_ADDRESS_DOMAIN
+const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN
+const SERVER_DOMAIN_FIREBASE = import.meta.env.VITE_HOST_FIREBASE_SERVER_DOMAIN
 
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
 import { _const } from "../_constant"
@@ -15,7 +17,7 @@ const createNoAuthInstance = (API: string) => {
   })
 
   const interceptorsRq = (config: InternalAxiosRequestConfig<any>) => {
-    let accessToken = storage.getAccessToken() ||  getTokenParam()
+    let accessToken = storage.getAccessToken() || getTokenParam()
 
     config.headers["x-mobicam-token"] = getTokenAuthHeader(accessToken)
 
@@ -49,35 +51,9 @@ const createNoAuthInstance = (API: string) => {
 export const serverInstanceNoAuth = createNoAuthInstance(SERVER_DOMAIN)
 export const addressInstance = createNoAuthInstance(ADDRESS_DOMAIN)
 
-// export const axiosInstance = createNoAuthInstance(
-//   "https://midvnremindbe-production.up.railway.app/api/v1/remind/",
-// )
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://192.168.2.24:3005/api/v1/remind/",
-// )
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://192.168.2.42:3005/api/v1/remind/",
-// )
-
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://192.168.2.42:3005/api/v1/remind/",
-// )
-
-export const axiosInstance = createNoAuthInstance(
-  "http://26.73.188.74:3005/api/v1/remind/",
-)
+// remind
+export const axiosInstance = createNoAuthInstance(SERVER_DOMAIN_REMIND)
 
 export const axiosFireBaseInstance = createNoAuthInstance(
   "http://localhost:3005/api/v1/token-firebase/",
 )
-
-// export const axiosFireBaseInstance = createNoAuthInstance(
-//   "http://localhost:3005/api/v1/token-firebase/",
-// )
-
-// export const axiosInstance = createNoAuthInstance(
-//   "http://localhost:3005/api/v1/remind/",
-// )

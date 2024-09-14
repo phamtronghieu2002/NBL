@@ -166,13 +166,12 @@ const ImportExel: FC<{
           vehicles: [item.license_plate?.toString()],
         }
       })
-      console.log("====================================")
-      console.log("formattedData truoc>>>>>>>>>>>>>", formattedData)
-      console.log("====================================")
+
       for (let i = 0; i < formattedData.length; i++) {
         let cate_id = ""
         let typeFind = type.find(
-          (itemType: any) => itemType.name === formattedData[i].type,
+          (itemType: any) =>
+            itemType.name.trim() === formattedData[i].type.trim(),
         )
 
         if (typeFind?.id) {
@@ -186,11 +185,12 @@ const ImportExel: FC<{
         }
         formattedData[i].remind_category_id = cate_id
       }
-      console.log('chay duoc den day');
+      console.log("chay duoc den day")
       for (let i = 0; i < formattedData.length; i++) {
         await addRemind(formattedData[i])
       }
       setLoading(false)
+      action?.closeModal?.()
     } catch (error) {
       console.log("error >>", error)
       api?.message?.error(
