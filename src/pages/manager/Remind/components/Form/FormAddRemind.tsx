@@ -416,6 +416,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 ]}
               >
                 <InputNumber
+      
                   onChange={(value) => {
                     form.setFieldsValue({ km_before: value })
                   }}

@@ -263,7 +263,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           okText={
             <ModalCreateRemind
               isUpdateCycleForm
-              type="add"
+              type="update-cycle"
               onReload={fetchRemind}
               remindData={record}
               button={<span>OK</span>}
