@@ -113,7 +113,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         form
           ?.validateFields()
           .then((values) => {
-            console.log("values ne cac ban", values)
 
             const processedValuesForm = {
               ...values,

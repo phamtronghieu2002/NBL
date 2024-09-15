@@ -98,9 +98,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
 
   const [loadingButton, setLoadingButton] = useState<number>(0)
   const [isShowModal, setIsShowModal] = useState(false)
-  console.log("====================================")
-  console.log("reminds", remindsFilter)
-  console.log("====================================")
+
   const confirm: PopconfirmProps["onConfirm"] = (e) => {
     setIsShowModal(true)
   }
@@ -162,27 +160,8 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
   }
 
   useEffect(() => {
-    const selectType = filter.select
     const keyword = filter.keyword
     fetchRemind(keyword)
-    // switch (selectType) {
-    //   case "all":
-    //     fetchRemind(keyword)
-    //     break
-    //   case "on":
-    //       setRemindsFilter(
-    //         reminds
-    //           .filter((item) => item.is_notified),
-    //       )
-    //       return
-    //       case "ò":
-    //         setRemindsFilter(
-    //           reminds
-    //             .filter((item) => !item.is_notified),
-    //         )
-    //         return
-
-    //     }
   }, [filter.keyword, filter.select, isReload])
   //   column
 
@@ -420,6 +399,7 @@ export const TabTableTire: FC<{
           <div className="ml-5 flex items-center">
             {isAddTireButton && (
               <ModalCreateTire
+                data={data}
                 onRefresh={() => {
                   fetchTire()
                   onReFresh?.()

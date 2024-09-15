@@ -22,8 +22,6 @@ export const deleteViahicle = (id: number) => {
 }
 
 export const updateViahicle = (id: number, data: ViahicleType) => {
-  console.log("====================================")
-  console.log("cac ban oi", data)
-  console.log("====================================")
+ 
   return axiosInstance.put(`/vehicle-no-gps/update-vehicle/${id}`, data)
 }

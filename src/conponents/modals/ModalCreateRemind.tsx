@@ -72,9 +72,7 @@ const Form: FC<{
     }
   }
   const handleUpdate = async (formData: any, callback: any, images?: any) => {
-    console.log("====================================")
-    console.log("images co phai form data ko >>>", images)
-    console.log("====================================")
+   
     // call api sửa nhắc nhở
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
