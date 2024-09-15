@@ -77,7 +77,7 @@ export const ThemeConfigHoc: React.FC<IProps> = ({ children }) => {
         }
       })
       .catch((error) => {
-        console.log(error)
+        console.log("loi khi lay theme >>", error)
       })
       .finally(() => {
         setIsDone(true)
