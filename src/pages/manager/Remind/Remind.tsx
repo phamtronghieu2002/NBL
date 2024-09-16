@@ -65,7 +65,6 @@ const Remind: FC<RemindProps> = () => {
         })
         dispatch?.setViahicleGPS?.(viahicleGPS)
 
-
         dispatch?.setLoading?.(false)
         setViahicles(viahicleGPS)
       } catch (error) {
@@ -75,6 +74,11 @@ const Remind: FC<RemindProps> = () => {
       try {
         const res = await getViahicle(keyword)
         const data = getData(res?.data)
+        const remind_viahicles_NoGPS = await getIconRemindViahicleGPS()
+        data.map((item: any) => {
+          item["icons"] = remind_viahicles_NoGPS.data[item.license_plate]
+        })
+
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
       } catch (error) {
@@ -98,7 +102,12 @@ const Remind: FC<RemindProps> = () => {
 
   return (
     <div className="relative">
-      <div className="mb-10 font-bold text-lg  "  style={{visibility:'hidden'}}>Quản lí Việc</div>
+      <div
+        className="mb-10 font-bold text-lg  "
+        style={{ visibility: "hidden" }}
+      >
+        Quản lí Việc
+      </div>
       <div className="action_create_remind flex justify-end absolute left-[450px] top-[80px] z-50 ">
         <ModalCreateRemind
           button={

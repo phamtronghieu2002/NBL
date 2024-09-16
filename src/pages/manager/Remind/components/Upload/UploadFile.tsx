@@ -8,11 +8,15 @@ import { number } from "react-i18next/icu.macro"
 interface UploadExelProps {
   setIsUpload: any
   setExcelData: any
+  setExcelDefaultTime: any,
+  setType: any
 }
 
 const UploadExel: React.FC<UploadExelProps> = ({
   setIsUpload,
   setExcelData,
+  setExcelDefaultTime,
+  setType
 }) => {
   const [tableColumns, setTableColumns] = useState<any[]>([])
   const [tableData, setTableData] = useState<any[]>([])
@@ -56,6 +60,28 @@ const UploadExel: React.FC<UploadExelProps> = ({
           if (col === "Lốp(Seri,size,brand)") acc.push(index)
           return acc
         }, [])
+
+        const worksheet2 = workbook.Sheets["Sheet2"];
+        const jsonData2: any[][] = XLSX.utils.sheet_to_json(worksheet2, {
+          header: 1,
+        });
+  
+        // Lấy giá trị "Thời gian mặc định" từ dòng đầu tiên (dòng 2) của Sheet2
+        const headerSheet2 = jsonData2[0];
+        const indexDefaultTime = headerSheet2.indexOf("Thời gian mặc định");
+        const indexExcelType = headerSheet2.indexOf("Loại của excel");
+        const typeExcel = jsonData2[1][indexExcelType];
+        if (typeExcel === "" || typeExcel === undefined) {
+          throw new Error("Invalid Excel type: Type cannot be empty or undefined");
+        }
+        console.log(typeExcel)
+        if (typeExcel === "Thêm mới") {
+          setType("add");
+        } else {
+          setType("replace");
+        }
+        const defaultTime = jsonData2[1][indexDefaultTime] || "08:00";
+        setExcelDefaultTime(defaultTime)
         const result = jsonData
           .slice(1)
           .filter(
@@ -77,11 +103,11 @@ const UploadExel: React.FC<UploadExelProps> = ({
             remindDate: indicesDate.map((dateIndex: any, i: any) => {
               const timeIndex = indicesTime[i]
               let dateValue = row[dateIndex] || "" // Lấy giá trị từ cột "Thời gian nhắc nhở"
-              let timeValue = "08:00" // Mặc định là 08:00 nếu không có cột "Thời gian"
+              let timeValue = defaultTime // Mặc định là 08:00 nếu không có cột "Thời gian"
 
               // Nếu có cột "Thời gian" và giá trị không trống
               if (timeIndex !== null) {
-                timeValue = row[timeIndex] || "08:00"
+                timeValue = row[timeIndex] || defaultTime
               }
 
               // Chỉ ghép thời gian nếu "Thời gian nhắc nhở" có giá trị hợp lệ

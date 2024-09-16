@@ -8,8 +8,11 @@ export const routeConfig = {
   reportSlug: "/report/:slug",
   // monitor: "/mananger",
 
-  //MANAGER
+//  login mobile
+  login_mobile: "/loginmobile",
 
+
+  //MANAGER
   manager_remind: "/manager/remind",
   manager_remindMobile: "/manager/remindMobile",
 

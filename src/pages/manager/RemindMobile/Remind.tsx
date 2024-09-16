@@ -87,6 +87,11 @@ const Remind: FC<RemindProps> = () => {
       try {
         const res = await getViahicle(keyword)
         const data = getData(res?.data)
+        const remind_viahicles_NoGPS = await getIconRemindViahicleGPS()
+        data.map((item: any) => {
+          item["icons"] = remind_viahicles_NoGPS.data[item.license_plate]
+        })
+
         setViahiclesNoGPS(data)
         dispatch?.setLoading?.(false)
       } catch (error) {
@@ -100,7 +105,7 @@ const Remind: FC<RemindProps> = () => {
   }, [tab, viahiclesStore.freshKey, viahiclesStore.keyword])
 
   useEffect(() => {
-     dispatch?.setViahicle([])
+    dispatch?.setViahicle([])
   }, [tab])
 
   const onChangeTab = (key: string) => {

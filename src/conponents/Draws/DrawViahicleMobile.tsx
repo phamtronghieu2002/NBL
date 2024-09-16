@@ -153,7 +153,13 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
     try {
       if (type == 0) {
         let res: any = []
-        res = await getRemindSearch(keyword, data?.license_plate)
+        if(keyword){
+          res = await getRemindSearch(keyword, data?.license_plate)
+
+        }else{
+
+          res = await getRemindSearch(keyword, data?.license_plate)
+        }
         const reminds = res?.data.filter(
           (item: any) => item?.remind_id !== null,
         )
