@@ -20,8 +20,8 @@ export const addRemind = (data: any) => {
   })
 }
 
-export const updateRemind = (id:number,data: any) => {
-  return axios.post(`${SERVER_DOMAIN_REMIND}main/update/${id}`, data, {
+export const updateRemind = (id: number, data: any) => {
+  return axios.put(`${SERVER_DOMAIN_REMIND}main/update/${id}`, data, {
     headers: {
       "Content-Type": "multipart/form-data",
       "x-mobicam-token": storage.getAccessToken(),
