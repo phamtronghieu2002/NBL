@@ -100,7 +100,6 @@ const ImportExel: FC<{
             }
           }),
       )
-
       for (let i = 0; i < parsedRemindTireData.length; i++) {
         try {
           await addTire(parsedRemindTireData[i])
@@ -114,19 +113,26 @@ const ImportExel: FC<{
             dateString === null ||
             dateString === undefined ||
             dateString === ""
-          )
+          ) {
             return ""
+          }
+          dateString = dateString.trim()
+          if (!dateString.includes(" ")) {
+            dateString += " 08:00"
+          }
           const [datePart, timePart] = dateString.trim().split(" ")
           const [day, month, year] = datePart.split("/")
           const [hours, minutes] = timePart.split(":")
 
           const date = new Date(
             Number(year),
-            Number(month) - 1,
+            Number(month) - 1, // JavaScript tháng bắt đầu từ 0
             Number(day),
             Number(hours),
             Number(minutes),
           )
+
+          // Convert to Unix timestamp (in milliseconds)
           return Math.floor(date.getTime())
         } catch (err) {
           throw err
@@ -134,7 +140,6 @@ const ImportExel: FC<{
       }
       const res = await getCategory()
       const type = res?.data
-
       const formattedData = excelData.map(function (item) {
         return {
           type: item.type,
@@ -143,7 +148,7 @@ const ImportExel: FC<{
           cycle: item.cycle,
           note_repair: item.indexDesc,
           schedules: item.remindDate
-            .filter((dateStr: any) => dateStr) // Lọc các giá trị null hoặc undefined
+            .filter((dateStr: any) => dateStr)
             .map((dateStr: any) => {
               const [startDate, endDateTime] = dateStr.split("-")
               const startDateTime = `${startDate.trim()} ${endDateTime
@@ -161,31 +166,31 @@ const ImportExel: FC<{
           vehicles: [item.license_plate?.toString()],
         }
       })
-      console.log("====================================")
-      console.log("formattedData truoc>>>>>>>>>>>>>", formattedData)
-      console.log("====================================")
+
       for (let i = 0; i < formattedData.length; i++) {
         let cate_id = ""
         let typeFind = type.find(
-          (itemType: any) => itemType.name === formattedData[i].type,
+          (itemType: any) =>
+            itemType.name.trim() === formattedData[i].type.trim(),
         )
 
         if (typeFind?.id) {
           cate_id = typeFind?.id
         } else {
           const res = await createCategory(formattedData[i]?.type, "", "")
-          console.log('====================================');
-          console.log();
-          console.log('====================================');
+          console.log("====================================")
+          console.log()
+          console.log("====================================")
           cate_id = res?.data
         }
         formattedData[i].remind_category_id = cate_id
       }
-
+      console.log("chay duoc den day")
       for (let i = 0; i < formattedData.length; i++) {
         await addRemind(formattedData[i])
       }
       setLoading(false)
+      action?.closeModal?.()
     } catch (error) {
       console.log("error >>", error)
       api?.message?.error(

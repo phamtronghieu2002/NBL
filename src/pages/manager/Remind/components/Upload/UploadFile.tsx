@@ -39,16 +39,23 @@ const UploadExel: React.FC<UploadExelProps> = ({
         const indexCycle = header.indexOf("Chu kì( Tháng)")
         const indexDes = header.indexOf("Nội dung")
 
+        // Tìm tất cả các cột "Thời gian nhắc nhở"
         const indicesDate = header.reduce((acc, col, index) => {
           if (col === "Thời gian nhắc nhở") acc.push(index)
           return acc
         }, [])
 
+        // Kiểm tra xem bên cạnh "Thời gian nhắc nhở" có cột "Thời gian" không
+        const indicesTime = indicesDate.map((index: any) => {
+          if (header[index + 1] === "Thời gian") {
+            return index + 1 // Lấy cột kế bên nếu là "Thời gian"
+          }
+          return null // Nếu không có cột "Thời gian"
+        })
         const indicesSeri = header.reduce((acc, col, index) => {
           if (col === "Lốp(Seri,size,brand)") acc.push(index)
           return acc
         }, [])
-
         const result = jsonData
           .slice(1)
           .filter(
@@ -66,7 +73,25 @@ const UploadExel: React.FC<UploadExelProps> = ({
             exp: row[indexExp],
             cycle: row[indexCycle],
             indexDesc: row[indexDes],
-            remindDate: indicesDate.map((index: number) => row[index]),
+            // Xử lý remindDate với logic mới
+            remindDate: indicesDate.map((dateIndex: any, i: any) => {
+              const timeIndex = indicesTime[i]
+              let dateValue = row[dateIndex] || "" // Lấy giá trị từ cột "Thời gian nhắc nhở"
+              let timeValue = "08:00" // Mặc định là 08:00 nếu không có cột "Thời gian"
+
+              // Nếu có cột "Thời gian" và giá trị không trống
+              if (timeIndex !== null) {
+                timeValue = row[timeIndex] || "08:00"
+              }
+
+              // Chỉ ghép thời gian nếu "Thời gian nhắc nhở" có giá trị hợp lệ
+              if (dateValue && dateValue.trim() !== "") {
+                return `${dateValue.trim()} ${timeValue}`
+              } else {
+                // Trả về chuỗi rỗng nếu "Thời gian nhắc nhở" bị thiếu
+                return ""
+              }
+            }),
             remindTire: indicesSeri.map((index: number) => row[index]),
           }))
         setExcelData(result)

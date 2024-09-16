@@ -56,15 +56,11 @@ const FormAdd: FC<{
   onRefresh,
   isInModalRemind,
   isReload,
-  isAddTireButton
+  isAddTireButton,
 }) => {
   const [form] = Form.useForm()
 
-  const { viahiclesStore, dispatch } = useContext(
-    viahiclesContext,
-  ) as ViahicleProviderContextProps
-
-  const lisence_plate = viahiclesStore?.viahiclesStore[0]?.license_plate
+  const lisence_plate = data?.license_plate
   const tireId = initialValues?.id ?? 0
   const getAction = () => {
     if (type == "add") {
@@ -75,8 +71,7 @@ const FormAdd: FC<{
           form
             .validateFields()
             .then(async (values) => {
-              // call api thêm lố
-
+              // call api thêm lốp
               try {
                 await addTire({
                   seri: values.seri,
@@ -113,7 +108,7 @@ const FormAdd: FC<{
     }
     if (type == "update") {
       return {
-        title: "Chỉnh sửa phương tiện",
+        title: "Chỉnh sửa lốp",
         okButton: "Lưu",
         okCallback: () => {
           form
@@ -121,11 +116,11 @@ const FormAdd: FC<{
             .then(async (values) => {
               try {
                 await updateTire(tireId, values)
-                api.message?.success("Chỉnh sửa phương tiện thành công")
+                api.message?.success("Chỉnh sửa lốp thành công")
                 onRefresh?.()
                 action?.closeModal()
               } catch (error) {
-                api.message?.error("Chỉnh sửa phương tiện thất bại !!")
+                api.message?.error("Chỉnh sửa lốp thất bại !!")
               }
             })
             .catch((errorInfo) => {
@@ -177,7 +172,14 @@ const FormAdd: FC<{
         </Form>
       )}
 
-      {isInModalRemind && <TabTableTire  isAddTireButton={isAddTireButton} isReload={isReload} data={data} />}
+      {isInModalRemind && (
+        <TabTableTire
+          onReFresh={onRefresh}
+          isAddTireButton={isAddTireButton}
+          isReload={isReload}
+          data={data}
+        />
+      )}
 
       <div className="flex justify-end gap-2">
         {/* {<MaskLoader />} */}
@@ -201,7 +203,7 @@ const ModalCreateTire: FC<ModalCreateTireProps> = ({
   onRefresh,
   isInModalRemind,
   isReload,
-  isAddTireButton
+  isAddTireButton,
 }) => {
   const getAction = () => {
     if (type === "add") {

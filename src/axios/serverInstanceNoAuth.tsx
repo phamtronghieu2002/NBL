@@ -1,5 +1,7 @@
 const SERVER_DOMAIN = import.meta.env.VITE_SERVER_DOMAIN
 const ADDRESS_DOMAIN = import.meta.env.VITE_ADDRESS_DOMAIN
+const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN
+const SERVER_DOMAIN_FIREBASE = import.meta.env.VITE_HOST_FIREBASE_SERVER_DOMAIN
 
 import axios, { AxiosResponse, InternalAxiosRequestConfig } from "axios"
 import { _const } from "../_constant"
@@ -15,7 +17,7 @@ const createNoAuthInstance = (API: string) => {
   })
 
   const interceptorsRq = (config: InternalAxiosRequestConfig<any>) => {
-    let accessToken = getTokenParam() || storage.getAccessToken()
+    let accessToken = storage.getAccessToken() || getTokenParam()
 
     config.headers["x-mobicam-token"] = getTokenAuthHeader(accessToken)
 

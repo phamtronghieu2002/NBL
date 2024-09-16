@@ -56,7 +56,6 @@ const getColumnViahicleNoGPS = (
       dataIndex: "setting",
       key: "setting",
       render(value, record, index) {
-        console.log("record ne cac ban oi", record)
 
         return (
           <DrawViahicle

@@ -3,22 +3,20 @@ import { axiosInstance } from "../axios/serverInstanceNoAuth"
 
 import { CategoryType } from "../interface/interface"
 import { getTokenParam } from "../utils/_param"
+import storage from "../utils/storage"
+const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN
 
 export const getIconRemindViahicleGPS = () => {
   return axiosInstance.get(`/main/get-category-all`)
 }
 
 export const addRemind = (data: any) => {
-  return axios.post(
-    "http://localhost:5012/api/v1/remind/main/add-remind",
-    data,
-    {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        "x-mobicam-token": getTokenParam(),
-      },
+  return axios.post(`${SERVER_DOMAIN_REMIND}main/add-remind`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      "x-mobicam-token": storage.getAccessToken(),
     },
-  )
+  })
 }
 
 export const updateRemind = (id: number, data: any) => {
