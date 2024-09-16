@@ -79,22 +79,39 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [loading, setLoading] = useState<boolean>(false)
 
     const [form] = Form.useForm()
+    const filePondRef = useRef<any>(null)
 
-    console.log("====================================")
-    console.log("imageFiles >>", imageFiles)
-    console.log("====================================")
     _log("initialValues >>", initialValues)
     // xử lí fill hình ảnh
     useEffect(() => {
       if (initialValues?.remind_img_url) {
-        const urls = initialValues?.remind_img_url?.split(",")?.map(
-          (url: string, index: number) =>
-            `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
-        )
+        const fetchImageFromUrl = async (url: string) => {
+          const response = await fetch(url);
+          const blob = await response.blob();
+          const file = new File([blob], "image.jpg", { type: blob.type });
+          return file;
+        };
+    
+        const loadImages = async () => {
+          const imagePromises = initialValues.remind_img_url.map((url: string) => fetchImageFromUrl(url));
+          const files = await Promise.all(imagePromises);
+    
+          console.log('====================================');
+          console.log('files', files);
+          console.log('====================================');
 
-        // tôi có links các url làm sao fill preview ngược lại filepond
+          // Thêm file vào FilePond
+          files.forEach((file) => {
+            filePondRef.current?.addFile(file);
+          });
+
+          setImageFiles(files)
+        };
+    
+        loadImages();
       }
-    }, [])
+    }, [initialValues?.remind_img_url]);
+    
 
     // xử lí fill thời gian
     useEffect(() => {

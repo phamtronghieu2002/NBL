@@ -14,7 +14,7 @@ import { addViahicle, addViahicleExel } from "../../apis/viahicleAPI"
 import { MaskLoader } from "../Loader"
 import { addTire } from "../../apis/tireAPI"
 import { createCategory, getCategory } from "../../apis/categoryAPI"
-import { addRemind } from "../../apis/remindAPI"
+import { addRemind, deleMultiRemind } from "../../apis/remindAPI"
 interface ModalImportExelProps {
   button: React.ReactNode
 }
@@ -36,7 +36,6 @@ const ImportExel: FC<{
     try {
       //check format date
       excelData.forEach((item, index) => {
-        console.log(type_);
         //nếu type_ = add thì mọi thứ như cũ em chạy code bth
         // nếu mà type_= replaced thì sẽ call api update tất cả remind của biển số xe có trong file excel trước
         // vì replace là thay thế nên sẽ phải update tất cả remind thành trạng thái xóa rồi sau đó add lại thay thế
@@ -72,9 +71,18 @@ const ImportExel: FC<{
         license: String(item.phoneNumber),
         user_address: String(item.address),
       }))
+  console.log('====================================');
+  console.log("type_", type_);
+  console.log('====================================');
+      if (type_ === "replace") {
+        const vehicles = dataNewVehicles.map((item) => item.license_plate)
+        console.log("====================================")
+        console.log("vehicles", vehicles)
+        console.log("====================================")
+        const res = await deleMultiRemind(vehicles)
+      }
 
       const viahicleGPS = viahiclesStore?.viahicleGPS
-
       // check trùng biển số xe và lấy được biển số xe trùng
 
       const licensePlates = dataNewVehicles.map((item) => item.license_plate)
@@ -227,7 +235,12 @@ const ImportExel: FC<{
       </p>
 
       <div className="flex justify-center mt-5 mb-10">
-        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload} setExcelDefaultTime={setExcelDefaultTime} setType={setType}/>
+        <UploadExel
+          setExcelData={setExcelData}
+          setIsUpload={setIsUpload}
+          setExcelDefaultTime={setExcelDefaultTime}
+          setType={setType}
+        />
       </div>
       <div className="actions flex justify-end">
         <Button

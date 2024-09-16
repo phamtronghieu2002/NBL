@@ -68,6 +68,16 @@ export const TurnOnRemind = (id: number) => {
 export const TurnOffRemind = (id: number) => {
   return axiosInstance.patch("/main/update-notified-off/" + id)
 }
+// api: /api/v1/remind/main/delete-multi-remind/ body truyền object dạng thế này
+
+
+
+export const deleMultiRemind  = (vehicles: string[]) => {
+  return axiosInstance.post("/main/delete-multi-remind/", {vehicles})
+}
+
+
+
 
 export const getRemindVehicleGPS = (
   lisense_plate: string,

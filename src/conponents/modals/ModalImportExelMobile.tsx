@@ -6,7 +6,7 @@ import { FileExcelOutlined } from "@ant-design/icons"
 import {
   ViahicleProviderContextProps,
   viahiclesContext,
-} from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
+} from "../../pages/manager/Remind/providers/ViahicleProvider"
 
 import { ViahicleType } from "../../interface/interface"
 import { api } from "../../_helper"
@@ -14,7 +14,7 @@ import { addViahicle, addViahicleExel } from "../../apis/viahicleAPI"
 import { MaskLoader } from "../Loader"
 import { addTire } from "../../apis/tireAPI"
 import { createCategory, getCategory } from "../../apis/categoryAPI"
-import { addRemind } from "../../apis/remindAPI"
+import { addRemind, deleMultiRemind } from "../../apis/remindAPI"
 interface ModalImportExelProps {
   button: React.ReactNode
 }
@@ -36,6 +36,15 @@ const ImportExel: FC<{
     try {
       //check format date
       excelData.forEach((item, index) => {
+        //nếu type_ = add thì mọi thứ như cũ em chạy code bth
+        // nếu mà type_= replaced thì sẽ call api update tất cả remind của biển số xe có trong file excel trước
+        // vì replace là thay thế nên sẽ phải update tất cả remind thành trạng thái xóa rồi sau đó add lại thay thế
+        // api: /api/v1/remind/main/delete-multi-remind/ body truyền object dạng thế này
+        // {
+        //  "vehicles": [];
+        // }
+        // giờ em cần tạo 1 payload dạng như trên, tách tất cả các biển số xe rồi truyền vào 1 mảng string rồi chạy, sau thì tất cả đều chạy như bình thường post vân...
+
         // Kiểm tra thuộc tính remindDate
         const remindDate = item.remindDate
         if (!Array.isArray(remindDate)) {
@@ -62,9 +71,18 @@ const ImportExel: FC<{
         license: String(item.phoneNumber),
         user_address: String(item.address),
       }))
+      console.log("====================================")
+      console.log("type_", type_)
+      console.log("====================================")
+      if (type_ === "replace") {
+        const vehicles = dataNewVehicles.map((item) => item.license_plate)
+        console.log("====================================")
+        console.log("vehicles", vehicles)
+        console.log("====================================")
+        const res = await deleMultiRemind(vehicles)
+      }
 
       const viahicleGPS = viahiclesStore?.viahicleGPS
-
       // check trùng biển số xe và lấy được biển số xe trùng
 
       const licensePlates = dataNewVehicles.map((item) => item.license_plate)
@@ -87,7 +105,6 @@ const ImportExel: FC<{
       setLoading(true)
 
       await addViahicleExel(dataNewVehicles)
-      dispatch?.freshKey()
 
       const parsedRemindTireData = excelData.flatMap((item) =>
         item.remindTire
@@ -188,11 +205,12 @@ const ImportExel: FC<{
         }
         formattedData[i].remind_category_id = cate_id
       }
-      console.log("chay duoc den day")
       for (let i = 0; i < formattedData.length; i++) {
         await addRemind(formattedData[i])
       }
       setLoading(false)
+      dispatch?.freshKey()
+
       action?.closeModal?.()
     } catch (error) {
       console.log("error >>", error)
@@ -217,7 +235,12 @@ const ImportExel: FC<{
       </p>
 
       <div className="flex justify-center mt-5 mb-10">
-        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload}  setExcelDefaultTime={setExcelDefaultTime} setType={setType}/>
+        <UploadExel
+          setExcelData={setExcelData}
+          setIsUpload={setIsUpload}
+          setExcelDefaultTime={setExcelDefaultTime}
+          setType={setType}
+        />
       </div>
       <div className="actions flex justify-end">
         <Button
