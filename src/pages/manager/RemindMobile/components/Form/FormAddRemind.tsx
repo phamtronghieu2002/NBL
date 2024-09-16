@@ -319,7 +319,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           </Form.Item>
 
           {/* chọn phương tiện */}
-          {(isTireSelect || initialValues?.remind_category_id == 8) && (
+          {(isTireSelect || initialValues?.remind_category_id == 6) && (
             <>
               <Form.Item
                 name="vehicles"
