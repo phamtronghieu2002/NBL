@@ -9,12 +9,14 @@ interface UploadExelProps {
   setIsUpload: any
   setExcelData: any
   setExcelDefaultTime: any
+  setType: any
 }
 
 const UploadExel: React.FC<UploadExelProps> = ({
   setIsUpload,
   setExcelData,
-  setExcelDefaultTime
+  setExcelDefaultTime,
+  setType,
 }) => {
   const [tableColumns, setTableColumns] = useState<any[]>([])
   const [tableData, setTableData] = useState<any[]>([])
@@ -59,17 +61,24 @@ const UploadExel: React.FC<UploadExelProps> = ({
           return acc
         }, [])
 
-        const worksheet2 = workbook.Sheets["Sheet2"];
+        const worksheet2 = workbook.Sheets["Sheet2"]
         const jsonData2: any[][] = XLSX.utils.sheet_to_json(worksheet2, {
           header: 1,
-        });
-  
+        })
+
         // Lấy giá trị "Thời gian mặc định" từ dòng đầu tiên (dòng 2) của Sheet2
-        const headerSheet2 = jsonData2[0];
-        const indexDefaultTime = headerSheet2.indexOf("Thời gian mặc định");
-  
-        const defaultTime = jsonData2[1][indexDefaultTime] || "08:00";
-        setExcelDefaultTime(defaultTime)
+        const headerSheet2 = jsonData2[0]
+        const indexDefaultTime = headerSheet2.indexOf("Thời gian mặc định")
+
+        const indexType = String(headerSheet2.indexOf("Loại của excel")) // Cột "Loại"
+
+        if (indexType === "" || indexType === undefined) {
+          throw new Error('Cột "Loại" không tồn tại  hoặc không có giá trị trong Sheet2')
+        }
+
+        const defaultTime = jsonData2[1][indexDefaultTime] || "08:00"
+        setExcelDefaultTime(defaultTime);
+        setType(indexType === "Thêm mới" ? "add" : "replace");
         const result = jsonData
           .slice(1)
           .filter(

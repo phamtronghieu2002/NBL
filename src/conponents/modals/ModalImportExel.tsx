@@ -25,6 +25,7 @@ const ImportExel: FC<{
   const [isUpload, setIsUpload] = useState<Boolean>(false)
   const [excelData, setExcelData] = useState<any[]>([])
   const [excelDefaultTime, setExcelDefaultTime] = useState<any>()
+  const [type_, setType] = useState<any>()
   const [loading, setLoading] = useState(false)
 
   const { viahiclesStore, dispatch } = useContext(
@@ -35,7 +36,6 @@ const ImportExel: FC<{
     try {
       //check format date
       excelData.forEach((item, index) => {
-        // Kiểm tra thuộc tính remindDate
         const remindDate = item.remindDate
         if (!Array.isArray(remindDate)) {
           console.log(
@@ -216,7 +216,7 @@ const ImportExel: FC<{
       </p>
 
       <div className="flex justify-center mt-5 mb-10">
-        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload} setExcelDefaultTime={setExcelDefaultTime} />
+        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload} setExcelDefaultTime={setExcelDefaultTime} setType ={setType} />
       </div>
       <div className="actions flex justify-end">
         <Button
