@@ -118,7 +118,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         }
         initFiles()
       }
-    }, [])
+    }, [imageFiles.length])
     // xử lí fill thời gian
     useEffect(() => {
       const fetchTime = async (id: number) => {

@@ -77,6 +77,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [imageFiles, setImageFiles] = useState<any[]>([])
     const [schedules, setSchedules] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(false)
+
     const [form] = Form.useForm()
 
     console.log("====================================")
@@ -85,45 +86,21 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     _log("initialValues >>", initialValues)
     // xử lí fill hình ảnh
     useEffect(() => {
-     
       if (initialValues?.remind_img_url) {
-        const convertUrlsToFiles = async (urls: string[]) => {
-          console.log('====================================');
-          console.log("urls>>", urls);
-          console.log('====================================');
-          return Promise.all(
-            urls.map(async (url) => {
-              const response = await fetch(url)
-              const blob = await response.blob()
-              const file = new File([blob], url.split("/").pop() || "file", {
-                type: blob.type,
-              })
-              console.log('====================================');
-              console.log("url ne cac ban >>", url);
-              console.log('====================================');
-              return {
-                source: url,
-                options: {
-                  type: "local",
-                  file: file,
-                },
-              }
-            }),
-          )
-        }
-
         const urls = initialValues?.remind_img_url?.split(",")?.map(
           (url: string, index: number) =>
             `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
 
-        const initFiles = async () => {
-          const files = await convertUrlsToFiles(urls)
-          setImageFiles(files)
-        }
-        initFiles()
+        // tôi có links các url làm sao fill preview ngược lại filepond
+        const files = urls.map((url: string) => {
+          return new File([url], url)
+        })
+
+        setImageFiles(files)
       }
     }, [])
+
     // xử lí fill thời gian
     useEffect(() => {
       const fetchTime = async (id: number) => {
@@ -537,21 +514,45 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               files={imageFiles}
               allowMultiple={true}
               maxFiles={5}
-              onupdatefiles={(fileItems) => {
-                const newFiles = fileItems.map((fileItem) => fileItem.file)
-                setImageFiles(newFiles) // Update imageFiles state
-              }}
-              acceptedFileTypes={["image/*"]}
+              acceptedFileTypes={["image/*"]} // Chỉ chấp nhận file ảnh
               name="images"
-              labelIdle='Kéo thả hình hoặc<span class="filepond--label-action">       Chọn </span>'
+              labelIdle='Kéo thả hình hoặc<span class="filepond--label-action"> Chọn </span>'
+              onupdatefiles={(fileItems) => {
+                const validFiles = fileItems
+                  .filter((fileItem: any) => {
+                    // Kiểm tra nếu file hợp lệ
+                    const isValid = fileItem.file.type.startsWith("image/")
+                    if (!isValid) {
+                      // nếu không hợp lệ thì loại khỏi danh sách file
+                      setImageFiles((prev) =>
+                        prev.filter((item) => item.name !== fileItem.file.name),
+                      )
+                    }
+                    return isValid
+                  })
+                  .map((fileItem) => fileItem.file)
+
+                // Cập nhật lại danh sách file chỉ với những file hợp lệ
+                setImageFiles(validFiles)
+              }}
               onaddfile={(error, fileItem) => {
-                if (!error) {
-                  handleImageUpload(fileItem.file, "add") // Handle add action
+                if (error) {
+                  setImageFiles((prev) =>
+                    prev.filter((item) => item.name !== fileItem.file.name),
+                  )
+                  return
+                }
+                if (!fileItem.file.type.startsWith("image/")) {
+                  setImageFiles((prev) =>
+                    prev.filter((item) => item.name !== fileItem.file.name),
+                  )
+                } else {
+                  handleImageUpload(fileItem.file, "add")
                 }
               }}
               onremovefile={(error, fileItem) => {
                 if (!error) {
-                  handleImageUpload(fileItem.file, "remove") // Handle remove action
+                  handleImageUpload(fileItem.file, "remove")
                 }
               }}
             />
