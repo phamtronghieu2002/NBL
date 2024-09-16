@@ -136,7 +136,7 @@ const FormAdd: FC<{
   return (
     <div>
       {type == "delete" ? (
-        <p>Bạn có chắc chắn muốn xoá phương tiện này không?</p>
+        <p>Bạn có chắc chắn muốn xoá lốp này không?</p>
       ) : (
         <Form
           form={form}

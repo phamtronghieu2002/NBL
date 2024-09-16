@@ -35,8 +35,12 @@ const DrawCM: FC<DrawProps> = ({
     setOpen(false)
     dispatch?.setViahicle?.([])
   }
+  const handleChildTouch = (event: any) => {
+    event.stopPropagation() // Ngăn sự kiện chạm lên phần tử cha
+    console.log("Chạm vào block con")
+  }
   return (
-    <>
+    <div onTouchStart={handleChildTouch}>
       <div className="drawMobile" onClick={showDrawer}>
         {button}
       </div>
@@ -52,7 +56,7 @@ const DrawCM: FC<DrawProps> = ({
           {children({ closeModal: onClose, data: data })}
         </Drawer>
       )}
-    </>
+    </div>
   )
 }
 

@@ -124,7 +124,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       const fetchTime = async (id: number) => {
         try {
           const res = await getTimeRemind(id)
-          setSchedules(res?.data)
+          if (res.data.length > 0) {
+            setSchedules(res?.data)
+          }
         } catch (error) {
           console.log("error time >>>", error)
         }
@@ -400,7 +402,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
           {viahiclesStore.type ? (
             <>
-              <Form>
+              <div>
                 <Row gutter={16}>
                   <Col span={12}>
                     <Form.Item
@@ -448,7 +450,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                     </Form.Item>
                   </Col>
                 </Row>
-              </Form>
+              </div>
             </>
           ) : (
             <></>
@@ -498,6 +500,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             ]}
           >
             <MultiDateTimePicker
+              initialValues={schedules}
               ref={buttonDateRef}
               setValueTime={(value: any) => {
                 setTimeSelect(value)

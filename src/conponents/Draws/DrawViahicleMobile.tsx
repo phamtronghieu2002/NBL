@@ -364,10 +364,10 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
         <div style={{ overflow: "overlay" }} className="h-[400px]">
           {remindsFilter?.map((item: any, index) => {
             return (
-              <div className="border rounded-md p-3 py-1 my-2">
+              <div className="border rounded-md p-4 pt-5 pb-5 py-1 my-2">
                 <div className="flex items-center">
                   <div className="max-w-max">
-                    <p className="" style={{ fontSize: "56px" }}>
+                    <p className="" style={{ fontSize: "30px" }}>
                       {item?.icon ?? item.category_icon}
                     </p>
                   </div>

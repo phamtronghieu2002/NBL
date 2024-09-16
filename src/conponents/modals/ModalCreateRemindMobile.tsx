@@ -194,7 +194,6 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const { viahiclesStore } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
-  console.log("viahiclesStore", viahiclesStore)
 
   const isTimestamp = (value: any) => {
     return typeof value === "number" && value > 1000000000
@@ -222,7 +221,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
 
     if (type === "update") {
       return {
-        title: `Sửa nhắc nhở  ${remindData?.note_repair}`,
+        title: `Sửa nhắc nhở`,
       }
     }
     

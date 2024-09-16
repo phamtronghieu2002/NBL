@@ -47,6 +47,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     //  Bắt đầu quá trình chọn item
     setIsSelecting(true)
   }
+  console.log("indexDraw >>", isIndexDraw)
 
   // Kết thúc chọn khi thả chuột
   const handleMouseUp = (id: number) => {
@@ -158,6 +159,9 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         props={{}}
       >
         {viahicles.map((item: any, index: any) => {
+          console.log("====================================")
+          console.log("item_id", item.id)
+          console.log("====================================")
           return (
             <div
               onClick={() => {
