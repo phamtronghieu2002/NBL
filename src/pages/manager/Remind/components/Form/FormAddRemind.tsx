@@ -122,7 +122,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       const fetchTime = async (id: number) => {
         try {
           const res = await getTimeRemind(id)
-          setSchedules(res?.data)
+          if(res.data.length > 0) {
+            setSchedules(res?.data)
+          }
         } catch (error) {
           console.log("error time >>>", error)
         }

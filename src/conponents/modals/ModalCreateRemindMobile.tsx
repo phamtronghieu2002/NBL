@@ -56,23 +56,36 @@ const Form: FC<{
         }
       }
     }
-    console.log('====================================');
-    console.log("token", storage.getAccessToken());
-    console.log('====================================');
+   
     images.append("token", storage.getAccessToken())
 
     // call api thêm nhắc nhở
-    // setLoading(true)
+    setLoading(true)
     await addRemind(images)
     // action?.closeModal?.()
     api.message?.success("Thêm nhắc nhở thành công")
+    setLoading(false)
+
     onReload?.()
   }
-  const handleUpdate = async (formData: any, callback: any) => {
-    console.log("formData", formData)
+  const handleUpdate = async (formData: any, callback: any, images?: any) => {
     // call api sửa nhắc nhở
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        const value = formData[key]
+        // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
+        if (Array.isArray(value) || typeof value === "object") {
+          images.append(key, JSON.stringify(value))
+        } else if (typeof value === "number") {
+          images.append(key, value)
+        } else {
+          images.append(key, value)
+        }
+      }
+    }
+    images.append("token", storage.getAccessToken())
     setLoading(true)
-    await updateRemind(remindData?.remind_id, formData)
+    await updateRemind(remindData?.remind_id, images)
     action?.closeModal?.()
     api.message?.success("cập nhật nhắc nhở thành công")
     onReload?.()
@@ -212,6 +225,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
         title: `Sửa nhắc nhở  ${remindData?.note_repair}`,
       }
     }
+    
   }
 
   return (
