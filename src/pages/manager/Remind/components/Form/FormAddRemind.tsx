@@ -122,7 +122,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       const fetchTime = async (id: number) => {
         try {
           const res = await getTimeRemind(id)
-          if(res.data.length > 0) {
+          if (res.data.length > 0) {
             setSchedules(res?.data)
           }
         } catch (error) {
@@ -151,10 +151,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }
 
     const fetchCategory = async () => {
-      setLoading(true)
-      const res = await getCategory()
-      setLoading(false)
-      setCategories(res?.data)
+      try {
+        setLoading(true)
+        const res = await getCategory()
+        setLoading(false)
+        setCategories(res?.data)
+      } catch (error) {
+        setLoading(false)
+        api.message?.error("Lỗi khi lấy dữ liệu loại nhắc nhở")
+      }
     }
 
     // fetch category
@@ -418,7 +423,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 ]}
               >
                 <InputNumber
-      
                   onChange={(value) => {
                     form.setFieldsValue({ km_before: value })
                   }}

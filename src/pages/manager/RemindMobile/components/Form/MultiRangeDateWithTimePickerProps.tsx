@@ -93,7 +93,7 @@ const MultiRangeDateWithTimePicker = forwardRef<
           if (item.startDate && item.endDate && item.time) {
             const startTimeStamp = moment(item.startDate).valueOf()
             const endTimeStamp = moment(item.endDate).valueOf()
-            const formattedTime = item.time.format("HH:mm:ss")
+            const formattedTime = item.time.format("HH:mm")
 
             return {
               start: startTimeStamp,

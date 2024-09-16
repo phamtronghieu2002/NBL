@@ -64,7 +64,7 @@ const FormAdd: FC<{
     viahiclesContext,
   ) as ViahicleProviderContextProps
 
-  const lisence_plate = viahiclesStore?.viahiclesStore[0]?.license_plate
+  const lisence_plate = data?.imei ? data?.imei : data?.license_plate
   const tireId = initialValues?.id ?? 0
   const getAction = () => {
     if (type == "add") {

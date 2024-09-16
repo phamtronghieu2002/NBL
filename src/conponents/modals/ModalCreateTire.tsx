@@ -60,9 +60,15 @@ const FormAdd: FC<{
 }) => {
   const [form] = Form.useForm()
 
-  const lisence_plate = data?.license_plate
-  console.log("lisence_plate", lisence_plate);
-  
+  const { viahiclesStore, dispatch } = useContext(
+    viahiclesContext,
+  ) as ViahicleProviderContextProps
+
+  console.log("====================================")
+  console.log("data", data)
+  console.log("====================================")
+  const lisence_plate = data?.imei ? data?.imei : data?.license_plate
+
   const tireId = initialValues?.id ?? 0
   const getAction = () => {
     if (type == "add") {
