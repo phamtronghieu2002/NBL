@@ -93,11 +93,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         )
 
         // tôi có links các url làm sao fill preview ngược lại filepond
-        const files = urls.map((url: string) => {
-          return new File([url], url)
-        })
-
-        setImageFiles(files)
       }
     }, [])
 
