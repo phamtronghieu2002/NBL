@@ -26,6 +26,7 @@ const ImportExel: FC<{
   const [excelData, setExcelData] = useState<any[]>([])
   const [excelDefaultTime, setExcelDefaultTime] = useState<any>()
   const [loading, setLoading] = useState(false)
+  const [type_, setType] = useState<any>()
 
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
@@ -216,7 +217,7 @@ const ImportExel: FC<{
       </p>
 
       <div className="flex justify-center mt-5 mb-10">
-        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload}  setExcelDefaultTime={setExcelDefaultTime}/>
+        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload}  setExcelDefaultTime={setExcelDefaultTime} setType={setType}/>
       </div>
       <div className="actions flex justify-end">
         <Button

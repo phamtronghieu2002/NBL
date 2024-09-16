@@ -8,13 +8,15 @@ import { number } from "react-i18next/icu.macro"
 interface UploadExelProps {
   setIsUpload: any
   setExcelData: any
-  setExcelDefaultTime: any
+  setExcelDefaultTime: any,
+  setType: any
 }
 
 const UploadExel: React.FC<UploadExelProps> = ({
   setIsUpload,
   setExcelData,
-  setExcelDefaultTime
+  setExcelDefaultTime,
+  setType
 }) => {
   const [tableColumns, setTableColumns] = useState<any[]>([])
   const [tableData, setTableData] = useState<any[]>([])
@@ -67,7 +69,17 @@ const UploadExel: React.FC<UploadExelProps> = ({
         // Lấy giá trị "Thời gian mặc định" từ dòng đầu tiên (dòng 2) của Sheet2
         const headerSheet2 = jsonData2[0];
         const indexDefaultTime = headerSheet2.indexOf("Thời gian mặc định");
-  
+        const indexExcelType = headerSheet2.indexOf("Loại của excel");
+        const typeExcel = jsonData2[1][indexExcelType];
+        if (typeExcel === "" || typeExcel === undefined) {
+          throw new Error("Invalid Excel type: Type cannot be empty or undefined");
+        }
+        console.log(typeExcel)
+        if (typeExcel === "Thêm mới") {
+          setType("add");
+        } else {
+          setType("replace");
+        }
         const defaultTime = jsonData2[1][indexDefaultTime] || "08:00";
         setExcelDefaultTime(defaultTime)
         const result = jsonData

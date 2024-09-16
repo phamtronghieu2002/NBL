@@ -26,6 +26,7 @@ const ImportExel: FC<{
   const [excelData, setExcelData] = useState<any[]>([])
   const [excelDefaultTime, setExcelDefaultTime] = useState<any>()
   const [loading, setLoading] = useState(false)
+  const [type_, setType] = useState<any>()
 
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
@@ -35,6 +36,16 @@ const ImportExel: FC<{
     try {
       //check format date
       excelData.forEach((item, index) => {
+        console.log(type_);
+        //nếu type_ = add thì mọi thứ như cũ em chạy code bth
+        // nếu mà type_= replaced thì sẽ call api update tất cả remind của biển số xe có trong file excel trước
+        // vì replace là thay thế nên sẽ phải update tất cả remind thành trạng thái xóa rồi sau đó add lại thay thế
+        // api: /api/v1/remind/main/delete-multi-remind/ body truyền object dạng thế này
+        // {
+        //  "vehicles": [];
+        // }
+        // giờ em cần tạo 1 payload dạng như trên, tách tất cả các biển số xe rồi truyền vào 1 mảng string rồi chạy, sau thì tất cả đều chạy như bình thường post vân...
+
         // Kiểm tra thuộc tính remindDate
         const remindDate = item.remindDate
         if (!Array.isArray(remindDate)) {
@@ -216,7 +227,7 @@ const ImportExel: FC<{
       </p>
 
       <div className="flex justify-center mt-5 mb-10">
-        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload} setExcelDefaultTime={setExcelDefaultTime} />
+        <UploadExel setExcelData={setExcelData} setIsUpload={setIsUpload} setExcelDefaultTime={setExcelDefaultTime} setType={setType}/>
       </div>
       <div className="actions flex justify-end">
         <Button
