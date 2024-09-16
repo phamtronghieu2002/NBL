@@ -470,7 +470,7 @@ export const TabTableTire: FC<{
   data: ViahicleType | TireProps
   isReload?: number
   onReFresh?: () => void
-}> = ({ data, isReload, isAddTireButton ,onReFresh}) => {
+}> = ({ data, isReload, isAddTireButton, onReFresh }) => {
   const columns: TableColumnsType<TireProps> = [
     {
       title: "STT",
@@ -504,7 +504,6 @@ export const TabTableTire: FC<{
             onRefresh={() => {
               fetchTire()
               onReFresh?.()
-
             }}
             button={<Button type="link">Cập nhật</Button>}
             type="update"
@@ -557,6 +556,7 @@ export const TabTableTire: FC<{
       >
         <div className="absolute -bottom-[38px] right-14">
           <ModalCreateTire
+            data={data}
             onRefresh={() => {
               fetchTire()
             }}

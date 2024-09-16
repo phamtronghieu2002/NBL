@@ -78,7 +78,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [schedules, setSchedules] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [form] = Form.useForm()
-
+   
+    console.log('====================================');
+    console.log("imageFiles >>", imageFiles);
+    console.log('====================================');
     _log("initialValues >>", initialValues)
     // xử lí fill hình ảnh
     useEffect(() => {
