@@ -98,9 +98,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
 
   const [loadingButton, setLoadingButton] = useState<number>(0)
   const [isShowModal, setIsShowModal] = useState(false)
-  console.log("====================================")
-  console.log("reminds", remindsFilter)
-  console.log("====================================")
+
   const confirm: PopconfirmProps["onConfirm"] = (e) => {
     setIsShowModal(true)
   }
@@ -162,27 +160,8 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
   }
 
   useEffect(() => {
-    const selectType = filter.select
     const keyword = filter.keyword
     fetchRemind(keyword)
-    // switch (selectType) {
-    //   case "all":
-    //     fetchRemind(keyword)
-    //     break
-    //   case "on":
-    //       setRemindsFilter(
-    //         reminds
-    //           .filter((item) => item.is_notified),
-    //       )
-    //       return
-    //       case "ò":
-    //         setRemindsFilter(
-    //           reminds
-    //             .filter((item) => !item.is_notified),
-    //         )
-    //         return
-
-    //     }
   }, [filter.keyword, filter.select, isReload])
   //   column
 
@@ -283,7 +262,8 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           onCancel={(e) => handleCancel(e, record)}
           okText={
             <ModalCreateRemind
-              type="add"
+              isUpdateCycleForm
+              type="update-cycle"
               onReload={fetchRemind}
               remindData={record}
               button={<span>OK</span>}
@@ -314,23 +294,7 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           },
           limitSearchLegth: 3,
         }}
-        right={
-          <div className="ml-5 flex items-center">
-            <Select
-              className="h-[25px]"
-              defaultValue="all"
-              style={{ width: 120 }}
-              onChange={(value) => {
-                setFilter({ ...filter, select: value })
-              }}
-              options={[
-                { value: "all", label: "Tất cả" },
-                { value: "off", label: "Bật" },
-                { value: "on", label: "Tắt" },
-              ]}
-            />
-          </div>
-        }
+        right={<div className=""></div>}
         props={{
           columns: columns,
           dataSource: remindsFilter,
@@ -390,7 +354,6 @@ export const TabTableTire: FC<{
             onRefresh={() => {
               fetchTire()
               onReFresh?.()
-
             }}
             button={<Button type="link">Xóa</Button>}
             type="delete"
@@ -436,6 +399,7 @@ export const TabTableTire: FC<{
           <div className="ml-5 flex items-center">
             {isAddTireButton && (
               <ModalCreateTire
+                data={data}
                 onRefresh={() => {
                   fetchTire()
                   onReFresh?.()

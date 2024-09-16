@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite --host",
     "start": "vite --host",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "test": "vitest",
     "format": "prettier --write .",
@@ -21,7 +21,7 @@
     "@types/leaflet": "^1.9.12",
     "@types/uuid": "^10.0.0",
     "animate.css": "^4.1.1",
-    "antd": "^5.17.4",
+    "antd": "^5.20.6",
     "antd-img-crop": "^4.22.0",
     "apexcharts": "^3.49.2",
     "axios": "^1.7.2",

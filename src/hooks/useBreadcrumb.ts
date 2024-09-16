@@ -5,9 +5,7 @@ type IR = IHEADER | undefined
 
 export const useBreadcrumb = (): [string, IR, IR, IHEADER[]] => {
   const { pathname } = useLocation()
-  console.log('====================================');
-  console.log('useBreadcrumb', pathname);
-  console.log('====================================');
+  
   let keyActive: string = ""
   let route: IR = undefined
   let his: IR = undefined

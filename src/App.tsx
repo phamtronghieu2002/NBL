@@ -11,27 +11,27 @@ import "leaflet.gridlayer.googlemutant"
 import "leaflet-arrowheads"
 import "animate.css"
 import { useEffect, useState } from "react"
-import { requestFCMToken, onMessageListener } from "./utils/firebase"
+// import { requestFCMToken, onMessageListener } from "./utils/firebase"
 import { addFirebaseToken } from "./apis/firebaseAPI"
 
-export const fetchFCM = async () => {
-  try {
-    const data: any = await requestFCMToken()
+// export const fetchFCM = async () => {
+//   try {
+//     const data: any = await requestFCMToken()
 
-    await addFirebaseToken(data)
-  } catch (error) {
-    console.log(error)
-  }
-}
+//     await addFirebaseToken(data)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 export const App: React.FC = () => {
 
 
-  onMessageListener().then((payload) => {
-    // toast(<div>
-    //   <p>{payload.notification.title}</p>
-    //   <p>{payload.notification.body}</p>
-    // </div>, {position: 'top-right'});
-  })
+  // onMessageListener().then((payload) => {
+  //   // toast(<div>
+  //   //   <p>{payload.notification.title}</p>
+  //   //   <p>{payload.notification.body}</p>
+  //   // </div>, {position: 'top-right'});
+  // })
 
   const [notifyAPI, contextHolder] = notification.useNotification()
   const [messageApi, contextMsgHolder] = message.useMessage()

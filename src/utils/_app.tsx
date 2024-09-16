@@ -1,4 +1,4 @@
-import { fetchFCM } from "../App"
+// import { fetchFCM } from "../App"
 import { _const } from "../_constant"
 import { api, history } from "../_helper"
 import { ICmcServer } from "../_types/devServerType"
@@ -45,7 +45,7 @@ import {
   resetPassService,
 } from "../services/userServices"
 import { _array } from "./_array"
-import { requestFCMToken } from "./firebase"
+// import { requestFCMToken } from "./firebase"
 import { getString } from "./getString"
 import storage from "./storage"
 
@@ -121,7 +121,6 @@ export const _app = {
   },
 
   getInitialData: {
-
     userInfo: async () => {
       return new Promise(async (resolve, reject) => {
         try {
@@ -133,11 +132,11 @@ export const _app = {
           const url = new URL(currentUrl)
 
           // Lấy token từ URL
-          const token:string = url.searchParams.get("token")!;
+          const token: string = url.searchParams.get("token")!
           const dispatch = store.dispatch
           dispatch(
             setUserAccess({
-              userInfo:{...data, token},
+              userInfo: { ...data, token },
             }),
           )
           resolve(data)
@@ -230,7 +229,7 @@ export const _app = {
       const userId = user?.id
 
       try {
-        fetchFCM()
+        // fetchFCM()
       } catch (error) {
         console.log("====================================")
         console.log("error", error)

@@ -38,18 +38,21 @@ import "filepond/dist/filepond.min.css"
 import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
+import { _log } from "../../../../../utils/_log"
+const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 
 // Đăng ký plugin
 registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType)
 
 interface FormAddRemindProps {
+  isUpdateCycleForm?: boolean
   viahicleSelected?: ViahicleType[]
   initialValues?: any
   onSubmit: (formData: any, callback: any, images: any) => void
 }
 
 const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
-  ({ onSubmit, initialValues, viahicleSelected }, ref) => {
+  ({ onSubmit, initialValues, viahicleSelected, isUpdateCycleForm }, ref) => {
     const [isName, setIsName] = useState<boolean>(false)
     const [isTireSelect, setIsTireSelect] = useState<boolean>(false)
     const [tires, setTires] = useState<any[]>([])
@@ -57,10 +60,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [isReloadTableTire, setIsReloadTableTire] = useState<number>(
       Math.random(),
     )
-    const [imageUrl, setImageUrl] = useState<string | undefined>(undefined) // State để lưu URL của ảnh preview
 
     const [categories, setCategories] = useState<CategoryType[]>([])
- 
+
     const { viahiclesStore } = useContext(
       viahiclesContext,
     ) as ViahicleProviderContextProps
@@ -75,18 +77,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [imageFiles, setImageFiles] = useState<any[]>([])
     const [schedules, setSchedules] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(false)
-    const [previewImage, setPreviewImage] = useState<string | null>(null)
-    const [previewVisible, setPreviewVisible] = useState<boolean>(false)
     const [form] = Form.useForm()
 
-   
-
+    _log("initialValues >>", initialValues)
+    // xử lí fill hình ảnh
     useEffect(() => {
-      // Chuyển đổi URL thành các đối tượng File ảo
-    }, [])
-    useEffect(() => {
+      console.log("====================================")
+      console.log("initialValues >>", initialValues)
+      console.log("====================================")
       if (initialValues?.remind_img_url) {
-
         const convertUrlsToFiles = async (urls: string[]) => {
           return Promise.all(
             urls.map(async (url) => {
@@ -108,7 +107,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
         const urls = initialValues?.remind_img_url?.split(",")?.map(
           (url: string, index: number) =>
-            `http://192.168.2.24:3005${url.trim()}`, // The URL of the image
+            `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
 
         const initFiles = async () => {
@@ -118,7 +117,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         initFiles()
       }
     }, [])
-
+    // xử lí fill thời gian
     useEffect(() => {
       const fetchTime = async (id: number) => {
         try {
@@ -136,8 +135,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     const fetchTire = async () => {
       try {
-        const license_plate = vhiahicleTire?.license_plate || ""
-        const res = await getTire(license_plate, "")
+        const license_plate =
+          viahiclesStore?.type == 1
+            ? vhiahicleTire?.imei
+            : vhiahicleTire?.license_plate
+        const res = await getTire(license_plate ?? "", "")
 
         setTires(res?.data)
       } catch (error) {
@@ -172,8 +174,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
           initialValues.expiration_time = moment(
             initialValues?.expiration_timeStamp,
-          ).add(initialValues?.cycle, "months")
-
+          ).add(isUpdateCycleForm ? initialValues?.cycle : 0, "months")
           const tire = initialValues?.tire
           if (tire) {
             handleSelectViahicle(
@@ -196,8 +197,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         form
           ?.validateFields()
           .then((values) => {
-            console.log("values ne cac ban", values)
-
             const processedValuesForm = {
               ...values,
               expiration_time: values.expiration_time
@@ -224,13 +223,13 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           })
       }
     }, [timeSelect.length, randomKey])
-
+    // xử lí render lốp khi chọn xe
     useEffect(() => {
       if (vhiahicleTire) {
         fetchTire()
       }
     }, [vhiahicleTire?.license_plate])
-
+    // xử lí chọn xe
     const handleSelectViahicle = (value: string) => {
       const viahicle: any = viahicleSelected?.find((item: ViahicleType) =>
         viahiclesStore?.type == 0
@@ -281,16 +280,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const handleGetDataForm = () => {
       buttonDateRef.current?.click()
       setRandomKey(Math.random())
-    }
-
-    const handleImagePreview = (file: any) => {
-      setPreviewImage(file.thumbUrl || file.url)
-      setPreviewVisible(true)
-    }
-
-    const handleCancelPreview = () => {
-      setPreviewImage(null)
-      setPreviewVisible(false)
     }
 
     return (
@@ -427,10 +416,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 ]}
               >
                 <InputNumber
-                  value={form.getFieldValue("km_before")}
+      
                   onChange={(value) => {
                     form.setFieldsValue({ km_before: value })
                   }}
+                  defaultValue={initialValues?.km_before}
                 />
                 <span style={{ marginLeft: 10, display: "inline-block" }}>
                   (KM)
@@ -451,10 +441,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                 ]}
               >
                 <InputNumber
-                  value={form.getFieldValue("cumulative_kilometers")}
                   onChange={(value) => {
                     form.setFieldsValue({ cumulative_kilometers: value })
                   }}
+                  defaultValue={initialValues?.cumulative_kilometers}
                 />
                 <span style={{ marginLeft: 10, display: "inline-block" }}>
                   (KM)
@@ -492,7 +482,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             ]}
           >
             <InputNumber
-              value={form.getFieldValue("cycle")}
+              defaultValue={initialValues?.cycle}
               onChange={(value) => {
                 form.setFieldsValue({ cycle: value })
               }}
@@ -501,6 +491,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               Tháng
             </span>
           </Form.Item>
+
           <Form.Item
             name={"schedules"}
             label="Thời gian"

@@ -35,7 +35,6 @@ const Remind: FC<RemindProps> = () => {
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
-  console.log("viahiclesStore", viahiclesStore)
 
   const fetchViahicle = async (keyword: string = "") => {
     // alert('co fe')

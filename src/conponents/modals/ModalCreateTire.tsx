@@ -61,6 +61,8 @@ const FormAdd: FC<{
   const [form] = Form.useForm()
 
   const lisence_plate = data?.license_plate
+  console.log("lisence_plate", lisence_plate);
+  
   const tireId = initialValues?.id ?? 0
   const getAction = () => {
     if (type == "add") {

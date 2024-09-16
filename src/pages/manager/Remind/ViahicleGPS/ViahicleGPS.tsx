@@ -21,9 +21,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     viahiclesContext,
   ) as ViahicleProviderContextProps
 
-  console.log("====================================")
-  console.log("viahicle Store loading >>", viahiclesStore.loading)
-  console.log("====================================")
+
   //handle logig reload
   const onReload = () => {
     dispatch.freshKey()

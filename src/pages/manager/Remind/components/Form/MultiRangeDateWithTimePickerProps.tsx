@@ -29,15 +29,10 @@ const MultiRangeDateWithTimePicker = forwardRef<
   const [dateRanges, setDateRanges] = useState<any[]>([])
   const [errors, setErrors] = useState<any[]>([])
 
-
   useEffect(() => {
     if (initialValues) {
-      console.log('====================================');
-      console.log('initialValues', initialValues);
-      console.log('====================================');
-      const initialRanges = initialValues?.map((item) => {          
+      const initialRanges = initialValues?.map((item) => {
         return {
-        
           range: [moment(item.start), moment(item.end)],
           time: moment(item.time, "HH:mm"),
         }
@@ -91,6 +86,7 @@ const MultiRangeDateWithTimePicker = forwardRef<
 
   const handleSubmit = () => {
     if (validateForm()) {
+
       const selectedRangesWithTime = dateRanges
         .map((item) => {
           if (item.range && item.time) {
@@ -99,15 +95,15 @@ const MultiRangeDateWithTimePicker = forwardRef<
             const formattedTime = item.time.format("HH:mm")
 
             return {
-              start: startTimeStamp ,
-              end: endTimeStamp ,
+              start: startTimeStamp,
+              end: endTimeStamp,
               time: formattedTime,
             }
           }
           return null
         })
         .filter(Boolean)
-
+      
       setValueTime(selectedRangesWithTime)
     } else {
       setValueTime([])

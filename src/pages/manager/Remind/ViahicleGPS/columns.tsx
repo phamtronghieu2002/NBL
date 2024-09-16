@@ -63,8 +63,6 @@ const getColumnViahicleGPS = (
               <Button
                 icon={<SettingOutlined />}
                 onClick={() => {
-                  // This should now log the correct record
-                  console.log("record inside onClick:", record)
                   setViahicleSelect([record])
                 }}
               >

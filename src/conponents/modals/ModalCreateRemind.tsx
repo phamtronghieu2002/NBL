@@ -23,6 +23,7 @@ interface ModalCreateRemindProps {
   isShow?: boolean
   onReload?: () => void
   type?: string
+  isUpdateCycleForm?: boolean
 }
 
 const Form: FC<{
@@ -30,12 +31,12 @@ const Form: FC<{
   onReload?: () => void
   remindData?: any
   type?: string
-}> = ({ action, onReload, remindData = {}, type }) => {
+  isUpdateCycleForm?: boolean
+}> = ({ action, onReload, remindData = {}, type, isUpdateCycleForm }) => {
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async (formData: any, callback: any, images?: any) => {
     try {
-
       const cate_name = formData["cat_name"]
       if (cate_name) {
         const cat = await createCategory(cate_name, "", "")
@@ -57,23 +58,21 @@ const Form: FC<{
         }
       }
       images.append("token", storage.getAccessToken())
-      console.log("====================================")
-      console.log("payload", images)
-      console.log("====================================")
+
       // call api thêm nhắc nhở
-      // setLoading(true)
+      setLoading(true)
       await addRemind(images)
-      // action?.closeModal?.()
+      action?.closeModal?.()
       api.message?.success("Thêm nhắc nhở thành công")
       onReload?.()
-      // setLoading(true)
+      setLoading(false)
     } catch (error) {
       api.message?.error("Thêm nhắc nhở thất bại")
       setLoading(false)
     }
   }
-  const handleUpdate = async (formData: any, callback: any,images?: any) => {
-  
+  const handleUpdate = async (formData: any, callback: any, images?: any) => {
+   
     // call api sửa nhắc nhở
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
@@ -159,6 +158,7 @@ const Form: FC<{
     <div>
       {loading && <MaskLoader />}
       <FormAddRemind
+        isUpdateCycleForm={isUpdateCycleForm}
         initialValues={remindData}
         // initialValues={
         //   {
@@ -195,6 +195,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   onReload,
   remindData,
   type = "add",
+  isUpdateCycleForm=false,
 }) => {
   const { viahiclesStore } = useContext(
     viahiclesContext,
@@ -242,6 +243,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
       title={getAction()?.title}
       children={(action) => (
         <Form
+          isUpdateCycleForm={isUpdateCycleForm}
           type={type}
           remindData={convertTimestampsToMoment(remindData)}
           onReload={onReload}
