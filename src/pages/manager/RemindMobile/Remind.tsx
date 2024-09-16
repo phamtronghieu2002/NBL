@@ -106,6 +106,7 @@ const Remind: FC<RemindProps> = () => {
   const onChangeTab = (key: string) => {
     setTab(key)
     dispatch?.setTypeViahicle(key === "1" ? 1 : 0)
+    dispatch?.setDrawIndex?.(0)
   }
 
   return (

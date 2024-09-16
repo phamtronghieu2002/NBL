@@ -29,8 +29,8 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
   const [isPressing, setIsPressing] = useState(false)
 
-  const [isIndexDraw, setIndexDraw] = useState<any>(null)
    
+  const isIndexDraw = viahiclesStore.drawIndex
 
   const pressTimer = useRef<any>()
 
@@ -50,7 +50,6 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     //  Bắt đầu quá trình chọn item
     setIsSelecting(true)
   }
-  console.log("indexDraw >>", isIndexDraw)
 
   // Kết thúc chọn khi thả chuột
   const handleMouseUp = (id: number) => {

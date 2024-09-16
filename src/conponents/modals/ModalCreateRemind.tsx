@@ -11,7 +11,7 @@ import {
 import { api } from "../../_helper"
 import { MaskLoader } from "../Loader"
 import { ViahicleType } from "../../interface/interface"
-import { addRemind, updateRemind } from "../../apis/remindAPI"
+import { addRemind, finishRemind, updateRemind } from "../../apis/remindAPI"
 import { log } from "console"
 import { createCategory } from "../../apis/categoryAPI"
 import moment from "moment"
@@ -72,7 +72,6 @@ const Form: FC<{
     }
   }
   const handleUpdate = async (formData: any, callback: any, images?: any) => {
-   
     // call api sửa nhắc nhở
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
@@ -95,11 +94,27 @@ const Form: FC<{
     onReload?.()
   }
 
-  const handleUpdateCycle = async (formData: any, callback: any) => {
-    console.log("formData", formData)
-    // call api sửa nhắc nhở
+  const handleUpdateCycle = async (
+    formData: any,
+    callback: any,
+    images?: any,
+  ) => {
+    for (const key in formData) {
+      if (formData.hasOwnProperty(key)) {
+        const value = formData[key]
+        // Kiểm tra nếu là mảng hoặc object, chuyển thành JSON trước khi gửi
+        if (Array.isArray(value) || typeof value === "object") {
+          images.append(key, JSON.stringify(value))
+        } else if (typeof value === "number") {
+          images.append(key, value)
+        } else {
+          images.append(key, value)
+        }
+      }
+    }
+    images.append("token", storage.getAccessToken())
     setLoading(true)
-    await updateRemind(remindData?.remind_id, formData)
+    await finishRemind(remindData?.remind_id, images)
     action?.closeModal?.()
     api.message?.success("cập nhật nhắc nhở thành công")
     onReload?.()
@@ -195,7 +210,7 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   onReload,
   remindData,
   type = "add",
-  isUpdateCycleForm=false,
+  isUpdateCycleForm = false,
 }) => {
   const { viahiclesStore } = useContext(
     viahiclesContext,
