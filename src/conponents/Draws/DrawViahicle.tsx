@@ -216,11 +216,6 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
       dataIndex: "expiration_time",
       key: "expiration_time",
     },
-    {
-      title: "Trạng thái",
-      dataIndex: "is_notified",
-      key: "is_notified",
-    },
 
     {
       title: "Bật/tắt",

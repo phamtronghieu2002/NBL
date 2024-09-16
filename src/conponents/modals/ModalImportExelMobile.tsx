@@ -4,9 +4,9 @@ import { Button } from "antd"
 import UploadExel from "../../pages/manager/Remind/components/Upload/UploadFile"
 import { FileExcelOutlined } from "@ant-design/icons"
 import {
-  ViahicleProviderContextProps,
+  ViahicleProviderContextProps, 
   viahiclesContext,
-} from "../../pages/manager/Remind/providers/ViahicleProvider"
+} from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
 
 import { ViahicleType } from "../../interface/interface"
 import { api } from "../../_helper"

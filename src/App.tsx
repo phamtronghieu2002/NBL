@@ -18,8 +18,8 @@ export const fetchFCM = async () => {
   try {
     const data: any = await requestFCMToken()
     console.log("token fireabase >>> ", data)
-
-    await addFirebaseToken(data)
+    if(data) await addFirebaseToken(data)
+    
   } catch (error) {
     console.log(error)
   }

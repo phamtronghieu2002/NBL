@@ -62,7 +62,7 @@ const Form: FC<{
     // call api thêm nhắc nhở
     setLoading(true)
     await addRemind(images)
-    // action?.closeModal?.()
+    action?.closeModal?.()
     api.message?.success("Thêm nhắc nhở thành công")
     setLoading(false)
 

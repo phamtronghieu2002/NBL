@@ -41,6 +41,7 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
 import { _log } from "../../../../../utils/_log"
+import exp from "constants"
 import dayjs from "dayjs"
 const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 
@@ -80,33 +81,58 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [imageFiles, setImageFiles] = useState<any[]>([])
     const [schedules, setSchedules] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(false)
+    const [imageFilesUrl, setImageFilesUrl] = useState<any[]>([])
     const [form] = Form.useForm()
 
     _log("initialValues >>", initialValues)
+
+    const convertUrlsToFiles = async (urls: string[]) => {
+      return Promise.all(
+        urls.map(async (url) => {
+          const response = await fetch(url)
+          const blob = await response.blob()
+          const file = new File([blob], url.split("/").pop() || "file", {
+            type: blob.type,
+          })
+          return {
+            source: url,
+            options: {
+              type: "local",
+              file: file,
+            },
+          }
+        }),
+      )
+    }
+
+    useEffect(() => {
+      if(initialValues?.img_url){
+        console.log('====================================');
+        console.log('initialValues?.remind_img_url', initialValues?.remind_img_url);
+        console.log('====================================');
+
+        const loading = async () => {
+          const urls = initialValues?.remind_img_url?.split(",")?.map(
+            (url: string, index: number) =>
+              `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
+          )
+
+          const files = await convertUrlsToFiles(urls)
+
+          setImageFilesUrl(files)
+        }
+
+        loading();
+      }
+    }, [initialValues.img_url])
+
     // xử lí fill hình ảnh
     useEffect(() => {
       console.log("====================================")
       console.log("initialValues >>", initialValues)
       console.log("====================================")
       if (initialValues?.remind_img_url) {
-        const convertUrlsToFiles = async (urls: string[]) => {
-          return Promise.all(
-            urls.map(async (url) => {
-              const response = await fetch(url)
-              const blob = await response.blob()
-              const file = new File([blob], url.split("/").pop() || "file", {
-                type: blob.type,
-              })
-              return {
-                source: url,
-                options: {
-                  type: "local",
-                  file: file,
-                },
-              }
-            }),
-          )
-        }
+        
 
         const urls = initialValues?.remind_img_url?.split(",")?.map(
           (url: string, index: number) =>
@@ -188,6 +214,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           }
           form.setFieldsValue({
             ...initialValues,
+            expiration_time: dayjs(initialValues?.expiration_timeStamp),
             vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
             tire: initialValues?.tire,
             is_notified: initialValues?.is_notified == 0 ? true : false,
@@ -470,11 +497,6 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   disabledDate={(current) => {
                     return current && current < moment().endOf("day")
                   }}
-                  defaultValue={
-                    initialValues?.expiration_time
-                      ? dayjs(initialValues.expiration_time)
-                      : null
-                  }
                   onChange={() => form.validateFields(["remindDate"])}
                 />
               </Form.Item>
@@ -525,7 +547,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             <FilePond
               imagePreviewHeight={200} // Chiều cao của ảnh preview
               imagePreviewMaxHeight={200} // Chiều cao tối đa của ảnh preview
-              files={imageFiles}
+              files={imageFilesUrl.length > 0 ? imageFilesUrl : imageFiles }
               allowMultiple={true}
               maxFiles={5}
               onupdatefiles={(fileItems) => {
