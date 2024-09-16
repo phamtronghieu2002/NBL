@@ -39,6 +39,7 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
 import { _log } from "../../../../../utils/_log"
+import dayjs from "dayjs"
 const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 
 // Đăng ký plugin
@@ -79,39 +80,55 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [loading, setLoading] = useState<boolean>(false)
 
     const [form] = Form.useForm()
-    const filePondRef = useRef<any>(null)
 
+    console.log("====================================")
+    console.log("imageFiles >>", imageFiles)
+    console.log("====================================")
     _log("initialValues >>", initialValues)
     // xử lí fill hình ảnh
     useEffect(() => {
-      if (initialValues?.remind_img_url) {
-        const fetchImageFromUrl = async (url: string) => {
-          const response = await fetch(url);
-          const blob = await response.blob();
-          const file = new File([blob], "image.jpg", { type: blob.type });
-          return file;
-        };
-    
-        const loadImages = async () => {
-          const imagePromises = initialValues.remind_img_url.map((url: string) => fetchImageFromUrl(url));
-          const files = await Promise.all(imagePromises);
-    
-          console.log('====================================');
-          console.log('files', files);
-          console.log('====================================');
+      const fetchImageFiles = async () => {
+        if (initialValues?.remind_img_url) {
+          const convertUrlsToFiles = async (urls: string[]) => {
+            console.log("====================================")
+            console.log("urls>>", urls)
+            console.log("====================================")
+            return Promise.all(
+              urls.map(async (url) => {
+                const response = await fetch(url)
+                const blob = await response.blob()
+                const file = new File([blob], url.split("/").pop() || "file", {
+                  type: blob.type,
+                })
+                console.log("====================================")
+                console.log("url ne cac ban >>", url)
+                console.log("====================================")
+                return {
+                  source: url,
+                  options: {
+                    type: "local",
+                    file: file,
+                  },
+                }
+              }),
+            )
+          }
 
-          // Thêm file vào FilePond
-          files.forEach((file) => {
-            filePondRef.current?.addFile(file);
-          });
+          const urls = initialValues.remind_img_url.split(",").map(
+            (url: string) => `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
+          )
 
-          setImageFiles(files)
-        };
-    
-        loadImages();
+          try {
+            const files = await convertUrlsToFiles(urls)
+            setImageFiles(files)
+          } catch (error) {
+            console.error("Error fetching image files:", error)
+          }
+        }
       }
-    }, [initialValues?.remind_img_url]);
-    
+
+      fetchImageFiles()
+    }, [initialValues?.remind_img_url])
 
     // xử lí fill thời gian
     useEffect(() => {
@@ -174,18 +191,21 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           })
         } else {
           // cộng thêm n tháng
-
           initialValues.expiration_time = moment(
             initialValues?.expiration_timeStamp,
           ).add(isUpdateCycleForm ? initialValues?.cycle : 0, "months")
+
           const tire = initialValues?.tire
           if (tire) {
             handleSelectViahicle(
               viahiclesStore?.viahiclesStore[0]?.license_plate,
             )
           }
+
           form.setFieldsValue({
-            ...initialValues,
+            // ...initialValues,
+            remind_category_id: initialValues?.remind_category_id,
+            
             vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
             tire: initialValues?.tire,
             is_notified: initialValues?.is_notified == 0 ? true : false,
@@ -463,9 +483,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             rules={[{ required: true, message: "Vui lòng chọn ngày nhắc nhở" }]}
           >
             <DatePicker
-              disabledDate={(current) => {
-                return current && current < moment().endOf("day")
-              }}
+              disabledDate={(current) =>
+                current && current < dayjs().endOf("day")
+              }
+              defaultValue={
+                initialValues?.expiration_time
+                  ? dayjs(initialValues.expiration_time)
+                  : null
+              }
+              format="YYYY/MM/DD"
               onChange={() => form.validateFields(["remindDate"])}
             />
           </Form.Item>

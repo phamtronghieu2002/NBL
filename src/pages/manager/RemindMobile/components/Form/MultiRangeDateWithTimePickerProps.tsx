@@ -7,6 +7,7 @@ import React, {
 import { DatePicker, TimePicker, Button, Space, Row, Col, message } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import moment from "moment"
+import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
 
@@ -38,14 +39,24 @@ const MultiRangeDateWithTimePicker = forwardRef<
       }))
       setDateRanges(initialRanges)
       setErrors(
-        initialRanges.map(() => ({ startDateError: false, endDateError: false, timeError: false })),
+        initialRanges.map(() => ({
+          startDateError: false,
+          endDateError: false,
+          timeError: false,
+        })),
       )
     }
   }, [initialValues])
 
   const addRange = () => {
-    setDateRanges([...dateRanges, { startDate: null, endDate: null, time: null }])
-    setErrors([...errors, { startDateError: false, endDateError: false, timeError: false }])
+    setDateRanges([
+      ...dateRanges,
+      { startDate: null, endDate: null, time: null },
+    ])
+    setErrors([
+      ...errors,
+      { startDateError: false, endDateError: false, timeError: false },
+    ])
   }
 
   const handleRangeChange = (index: number, range: any) => {
@@ -82,7 +93,8 @@ const MultiRangeDateWithTimePicker = forwardRef<
     setErrors(newErrors)
 
     return newErrors.every(
-      (error) => !error.startDateError && !error.endDateError && !error.timeError,
+      (error) =>
+        !error.startDateError && !error.endDateError && !error.timeError,
     )
   }
 
@@ -142,7 +154,7 @@ const MultiRangeDateWithTimePicker = forwardRef<
                 return current && current < moment().startOf("day")
               }}
               onChange={(date) => handleStartDateChange(index, date)}
-              value={item.startDate}
+              value={item.startDate ? dayjs(item.startDate) : null}
               placeholder="Ngày bắt đầu"
               style={
                 errors[index]?.startDateError
@@ -161,7 +173,7 @@ const MultiRangeDateWithTimePicker = forwardRef<
                 return current && current < moment(item.startDate).endOf("day")
               }}
               onChange={(date) => handleEndDateChange(index, date)}
-              value={item.endDate}
+              value={item.endDate ? dayjs(item.endDate) : null}
               placeholder="Ngày kết thúc"
               style={
                 errors[index]?.endDateError

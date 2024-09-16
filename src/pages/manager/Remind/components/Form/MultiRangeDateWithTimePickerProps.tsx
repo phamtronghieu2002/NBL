@@ -7,6 +7,7 @@ import React, {
 import { DatePicker, TimePicker, Button, Space, Row, Col, message } from "antd"
 import { CloseOutlined } from "@ant-design/icons"
 import moment from "moment"
+import dayjs from "dayjs"
 
 const { RangePicker } = DatePicker
 
@@ -86,7 +87,6 @@ const MultiRangeDateWithTimePicker = forwardRef<
 
   const handleSubmit = () => {
     if (validateForm()) {
-
       const selectedRangesWithTime = dateRanges
         .map((item) => {
           if (item.range && item.time) {
@@ -103,7 +103,7 @@ const MultiRangeDateWithTimePicker = forwardRef<
           return null
         })
         .filter(Boolean)
-      
+
       setValueTime(selectedRangesWithTime)
     } else {
       setValueTime([])
@@ -119,11 +119,13 @@ const MultiRangeDateWithTimePicker = forwardRef<
         <Row key={index} gutter={1} align="middle" className="!mr-[-100px]">
           <Col>
             <RangePicker
-              disabledDate={(current) => {
-                return current && current < moment().startOf("day")
-              }}
+              disabledDate={(current) =>
+                current && current < dayjs().startOf("day")
+              }
+              value={
+                item.range ? [dayjs(item.range[0]), dayjs(item.range[1])] : null
+              }
               onChange={(range) => handleRangeChange(index, range)}
-              value={item.range}
               placeholder={["Chọn ngày bắt đầu", "Chọn ngày kết thúc"]}
               style={errors[index]?.rangeError ? { borderColor: "red" } : {}}
             />

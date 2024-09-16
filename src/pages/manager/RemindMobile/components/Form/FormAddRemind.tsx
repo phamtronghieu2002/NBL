@@ -41,6 +41,7 @@ import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
 import { _log } from "../../../../../utils/_log"
+import dayjs from "dayjs"
 const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 
 // Đăng ký plugin
@@ -469,6 +470,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
                   disabledDate={(current) => {
                     return current && current < moment().endOf("day")
                   }}
+                  defaultValue={
+                    initialValues?.expiration_time
+                      ? dayjs(initialValues.expiration_time)
+                      : null
+                  }
                   onChange={() => form.validateFields(["remindDate"])}
                 />
               </Form.Item>
