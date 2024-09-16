@@ -100,7 +100,7 @@ const Remind: FC<RemindProps> = () => {
   }, [tab, viahiclesStore.freshKey, viahiclesStore.keyword])
 
   useEffect(() => {
-    dispatch?.setViahicle([])
+     dispatch?.setViahicle([])
   }, [tab])
 
   const onChangeTab = (key: string) => {

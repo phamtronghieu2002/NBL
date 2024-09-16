@@ -56,7 +56,7 @@ const Form: FC<{
         }
       }
     }
-   
+
     images.append("token", storage.getAccessToken())
 
     // call api thêm nhắc nhở
@@ -91,7 +91,11 @@ const Form: FC<{
     onReload?.()
   }
 
-  const handleUpdateCycle = async (formData: any, callback: any,images?: any) => {
+  const handleUpdateCycle = async (
+    formData: any,
+    callback: any,
+    images?: any,
+  ) => {
     for (const key in formData) {
       if (formData.hasOwnProperty(key)) {
         const value = formData[key]
@@ -210,14 +214,17 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
   const isTimestamp = (value: any) => {
     return typeof value === "number" && value > 1000000000
   }
-   
+
   const convertTimestampsToMoment = (data: any) => {
     const convertedData = { ...data }
-  
+
     Object.keys(convertedData).forEach((key) => {
       if (isTimestamp(convertedData[key])) {
         // Chỉ chuyển đổi nếu là timestamp
-        convertedData[key] = moment(convertedData[key]).add(convertedData?.time_before, 'months')
+        convertedData[key] = moment(convertedData[key]).add(
+          convertedData?.time_before,
+          "months",
+        )
       }
     })
 
@@ -236,7 +243,6 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
         title: `Sửa nhắc nhở`,
       }
     }
-    
   }
 
   return (
