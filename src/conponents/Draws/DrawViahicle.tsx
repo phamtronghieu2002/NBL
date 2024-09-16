@@ -262,7 +262,6 @@ const TabTableRemind = memo(({ data, isReload }: any) => {
           onCancel={(e) => handleCancel(e, record)}
           okText={
             <ModalCreateRemind
-             
               isUpdateCycleForm
               type="update-cycle"
               onReload={fetchRemind}
@@ -370,7 +369,10 @@ export const TabTableTire: FC<{
   const fetchTire = async (keyword: string = "") => {
     try {
       setLoading(true)
-      const res = await getTire(data?.license_plate ? data?.license_plate : data?.imei   || "", keyword)
+      const res = await getTire(
+        data?.imei ? data?.imei : data?.license_plate || "",
+        keyword,
+      )
       setTires(res?.data)
       setLoading(false)
     } catch (error) {}

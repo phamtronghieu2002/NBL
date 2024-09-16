@@ -98,6 +98,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               const file = new File([blob], url.split("/").pop() || "file", {
                 type: blob.type,
               })
+              console.log('====================================');
+              console.log("url ne cac ban >>", url);
+              console.log('====================================');
               return {
                 source: url,
                 options: {
