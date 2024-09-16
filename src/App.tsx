@@ -17,6 +17,7 @@ import { addFirebaseToken } from "./apis/firebaseAPI"
 export const fetchFCM = async () => {
   try {
     const data: any = await requestFCMToken()
+    console.log("token fireabase >>> ", data)
 
     await addFirebaseToken(data)
   } catch (error) {

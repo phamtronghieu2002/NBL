@@ -4,6 +4,7 @@ export interface TireProps {
   size?: string
   seri?: string
   license_plate?: string
+  imei?: string
 }
 
 export interface ViahicleType {

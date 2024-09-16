@@ -230,6 +230,7 @@ export const _app = {
 
       try {
         fetchFCM()
+        
       } catch (error) {
         console.log("====================================")
         console.log("error", error)

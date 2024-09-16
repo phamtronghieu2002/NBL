@@ -78,18 +78,19 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [schedules, setSchedules] = useState<any[]>([])
     const [loading, setLoading] = useState<boolean>(false)
     const [form] = Form.useForm()
-   
-    console.log('====================================');
-    console.log("imageFiles >>", imageFiles);
-    console.log('====================================');
+
+    console.log("====================================")
+    console.log("imageFiles >>", imageFiles)
+    console.log("====================================")
     _log("initialValues >>", initialValues)
     // xử lí fill hình ảnh
     useEffect(() => {
-      console.log("====================================")
-      console.log("initialValues >>", initialValues)
-      console.log("====================================")
+     
       if (initialValues?.remind_img_url) {
         const convertUrlsToFiles = async (urls: string[]) => {
+          console.log('====================================');
+          console.log("urls>>", urls);
+          console.log('====================================');
           return Promise.all(
             urls.map(async (url) => {
               const response = await fetch(url)

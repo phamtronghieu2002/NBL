@@ -528,7 +528,10 @@ export const TabTableTire: FC<{
 
   const fetchTire = async (keyword: string = "") => {
     try {
-      const res = await getTire(data?.license_plate || "", keyword)
+      const res = await getTire(
+        data?.imei ? data?.imei : data?.license_plate || "",
+        keyword,
+      )
       setTires(res?.data)
     } catch (error) {}
   }

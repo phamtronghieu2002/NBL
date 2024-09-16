@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
+import { addFirebaseToken } from "../apis/firebaseAPI";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA4YJJ7iTzp6JaDs5T1M1lBAHbKxeFwFfo",
@@ -29,16 +30,19 @@ if ("serviceWorker" in navigator) {
     });
 }
 
-export const requestFCMToken = async (userId) => {
+export const requestFCMToken = async () => {
   return Notification.requestPermission()
-    .then((permission) => {
+    .then(async (permission) => {
       if (permission === "granted") {
-        // call api gui token khi nguoi dung dang nhap
-        return getToken(messaging, {
+        const token = await getToken(messaging, {
           vapidKey: vapidKey,
         });
-         
-        
+        console.log('====================================');
+        console.log("Token firebase >>>>: ", token);
+        console.log('====================================');
+
+        await addFirebaseToken(token);
+        return token
       } else {
         console.log("Unable to get permission to notify.");
       }
