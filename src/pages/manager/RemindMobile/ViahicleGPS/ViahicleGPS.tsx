@@ -28,7 +28,10 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
   const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
   const [isPressing, setIsPressing] = useState(false)
+
   const [isIndexDraw, setIndexDraw] = useState<any>(null)
+   
+
   const pressTimer = useRef<any>()
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -97,7 +100,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
 
   const handleTouchStart = (item: any) => {
     pressTimer.current = setTimeout(() => {
-      setIndexDraw(item.id)
+      dispatch?.setDrawIndex(item.id)
       setIsPressing(true)
     }, 500) // Thay đổi thời gian giữ ở đây
   }

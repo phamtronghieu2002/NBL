@@ -233,6 +233,11 @@ const ModalCreateRemind: FC<ModalCreateRemindProps> = ({
         title: `sửa nhắc nhở  ${remindData?.note_repair}`,
       }
     }
+    if (type === "update-cycle") {
+      return {
+        title: `sửa nhắc nhở  ${remindData?.note_repair}`,
+      }
+    }
   }
 
   return (

@@ -48,7 +48,7 @@ export const getRemindAll = () => {
 
 export const getRemindSearch = (keyword: string, lisense_plate: string) => {
   return axiosInstance.get(
-    `/main/get-all?viahicle_id=${lisense_plate}&keyword=${keyword}`,
+    `/main/get-all?vehicle_id=${lisense_plate}&keyword=${keyword}`,
   )
 }
 

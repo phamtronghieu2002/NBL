@@ -9,12 +9,14 @@ interface ViahicleProviderProps {
   type: number
   loading?: boolean
   viahicleGPS?: ViahicleType[]
+  drawIndex?: any
 }
 
 export interface ViahicleProviderContextProps {
   viahiclesStore: ViahicleProviderProps
 
   dispatch: {
+    setDrawIndex: (index: any) => void
     setTypeViahicle: (type: number) => void
     freshKey: () => void
     setKeyword: (keyword: string) => void
@@ -43,6 +45,12 @@ const ViahicleProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     React.useState<ViahicleProviderProps>(initState)
 
   const dispatch = {
+    setDrawIndex: (index: any) => {
+      setState((prevState) => ({
+        ...prevState,
+        drawIndex: index,
+      }))
+    },
     setTypeViahicle: (type: number) => {
       setState((prevState) => ({
         ...prevState,
@@ -58,7 +66,7 @@ const ViahicleProvider: FC<{ children: React.ReactNode }> = ({ children }) => {
     freshKey: () => {
       setState({ ...viahiclesStore, freshKey: Math.random() })
     },
-    
+
     setLoading: (loading: boolean) => {
       setState((prevState) => ({
         ...prevState,

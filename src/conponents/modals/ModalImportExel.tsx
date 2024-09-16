@@ -85,7 +85,6 @@ const ImportExel: FC<{
       setLoading(true)
 
       await addViahicleExel(dataNewVehicles)
-      dispatch?.freshKey()
 
       const parsedRemindTireData = excelData.flatMap((item) =>
         item.remindTire
@@ -186,11 +185,12 @@ const ImportExel: FC<{
         }
         formattedData[i].remind_category_id = cate_id
       }
-      console.log("chay duoc den day")
       for (let i = 0; i < formattedData.length; i++) {
         await addRemind(formattedData[i])
       }
       setLoading(false)
+      dispatch?.freshKey()
+
       action?.closeModal?.()
     } catch (error) {
       console.log("error >>", error)
