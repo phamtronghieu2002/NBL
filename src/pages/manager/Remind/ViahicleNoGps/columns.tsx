@@ -56,7 +56,6 @@ const getColumnViahicleNoGPS = (
       dataIndex: "setting",
       key: "setting",
       render(value, record, index) {
-
         return (
           <DrawViahicle
             data={record}
@@ -82,22 +81,20 @@ const getColumnViahicleNoGPS = (
       dataIndex: "actions",
       key: "actions",
       render(value, record, index) {
-        return {
-          children: (
-            <div className="flex">
-              <ModalAddViahicle
-                data={record}
-                type="update"
-                button={<Button type="link">Cập nhật</Button>}
-              />
-              <ModalAddViahicle
-                type="delete"
-                data={record}
-                button={<Button type="link">Xóa</Button>}
-              />
-            </div>
-          ),
-        }
+        return (
+          <div className="flex">
+            <ModalAddViahicle
+              data={record}
+              type="update"
+              button={<Button type="link">Cập nhật</Button>}
+            />
+            <ModalAddViahicle
+              type="delete"
+              data={record}
+              button={<Button type="link">Xóa</Button>}
+            />
+          </div>
+        )
       },
     },
   ]

@@ -13,6 +13,7 @@ import ModalCreateRemindMobile from "../../../../conponents/modals/ModalCreateRe
 import { PlusCircleOutlined } from "@ant-design/icons"
 import { MaskLoader } from "../../../../conponents/Loader"
 import DrawViahicle from "../../../../conponents/Draws/DrawViahicleMobile"
+import { d } from "vitest/dist/types-e3c9754d.js"
 
 interface ViahicleGPSType {
   viahicles: ViahicleType[]
@@ -165,14 +166,14 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         right={<></>}
         props={{}}
       >
-        {viahicles.map((item: any) => (
+        {viahicles.map((item: any,index:number) => (
           <div
             onClick={() => {
               //  nếu đang đang có check box thì không bật draw
               if (showCheckbox) return
               dispatch.setDrawIndex(item.id)
             }}
-            key={item.imei}
+            key={index}
             onMouseDown={() => handleMouseDown(item.id)} // Nhấn giữ chuột để bắt đầu chọn
             onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
             onTouchStart={() => handleTouchStart(item)}
@@ -191,6 +192,7 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
               <DrawViahicle
                 setSelectedItems={() => {
                   dispatch.setDrawIndex(null)
+                  dispatch.setViahicle([])
                   setSelectedItems([])
                 }}
                 button={<></>}

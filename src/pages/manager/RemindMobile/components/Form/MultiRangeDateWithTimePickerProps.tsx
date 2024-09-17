@@ -103,8 +103,8 @@ const MultiRangeDateWithTimePicker = forwardRef<
       const selectedRangesWithTime = dateRanges
         .map((item) => {
           if (item.startDate && item.endDate && item.time) {
-            const startTimeStamp = moment(item.startDate).valueOf()
-            const endTimeStamp = moment(item.endDate).valueOf()
+            const startTimeStamp = dayjs(item.startDate).valueOf()
+            const endTimeStamp = dayjs(item.endDate).valueOf()
             const formattedTime = item.time.format("HH:mm")
 
             return {

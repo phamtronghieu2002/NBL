@@ -37,8 +37,7 @@ const DrawCM: FC<DrawProps> = ({
 
   const onClose = () => {
     setOpen(false)
-    dispatch?.setViahicle?.([])
-    setSelectedItems?.([])
+    setSelectedItems?.()
   }
 
   // Sử dụng touchstart với passive: false
