@@ -1,4 +1,4 @@
-import { FC, useContext, useState } from "react"
+import { FC, useContext, useState, useEffect, useRef } from "react"
 import React from "react"
 import { Button, Drawer } from "antd"
 import "./drawMobile.css"
@@ -6,12 +6,14 @@ import {
   ViahicleProviderContextProps,
   viahiclesContext,
 } from "../../pages/manager/RemindMobile/providers/ViahicleProvider"
+
 interface DrawProps {
   button: React.ReactNode
   children: (data: { closeModal: any; data: any }) => React.ReactNode
   title: React.ReactNode
   width?: string | number
   data: any
+  setSelectedItems?: any
 }
 
 const DrawCM: FC<DrawProps> = ({
@@ -20,12 +22,14 @@ const DrawCM: FC<DrawProps> = ({
   title,
   width = "100%",
   data,
+  setSelectedItems
 }) => {
   const [open, setOpen] = useState(true)
-
   const { viahiclesStore, dispatch } = useContext(
     viahiclesContext,
   ) as ViahicleProviderContextProps
+
+  const drawerRef = useRef<HTMLDivElement>(null)
 
   const showDrawer = () => {
     setOpen(true)
@@ -34,13 +38,27 @@ const DrawCM: FC<DrawProps> = ({
   const onClose = () => {
     setOpen(false)
     dispatch?.setViahicle?.([])
+    setSelectedItems?.([])
   }
-  const handleChildTouch = (event: any) => {
-    event.stopPropagation() // Ngăn sự kiện chạm lên phần tử cha
-    console.log("Chạm vào block con")
-  }
+
+  // Sử dụng touchstart với passive: false
+  useEffect(() => {
+    const handleTouchStart = (event: TouchEvent) => {
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+    }
+
+    const currentDrawer = drawerRef.current
+    currentDrawer?.addEventListener('touchstart', handleTouchStart, { passive: false })
+
+    return () => {
+      currentDrawer?.removeEventListener('touchstart', handleTouchStart)
+    }
+  }, [])
+
   return (
-    <div onTouchStart={handleChildTouch}>
+    <div ref={drawerRef}>
       <div className="drawMobile" onClick={showDrawer}>
         {button}
       </div>

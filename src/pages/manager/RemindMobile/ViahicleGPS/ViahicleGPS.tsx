@@ -23,39 +23,42 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     viahiclesContext,
   ) as ViahicleProviderContextProps
 
-  const [selectedItems, setSelectedItems] = useState<any>([])
+  const [selectedItems, setSelectedItems] = useState<ViahicleType[]>([])
   const [showCheckbox, setShowCheckbox] = useState(false) // Hiển thị checkbox khi thả chuột
   const [isSelecting, setIsSelecting] = useState(false) // Trạng thái nhấn giữ chuột
   const [selectAll, setSelectAll] = useState(false) // Trạng thái chọn tất cả
   const [isPressing, setIsPressing] = useState(false)
 
-   
   const isIndexDraw = viahiclesStore.drawIndex
 
   const pressTimer = useRef<any>()
-
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Hàm handle khi check/uncheck checkbox
-  const handleCheck = (id: number, checked: boolean) => {
-    setSelectedItems((prevSelected: any) =>
+  const handleCheck = (item: ViahicleType, checked: boolean) => {
+    setSelectedItems(
+      (prevSelected) =>
+        checked
+          ? [...prevSelected, item] // Lưu đối tượng viahicle
+          : prevSelected.filter((selectedItem) => selectedItem.id !== item.id), // Lọc bỏ đối tượng đã bỏ chọn
+    )
+    dispatch.setViahicle(
       checked
-        ? [...prevSelected, id]
-        : prevSelected.filter((itemId: any) => itemId !== id),
+        ? [...selectedItems, item]
+        : selectedItems.filter((selectedItem) => selectedItem.id !== item.id),
     )
   }
 
   // Bắt đầu chọn khi nhấn giữ chuột
   const handleMouseDown = (id: number) => {
-    //  Bắt đầu quá trình chọn item
     setIsSelecting(true)
   }
 
   // Kết thúc chọn khi thả chuột
-  const handleMouseUp = (id: number) => {
+  const handleMouseUp = (item: ViahicleType) => {
     if (isSelecting) {
       setShowCheckbox(true) // Hiển thị checkbox sau khi thả chuột
-      handleCheck(id, true) // Chọn item ngay khi thả chuột
+      handleCheck(item, true) // Chọn item ngay khi thả chuột
     }
     setIsSelecting(false) // Kết thúc quá trình chọn
   }
@@ -89,17 +92,19 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
     if (selectAll) {
       // Nếu đã chọn tất cả, bỏ chọn
       setSelectedItems([])
+      dispatch.setViahicle([]) // Bỏ chọn tất cả
     } else {
       // Nếu chưa chọn tất cả, chọn tất cả item
-      setSelectedItems(viahicles.map((item) => item))
+      setSelectedItems(viahicles) // Lưu tất cả đối tượng viahicle
+      dispatch.setViahicle(viahicles) // Dispatch với tất cả các đối tượng viahicle
     }
     setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
   }
 
-  const handleTouchStart = (item: any) => {
+  const handleTouchStart = (item: ViahicleType) => {
     pressTimer.current = setTimeout(() => {
-      dispatch?.setDrawIndex(item.id)
+      dispatch.setDrawIndex(item.id)
       setIsPressing(true)
     }, 500) // Thay đổi thời gian giữ ở đây
   }
@@ -160,36 +165,41 @@ const ViahicleGPS: FC<ViahicleGPSType> = ({ viahicles }) => {
         right={<></>}
         props={{}}
       >
-        {viahicles.map((item: any, index: any) => {
-          console.log("====================================")
-          console.log("item_id", item.id)
-          console.log("====================================")
-          return (
-            <div
-              onClick={() => {
-                dispatch.setViahicle(selectedItems)
-              }}
-              key={item.imei}
-              onMouseDown={() => handleMouseDown(item)} // NhấHum to Kannadan chuột để bắt đầu chọn
-              onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
-              onTouchStart={() => handleTouchStart(item)}
-              onTouchEnd={handleTouchEnd}
-              className="item-container"
-            >
-              <CardCar
-                isGPS
-                {...item}
-                showCheckbox={showCheckbox} // Hiển thị checkbox khi người dùng nhấn giữ và thả chuột
-                checked={selectedItems.includes(item)} // Trạng thái checkbox
-                onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
+        {viahicles.map((item: any) => (
+          <div
+            onClick={() => {
+              //  nếu đang đang có check box thì không bật draw
+              if (showCheckbox) return
+              dispatch.setDrawIndex(item.id)
+            }}
+            key={item.imei}
+            onMouseDown={() => handleMouseDown(item.id)} // Nhấn giữ chuột để bắt đầu chọn
+            onMouseUp={() => handleMouseUp(item)} // Thả chuột để hiển thị checkbox và chọn item
+            onTouchStart={() => handleTouchStart(item)}
+            onTouchEnd={handleTouchEnd}
+            className="item-container"
+          >
+            <CardCar
+              isGPS
+              {...item}
+              showCheckbox={showCheckbox} // Hiển thị checkbox khi người dùng nhấn giữ và thả chuột
+              checked={selectedItems.includes(item)} // Trạng thái checkbox
+              onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
+            />
+            {/* reload set isIndexDraw = null */}
+            {isIndexDraw === item.id && (
+              <DrawViahicle
+                setSelectedItems={() => {
+                  dispatch.setDrawIndex(null)
+                  setSelectedItems([])
+                }}
+                button={<></>}
+                title="Chi tiết"
+                data={item}
               />
-              {/* reaload set isIndexDraw = null */}
-              {isIndexDraw === item.id && (
-                <DrawViahicle button={<></>} title="Chi tiết" data={item} />
-              )}
-            </div>
-          )
-        })}
+            )}
+          </div>
+        ))}
       </TableCM>
     </div>
   )

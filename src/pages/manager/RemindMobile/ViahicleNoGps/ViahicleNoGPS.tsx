@@ -50,11 +50,20 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
   const containerRef = useRef<HTMLDivElement>(null)
 
   // Hàm handle khi check/uncheck checkbox
-  const handleCheck = (id: number, checked: boolean) => {
-    setSelectedItems((prevSelected: any) =>
+  const handleCheck = (item: ViahicleType, checked: boolean) => {
+    setSelectedItems(
+      (prevSelected: any[]) =>
+        checked
+          ? [...prevSelected, item] // Lưu đối tượng viahicle
+          : prevSelected.filter((selectedItem) => selectedItem.id !== item.id), // Lọc bỏ đối tượng đã bỏ chọn
+    )
+    dispatch.setViahicle(
       checked
-        ? [...prevSelected, id]
-        : prevSelected.filter((itemId: any) => itemId !== id),
+        ? [...selectedItems, item]
+        : selectedItems.filter(
+            (selectedItem: { id: number | undefined }) =>
+              selectedItem.id !== item.id,
+          ),
     )
   }
 
@@ -64,10 +73,10 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
   }
 
   // Kết thúc chọn khi thả chuột
-  const handleMouseUp = (id: number) => {
+  const handleMouseUp = (item: ViahicleType) => {
     if (isSelecting) {
       setShowCheckbox(true) // Hiển thị checkbox sau khi thả chuột
-      handleCheck(id, true) // Chọn item ngay khi thả chuột
+      handleCheck(item, true) // Chọn item ngay khi thả chuột
     }
     setIsSelecting(false) // Kết thúc quá trình chọn
   }
@@ -96,9 +105,11 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
     if (selectAll) {
       // Nếu đã chọn tất cả, bỏ chọn
       setSelectedItems([])
+      dispatch.setViahicle([]) // Bỏ chọn tất cả
     } else {
       // Nếu chưa chọn tất cả, chọn tất cả item
-      setSelectedItems(viahicles.map((item) => item))
+      setSelectedItems(viahicles) // Lưu tất cả đối tượng viahicle
+      dispatch.setViahicle(viahicles) // Dispatch với tất cả các đối tượng viahicle
     }
     setSelectAll(!selectAll) // Đảo trạng thái "Chọn tất cả"
     setShowCheckbox(true) // Hiển thị checkbox khi chọn tất cả
@@ -114,7 +125,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
   const handleTouchEnd = () => {
     clearTimeout(pressTimer.current)
     if (isPressing) {
-      console.log("Long press detected")
+      // dispatch.setDrawIndex(0)
       setIsPressing(false)
     }
   }
@@ -201,7 +212,8 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
           return (
             <div
               onClick={() => {
-                dispatch.setViahicle(selectedItems)
+                if (showCheckbox) return
+                dispatch.setDrawIndex(item.id)
               }}
               key={item.id}
               onMouseDown={() => handleMouseDown(item)} // Nhấn chuột để bắt đầu chọn
@@ -219,7 +231,15 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 onCheckChange={(checked) => handleCheck(item, checked)} // Xử lý thay đổi trạng thái checkbox
               />
               {isIndexDraw === item.id && (
-                <DrawViahicle button={<></>} title="Chi tiết" data={item} />
+                <DrawViahicle
+                  setSelectedItems={() => {
+                    dispatch.setDrawIndex(null)
+                    setSelectedItems([])
+                  }}
+                  button={<></>}
+                  title="Chi tiết"
+                  data={item}
+                />
               )}
             </div>
           )

@@ -1,4 +1,4 @@
-// import { fetchFCM } from "../App"
+import { fetchFCM } from "../App"
 import { _const } from "../_constant"
 import { api, history } from "../_helper"
 import { ICmcServer } from "../_types/devServerType"
@@ -229,7 +229,7 @@ export const _app = {
       const userId = user?.id
 
       try {
-        // fetchFCM()
+        fetchFCM()
         
       } catch (error) {
         console.log("====================================")

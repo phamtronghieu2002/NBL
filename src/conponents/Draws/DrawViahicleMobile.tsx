@@ -100,6 +100,7 @@ interface DrawViahicleProps {
   button: React.ReactNode
   title: string
   data: any
+  setSelectedItems?: any
 }
 
 interface DetailViahicleComponentsProps {
@@ -690,9 +691,10 @@ const DetailViahicleComponents: FC<DetailViahicleComponentsProps> = ({
   )
 }
 
-const DrawViahicle: FC<DrawViahicleProps> = ({ button, title, data }) => {
+const DrawViahicle: FC<DrawViahicleProps> = ({ button, title, data ,setSelectedItems}) => {
   return (
     <DrawCM
+    setSelectedItems={setSelectedItems}
       title={
         <p>
           Cài đặt nhắc nhở xe : <b>{data?.license_plate}</b>

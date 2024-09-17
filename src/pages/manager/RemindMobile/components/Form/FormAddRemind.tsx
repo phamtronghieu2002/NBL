@@ -83,9 +83,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [loading, setLoading] = useState<boolean>(false)
     const [imageFilesUrl, setImageFilesUrl] = useState<any[]>([])
     const [form] = Form.useForm()
-
-    _log("initialValues >>", initialValues)
-
+    const initImageURL = initialValues?.remind_img_url || initialValues?.img_url
     const convertUrlsToFiles = async (urls: string[]) => {
       return Promise.all(
         urls.map(async (url) => {
@@ -94,6 +92,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           const file = new File([blob], url.split("/").pop() || "file", {
             type: blob.type,
           })
+          console.log("====================================")
+          console.log("url ne cac ban >>", url)
+          console.log("====================================")
           return {
             source: url,
             options: {
@@ -105,47 +106,40 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       )
     }
 
-    useEffect(() => {
-      if(initialValues?.img_url){
-        console.log('====================================');
-        console.log('initialValues?.remind_img_url', initialValues?.remind_img_url);
-        console.log('====================================');
+    _log("initialValues >>", initialValues)
+    // xử lí fill hình ảnh
 
+    useEffect(() => {
+      if (initImageURL) {
         const loading = async () => {
-          const urls = initialValues?.remind_img_url?.split(",")?.map(
+          const urls = initImageURL?.split(",")?.map(
             (url: string, index: number) =>
               `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
           )
-
           const files = await convertUrlsToFiles(urls)
-
           setImageFilesUrl(files)
         }
-
-        loading();
+        loading()
       }
-    }, [initialValues.img_url])
+    }, [initImageURL])
 
-    // xử lí fill hình ảnh
     useEffect(() => {
-      console.log("====================================")
-      console.log("initialValues >>", initialValues)
-      console.log("====================================")
-      if (initialValues?.remind_img_url) {
-        
-
-        const urls = initialValues?.remind_img_url?.split(",")?.map(
+      if (initImageURL) {
+        const urls = initImageURL?.split(",")?.map(
           (url: string, index: number) =>
             `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
 
-        const initFiles = async () => {
+        const loadImageFiles = async () => {
           const files = await convertUrlsToFiles(urls)
           setImageFiles(files)
         }
-        initFiles()
+
+        loadImageFiles()
+
+        // tôi có links các url làm sao fill preview ngược lại filepond
       }
-    }, [imageFiles.length])
+    }, [imageFiles?.length])
     // xử lí fill thời gian
     useEffect(() => {
       const fetchTime = async (id: number) => {
@@ -180,10 +174,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     }
 
     const fetchCategory = async () => {
-      setLoading(true)
-      const res = await getCategory()
-      setLoading(false)
-      setCategories(res?.data)
+      try {
+        setLoading(true)
+        const res = await getCategory()
+        setLoading(false)
+        setCategories(res?.data)
+      } catch (error) {
+        setLoading(false)
+        api.message?.error("Lỗi khi lấy dữ liệu loại nhắc nhở")
+      }
     }
 
     // fetch category
@@ -202,19 +201,23 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
           })
         } else {
           // cộng thêm n tháng
-
           initialValues.expiration_time = moment(
             initialValues?.expiration_timeStamp,
           ).add(isUpdateCycleForm ? initialValues?.cycle : 0, "months")
+
           const tire = initialValues?.tire
           if (tire) {
             handleSelectViahicle(
               viahiclesStore?.viahiclesStore[0]?.license_plate,
             )
           }
+
           form.setFieldsValue({
             ...initialValues,
-            expiration_time: dayjs(initialValues?.expiration_timeStamp),
+            expiration_time: dayjs(initialValues?.expiration_time),
+            remind_category_id: initialValues?.remind_category_id,
+            cycle: initialValues?.cycle,
+            note_repair: initialValues?.note_repair,
             vehicles: viahiclesStore?.viahiclesStore[0]?.license_plate,
             tire: initialValues?.tire,
             is_notified: initialValues?.is_notified == 0 ? true : false,
@@ -547,12 +550,16 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
             <FilePond
               imagePreviewHeight={200} // Chiều cao của ảnh preview
               imagePreviewMaxHeight={200} // Chiều cao tối đa của ảnh preview
-              files={imageFilesUrl.length > 0 ? imageFilesUrl : imageFiles }
+              files={imageFilesUrl.length > 0 ? imageFilesUrl : imageFiles}
               allowMultiple={true}
               maxFiles={5}
               onupdatefiles={(fileItems) => {
-                const newFiles = fileItems.map((fileItem) => fileItem.file)
-                setImageFiles(newFiles) // Update imageFiles state
+                // nếu file lỗi thì tự động xóa
+                if (fileItems.filter((file:any) => file.error).length > 0) {
+                  setImageFiles([])
+                }
+
+           
               }}
               acceptedFileTypes={["image/*"]}
               name="images"

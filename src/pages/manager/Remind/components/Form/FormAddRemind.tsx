@@ -38,12 +38,12 @@ import "filepond/dist/filepond.min.css"
 import FilePondPluginImagePreview from "filepond-plugin-image-preview"
 import "filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css"
 import FilePondPluginFileValidateType from "filepond-plugin-file-validate-type"
+registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType)
 import { _log } from "../../../../../utils/_log"
 import dayjs from "dayjs"
 const SERVER_DOMAIN_REMIND = import.meta.env.VITE_HOST_REMIND_SERVER_DOMAIN_IMG
 
 // Đăng ký plugin
-registerPlugin(FilePondPluginImagePreview, FilePondPluginFileValidateType)
 
 interface FormAddRemindProps {
   isUpdateCycleForm?: boolean
@@ -82,9 +82,8 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
     const [imageFilesUrl, setImageFilesUrl] = useState<any[]>([])
 
     const [form] = Form.useForm()
-
+    const initImageURL = initialValues?.remind_img_url || initialValues?.img_url
     const convertUrlsToFiles = async (urls: string[]) => {
-     
       return Promise.all(
         urls.map(async (url) => {
           const response = await fetch(url)
@@ -106,14 +105,13 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
       )
     }
 
- 
     _log("initialValues >>", initialValues)
     // xử lí fill hình ảnh
 
     useEffect(() => {
-      if (initialValues?.remind_img_url) {
+      if (initImageURL) {
         const loading = async () => {
-          const urls = initialValues?.remind_img_url?.split(",")?.map(
+          const urls = initImageURL?.split(",")?.map(
             (url: string, index: number) =>
               `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
           )
@@ -122,16 +120,11 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
         }
         loading()
       }
-    }, [initialValues?.remind_img_url])
+    }, [initImageURL])
 
     useEffect(() => {
-      console.log(
-        "=>>>>>>>>>>>>>>>>>>>>>>>",
-        initialValues?.remind_img_url?.split(",")?.length,
-      )
-
-      if (initialValues?.remind_img_url) {
-        const urls = initialValues?.remind_img_url?.split(",")?.map(
+      if (initImageURL) {
+        const urls = initImageURL?.split(",")?.map(
           (url: string, index: number) =>
             `${SERVER_DOMAIN_REMIND}${url.trim()}`, // The URL of the image
         )
@@ -145,7 +138,7 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
         // tôi có links các url làm sao fill preview ngược lại filepond
       }
-    }, [initialValues?.remind_img_url])
+    }, [initImageURL])
     // xử lí fill thời gian
     useEffect(() => {
       const fetchTime = async (id: number) => {

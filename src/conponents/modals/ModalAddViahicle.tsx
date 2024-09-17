@@ -123,6 +123,8 @@ const FormAdd: FC<{
               action?.closeModal()
             })
             .catch((errorInfo) => {
+              setLoading(false)
+              api.message?.error("Biển số Phương tiện trùng !!!")
               console.log("Validation Failed:", errorInfo)
             })
         },
@@ -199,7 +201,6 @@ const ModalAddViahicle: FC<ModalAddViahicleProps> = ({
   button,
   type,
 }) => {
-
   const getAction = () => {
     if (type === "add") {
       return {

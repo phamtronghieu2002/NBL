@@ -90,6 +90,7 @@ export const ModalCView = forwardRef<ModalCViewAction, IProps>(
           {button}
         </div>
         <Modal
+        
           title={title}
           centered
           open={open}
