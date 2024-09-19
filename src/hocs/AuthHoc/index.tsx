@@ -23,7 +23,6 @@ export const AuthHoc: React.FC<IProps> = ({ children }) => {
     _app.getInitialData
       ?.all()
       .then((fb) => {
-        _log("APP INITIAL SUCCESS")
         _app.setUserAuthed(true)
       })
       .catch((error) => {

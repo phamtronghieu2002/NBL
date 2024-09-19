@@ -35,6 +35,11 @@ const Form: FC<{
 }> = ({ action, onReload, remindData = {}, type, isUpdateCycleForm }) => {
   const [loading, setLoading] = useState(false)
 
+  const { viahiclesStore, dispatch } = useContext(
+    viahiclesContext,
+  ) as ViahicleProviderContextProps
+  const viahicleSelected = viahiclesStore.viahiclesStore
+
   const handleSubmit = async (formData: any, callback: any, images?: any) => {
     try {
       const cate_name = formData["cat_name"]
@@ -65,6 +70,7 @@ const Form: FC<{
       action?.closeModal?.()
       api.message?.success("Thêm nhắc nhở thành công")
       onReload?.()
+      dispatch?.freshKey?.()
       setLoading(false)
     } catch (error) {
       api.message?.error("Thêm nhắc nhở thất bại")
@@ -90,6 +96,7 @@ const Form: FC<{
     setLoading(true)
     await updateRemind(remindData?.remind_id, images)
     action?.closeModal?.()
+
     api.message?.success("cập nhật nhắc nhở thành công")
     onReload?.()
   }
@@ -133,10 +140,6 @@ const Form: FC<{
   }
   const handleFormData: any = getFunctionHandleAction()
 
-  const { viahiclesStore } = useContext(
-    viahiclesContext,
-  ) as ViahicleProviderContextProps
-  const viahicleSelected = viahiclesStore.viahiclesStore
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const getAction = () => {

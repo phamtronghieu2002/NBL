@@ -301,15 +301,15 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
 
     // Hàm xử lý khi ảnh được chọn
     const handleImageUpload = (file: any, action: string) => {
-      const formData = new FormData()
       if (action === "add") {
-        formData.append("images", file) // Thêm ảnh mới vào FormData
-        setImageFiles((prev) => [...prev, formData])
+        const formData = new FormData()
+        formData.append("images", file)
+        setImageFiles((prev) => [...prev, { name: file.name, data: formData }])
       } else if (action === "remove") {
-        setImageFiles((prev) => prev.filter((item) => item.name !== file.name)) // Xóa ảnh
+        setImageFiles((prev) => prev.filter((item) => item.name !== file.name))
       }
 
-      return false // Ngăn việc upload tự động
+      return false
     }
 
     const handleGetDataForm = () => {
@@ -555,11 +555,9 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               maxFiles={5}
               onupdatefiles={(fileItems) => {
                 // nếu file lỗi thì tự động xóa
-                if (fileItems.filter((file:any) => file.error).length > 0) {
+                if (fileItems.filter((file: any) => file.error).length > 0) {
                   setImageFiles([])
                 }
-
-           
               }}
               acceptedFileTypes={["image/*"]}
               name="images"
@@ -571,7 +569,10 @@ const FormAddRemind = forwardRef<HTMLButtonElement, FormAddRemindProps>(
               }}
               onremovefile={(error, fileItem) => {
                 if (!error) {
-                  handleImageUpload(fileItem.file, "remove") // Handle remove action
+                  handleImageUpload(fileItem.file, "remove")
+                  // Handle remove action
+                } else {
+                  console.log("error:", error)
                 }
               }}
             />

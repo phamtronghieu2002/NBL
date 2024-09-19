@@ -234,6 +234,7 @@ const ViahicleNoGPS: FC<ViahicleNoGPSType> = ({ viahicles }) => {
                 <DrawViahicle
                   setSelectedItems={() => {
                     dispatch.setDrawIndex(null)
+                    dispatch.setViahicle([])
                     setSelectedItems([])
                   }}
                   button={<></>}
