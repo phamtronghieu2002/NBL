@@ -60,27 +60,19 @@ const UploadExel: React.FC<UploadExelProps> = ({
           if (col === "Lốp(Seri,size,brand)") acc.push(index)
           return acc
         }, [])
-
-        const worksheet2 = workbook.Sheets["Sheet2"];
-        const jsonData2: any[][] = XLSX.utils.sheet_to_json(worksheet2, {
-          header: 1,
-        });
-  
         // Lấy giá trị "Thời gian mặc định" từ dòng đầu tiên (dòng 2) của Sheet2
-        const headerSheet2 = jsonData2[0];
-        const indexDefaultTime = headerSheet2.indexOf("Thời gian mặc định");
-        const indexExcelType = headerSheet2.indexOf("Loại của excel");
-        const typeExcel = jsonData2[1][indexExcelType];
+        const indexDefaultTime = header.indexOf("Thời gian mặc định");
+        const indexExcelType = header.indexOf("Loại của excel");
+        const typeExcel = jsonData[1][indexExcelType];
         if (typeExcel === "" || typeExcel === undefined) {
           throw new Error("Invalid Excel type: Type cannot be empty or undefined");
         }
-        console.log(typeExcel)
         if (typeExcel === "Thêm mới") {
           setType("add");
         } else {
           setType("replace");
         }
-        const defaultTime = jsonData2[1][indexDefaultTime] || "08:00";
+        const defaultTime = jsonData[1][indexDefaultTime] || "08:00";
         setExcelDefaultTime(defaultTime)
         const result = jsonData
           .slice(1)
